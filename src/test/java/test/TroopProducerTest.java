@@ -6,7 +6,6 @@ import game.logic.troop.TroopProducer;
 import game.logic.troop.TroopType;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +35,7 @@ class TroopProducerTest {
     @Test
     void step() {
         TroopProducer p = new TroopProducer();
+        assertFalse(p.step().isPresent());
         p.addTroop(TroopType.KNIGHT, 2);
         p.addTroop(TroopType.PIKE_MAN);
         p.addTroop(TroopType.ONAGER, 2);

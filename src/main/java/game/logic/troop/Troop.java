@@ -15,6 +15,26 @@ public abstract class Troop {
         this.name = name;
     }
 
+    public int getCost() {
+        return cost;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Troop) {

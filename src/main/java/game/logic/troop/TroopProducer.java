@@ -1,32 +1,10 @@
 package game.logic.troop;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class TroopProducer {
-
-    public static class TroopRemainingTime {
-        TroopType t;
-
-        int remainingTime;
-
-        public int getRemainingTime() {
-            return remainingTime;
-        }
-
-        public TroopType getT() {
-            return t;
-        }
-
-        public TroopRemainingTime(TroopType t) {
-            this.t = t;
-            this.remainingTime = t.getTime();
-        }
-
-        @Override
-        public String toString() {
-            return t.toString() + " : " + remainingTime;
-        }
-    }
 
     private LinkedList<TroopRemainingTime> queue;
 
@@ -62,6 +40,37 @@ public class TroopProducer {
             return Optional.empty();
         } catch (NoSuchElementException ignored) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("Currently in queue: \n");
+        queue.forEach(s::append);
+        return s.toString();
+    }
+
+    public static class TroopRemainingTime {
+        TroopType t;
+
+        int remainingTime;
+
+        public TroopRemainingTime(TroopType t) {
+            this.t = t;
+            this.remainingTime = t.getTime();
+        }
+
+        public int getRemainingTime() {
+            return remainingTime;
+        }
+
+        public TroopType getT() {
+            return t;
+        }
+
+        @Override
+        public String toString() {
+            return t.toString() + " : " + remainingTime;
         }
     }
 }
