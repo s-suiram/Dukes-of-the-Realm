@@ -1,5 +1,8 @@
 package game.logic;
 
+
+import javafx.geometry.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,10 @@ public class Player {
 
     public void addCastle(Cardinal door) {
         castles.add(new Castle(this, door));
+    }
+
+    public void addCastle(Cardinal door, Point2D pos) {
+        castles.add(new Castle(this, door, pos));
     }
 
     @Override

@@ -1,4 +1,3 @@
-import game.Game;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -13,15 +12,18 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Game g = new Game();
         Group group = new Group();
-        Scene s = new Scene(group, Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT, Color.GREY);
+        Scene s = new Scene(group, 1000, 800, Color.GREY);
+
+        Group g = new Group();
+
+        s.setRoot(g);
+
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.setTitle("Dukes of the realm");
         primaryStage.show();
 
-        g.runGameLoop();
     }
 
 

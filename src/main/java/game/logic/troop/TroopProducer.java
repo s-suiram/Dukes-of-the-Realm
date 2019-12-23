@@ -70,7 +70,7 @@ public class TroopProducer {
 
         @Override
         public String toString() {
-            return t.toString() + " : " + remainingTime;
+            return t + " : " + remainingTime + "\n";
         }
     }
 }

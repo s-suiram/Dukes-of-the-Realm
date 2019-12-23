@@ -2,6 +2,7 @@ package game.controller;
 
 import game.logic.Cardinal;
 import game.logic.World;
+import game.logic.troop.TroopType;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -20,6 +21,9 @@ public class CommandParser {
         actions.put("castlelist", CommandParser::listCastle);
         actions.put("castlelistall", CommandParser::listAllCastle);
         actions.put("step", CommandParser::step);
+        actions.put("help", CommandParser::help);
+        actions.put("troopform", CommandParser::formTroop);
+        actions.put("levelup", CommandParser::levelUp);
     }
 
     public static void main(String[] args_) {
@@ -34,44 +38,80 @@ public class CommandParser {
         } while (true);
     }
 
+    private static void levelUp(List<String> args) {
+        try {
+            if (!World.getInstance().castleById(Integer.parseInt(args.get(1))).get().startLevelUp())
+                System.out.println("Not enough money to level up");
+        } catch (IndexOutOfBoundsException e) {
+            invalidArgs(args.get(0));
+        } catch (NumberFormatException e) {
+            invalidArgs(args.get(0), e.getMessage());
+        } catch (NoSuchElementException e) {
+            invalidArgs(args.get(0), "Invalid castle id");
+        }
+    }
+
+    // troopform castleid troopname nbtroop
+    private static void formTroop(List<String> args) {
+        try {
+            World.getInstance().castleById(Integer.parseInt(args.get(1))).get().produce(TroopType.fromString(args.get(2)), Integer.parseInt(args.get(3)));
+        } catch (IndexOutOfBoundsException e) {
+            invalidArgs(args.get(0));
+        } catch (NumberFormatException e) {
+            invalidArgs(args.get(0), e.getMessage());
+        } catch (NoSuchElementException e) {
+            invalidArgs(args.get(0), "Invalid castle id");
+        }
+    }
+
     private static void listAllCastle(List<String> args) {
         World.getInstance().getCastles().forEach(System.out::println);
     }
 
     static void listCastle(List<String> args) {
-        boolean bad = args.size() < 2;
-        if (bad) {
+        try {
+            World.getInstance().getPlayer(args.get(1))
+                    .orElseThrow(() -> new IllegalArgumentException("The player " + args.get(1) + " doesn't exist"))
+                    .getCastles().forEach(System.out::println);
+        } catch (IndexOutOfBoundsException e) {
             invalidArgs(args.get(0));
-            return;
+        } catch (IllegalArgumentException e) {
+            invalidArgs(args.get(0), e.getMessage());
         }
-        World.getInstance().getPlayer(args.get(1)).ifPresent(player -> player.getCastles().forEach(System.out::println));
     }
 
     static void step(List<String> args) {
         if (args.size() > 1) {
-            for (int i = 0; i < Integer.parseInt(args.get(1)); i++) World.getInstance().step();
+            try {
+                for (int i = 0; i < Integer.parseInt(args.get(1)); i++) World.getInstance().step();
+            } catch (NumberFormatException e) {
+                invalidArgs(args.get(0), "First arg is not a number");
+            }
             return;
         }
         World.getInstance().step();
     }
 
+    static void help(List<String> args) {
+        actions.keySet().forEach(System.out::println);
+    }
+
     static void addCastle(List<String> args) {
-        boolean bad = args.size() < 3 || Arrays.stream(Cardinal.values()).map(Enum::toString).map(String::toLowerCase).noneMatch(s -> s.equals(args.get(2)));
-        if (bad) {
+        try {
+            World.getInstance().getPlayer(args.get(1)).ifPresent(player -> player.addCastle(Cardinal.fromString((args.get(2)))));
+        } catch (IndexOutOfBoundsException e) {
             invalidArgs(args.get(0));
-            return;
+        } catch (IllegalArgumentException e) {
+            invalidArgs(args.get(0), e.getMessage());
         }
-        World.getInstance().getPlayer(args.get(1)).ifPresent(player -> player.addCastle(Cardinal.fromString((args.get(2)))));
     }
 
     static void addPlayer(List<String> args) {
-        boolean bad = args.size() < 2;
-        if (bad) {
+        try {
+            World.getInstance().addPlayer(args.get(1));
+        } catch (IndexOutOfBoundsException e) {
             invalidArgs(args.get(0));
-            return;
         }
-
-        World.getInstance().addPlayer(args.get(1));
     }
 
     static void playerList(List<String> args) {
@@ -84,5 +124,10 @@ public class CommandParser {
 
     static void invalidArgs(String name) {
         System.out.println("Invalid args for " + name);
+    }
+
+    static void invalidArgs(String name, String desc) {
+        System.out.println("Invalid args for " + name);
+        System.out.println(desc);
     }
 }

@@ -1,10 +1,16 @@
 package game.logic;
 
+import javafx.geometry.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class World {
+
+    public static int FIELD_WIDTH = 1000;
+    public static int FIELD_HEIGHT = 1000;
+
     private static World instance;
 
     private List<Player> players;
@@ -47,5 +53,13 @@ public class World {
         StringBuilder s = new StringBuilder();
         players.forEach(p -> s.append(p.toString()));
         return s.toString();
+    }
+
+    public Optional<Castle> castleById(int id) {
+        return getCastles().stream().filter(c -> c.hashCode() == id).findFirst();
+    }
+
+    public boolean castleHere(Point2D here) {
+        return getCastles().stream().map(Castle::getSpatialRepresentation).anyMatch(rect -> rect.contains(here));
     }
 }

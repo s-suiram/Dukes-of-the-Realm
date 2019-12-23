@@ -36,6 +36,11 @@ public abstract class Troop {
     }
 
     @Override
+    public String toString() {
+        return name + "\n";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Troop) {
             return cost == ((Troop) obj).cost

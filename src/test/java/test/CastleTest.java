@@ -1,12 +1,13 @@
 package test;
 
 import game.logic.Castle;
+import game.logic.World;
 import game.logic.troop.Pikeman;
 import game.logic.troop.TroopType;
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CastleTest {
     @Test
@@ -62,5 +63,13 @@ class CastleTest {
         for (int i = 0; i < TroopType.PIKE_MAN.getTime(); i++) c.step();
         assertEquals(1, c.getTroops().size());
         assertTrue(c.getTroops().get(0) instanceof Pikeman);
+    }
+
+    @Test
+    public void castlePosition() {
+        World.getInstance().addPlayer("max");
+        World.getInstance().getPlayer("max").ifPresent(it -> it.addCastle(null, new Point2D(500, 100)));
+        assertTrue(World.getInstance().castleHere(new Point2D(500, 105)));
+        assertFalse(World.getInstance().castleHere(new Point2D(500, 156)));
     }
 }

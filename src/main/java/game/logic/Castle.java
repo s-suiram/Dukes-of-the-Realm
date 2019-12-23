@@ -3,12 +3,20 @@ package game.logic;
 import game.logic.troop.Troop;
 import game.logic.troop.TroopProducer;
 import game.logic.troop.TroopType;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Castle {
+
+    private static int tempCounter = 0;
+
+    private Rectangle2D spatialRepresentation;
+
     private Player owner;
+    private int tempId;
     private int money;
     private int level;
     private int timeToLevelUp;
@@ -26,6 +34,12 @@ public class Castle {
         troops = new ArrayList<>();
         this.door = door;
         producer = new TroopProducer();
+        tempId = tempCounter++;
+    }
+
+    public Castle(Player owner, Cardinal door, Point2D position) {
+        this(owner, door);
+        spatialRepresentation = new Rectangle2D(position.getX(), position.getY(), 50, 50);
     }
 
     public boolean startLevelUp() {
@@ -49,11 +63,10 @@ public class Castle {
         money += level * 10;
         producer.step().ifPresent(troop -> troops.add(troop));
 
-        if (timeToLevelUp != -1) {
-            if (timeToLevelUp != 0) {
+        if (timeToLevelUp > -1) {
+            timeToLevelUp--;
+            if (timeToLevelUp == 0) {
                 level++;
-            } else {
-                timeToLevelUp--;
             }
         }
     }
@@ -93,14 +106,23 @@ public class Castle {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Owner: " + owner + "\n" +
-                "id: " + super.toString() + "\n" +
+                "id: " + hashCode() + "\n" +
                 "door: " + door + "\n" +
                 "money: " + money + "\n" +
                 "level: " + level + "\n" +
+                "time before next level: " + (timeToLevelUp == -1 ? "no level up currently" : timeToLevelUp) + "\n" +
                 "troops :\n");
-        troops.forEach(t -> s.append(t.getName()));
-        s.append("\n");
+        troops.forEach(s::append);
         s.append(producer);
         return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return tempId;
+    }
+
+    public Rectangle2D getSpatialRepresentation() {
+        return spatialRepresentation;
     }
 }
