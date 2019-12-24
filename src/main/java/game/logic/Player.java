@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public abstract class Player {
     private List<Castle> castles;
 
     private String name;

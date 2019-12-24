@@ -67,9 +67,9 @@ class CastleTest {
 
     @Test
     public void castlePosition() {
-        World.getInstance().addPlayer("max");
+        World.getInstance().addFightingDukes("max");
         World.getInstance().getPlayer("max").ifPresent(it -> it.addCastle(null, new Point2D(500, 100)));
         assertTrue(World.getInstance().castleHere(new Point2D(500, 105)));
-        assertFalse(World.getInstance().castleHere(new Point2D(500, 156)));
+        assertFalse(World.getInstance().castleHere(new Point2D(500, 256)));
     }
 }

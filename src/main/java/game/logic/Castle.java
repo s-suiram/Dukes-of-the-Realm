@@ -13,7 +13,7 @@ public class Castle {
 
     private static int tempCounter = 0;
 
-    private Rectangle2D spatialRepresentation;
+    private Rectangle2D boundingRect;
 
     private Player owner;
     private int tempId;
@@ -39,7 +39,7 @@ public class Castle {
 
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
-        spatialRepresentation = new Rectangle2D(position.getX(), position.getY(), 50, 50);
+        boundingRect = new Rectangle2D(position.getX(), position.getY(), 150, 150);
     }
 
     public boolean startLevelUp() {
@@ -122,7 +122,7 @@ public class Castle {
         return tempId;
     }
 
-    public Rectangle2D getSpatialRepresentation() {
-        return spatialRepresentation;
+    public Rectangle2D getBoundingRect() {
+        return boundingRect;
     }
 }
