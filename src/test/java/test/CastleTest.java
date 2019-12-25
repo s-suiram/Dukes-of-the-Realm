@@ -1,10 +1,10 @@
 package test;
 
+import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.World;
 import game.logic.troop.Pikeman;
 import game.logic.troop.TroopType;
-import javafx.geometry.Point2D;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

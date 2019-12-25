@@ -1,6 +1,6 @@
 package game.logic;
 
-import javafx.geometry.Point2D;
+import com.sun.javafx.geom.Point2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +101,6 @@ public class World {
     }
 
     public boolean castleHere(Point2D here) {
-        return getCastles().stream().map(Castle::getBoundingRect).anyMatch(rect -> rect.contains(here));
+        return getCastles().stream().map(Castle::getBoundingRect).anyMatch(rect -> rect.contains(here.x, here.y));
     }
 }

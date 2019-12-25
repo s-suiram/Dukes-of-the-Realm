@@ -1,35 +1,44 @@
 package game.view;
 
 import game.logic.Cardinal;
+import game.view.observable.ObserverLabel;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static game.controller.GameEvent.*;
+
 public class App extends Application {
 
     public static int WINDOW_WIDTH = 1000;
     public static int WINDOW_HEIGHT = 800;
-    public static Map<KeyCode, Boolean> keys;
+    public static Map<KeyCode, Boolean> keysPressed;
 
     static {
-        keys = new HashMap<>(KeyCode.values().length);
+        keysPressed = new HashMap<>(KeyCode.values().length);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public boolean isKeyPressed(KeyCode k) {
-        return keys.getOrDefault(k, false);
+    public static boolean isKeyPressed(KeyCode k) {
+        return keysPressed.getOrDefault(k, false);
+    }
+
+    public static boolean isKeyPressedAndConsume(KeyCode k) {
+        boolean b = keysPressed.getOrDefault(k, false);
+        keysPressed.put(k, false);
+        return b;
     }
 
     @Override
@@ -37,12 +46,14 @@ public class App extends Application {
         StackPane root = new StackPane();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
         Pane castles = new Pane();
-        Pane HUD = new Pane();
+        VBox HUD = new VBox();
         root.getChildren().addAll(castles, HUD);
         root.setStyle("-fx-background-color: #668054");
-        s.setOnKeyPressed(e -> keys.put(e.getCode(), true));
-        s.setOnKeyReleased(e -> keys.put(e.getCode(), false));
-
+        s.setOnKeyPressed(e -> {
+            keysPressed.put(e.getCode(), true);
+            System.out.println(e.getCode());
+        });
+        s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
 
         primaryStage.setScene(s);
@@ -50,27 +61,42 @@ public class App extends Application {
         primaryStage.setTitle("Dukes of the realm");
         primaryStage.show();
 
-        Label cameraPos = new Label();
+        ObserverLabel cameraPos = new ObserverLabel(CAMERA_MOVE);
+        ObserverLabel cameraSpeed = new ObserverLabel(CAMERA_SPEED);
 
-        HUD.getChildren().add(cameraPos);
+        cameraPos.setText(
+                String.format(
+                        "(%f, %f)",
+                        WorldView.getInstance().getCameraPosition().x,
+                        WorldView.getInstance().getCameraPosition().y)
+        );
 
+        cameraSpeed.setText(String.valueOf(WorldView.getInstance().getCameraSpeed()));
+
+        WorldView.getInstance().addObservers(cameraPos, cameraSpeed);
+        HUD.getChildren().addAll(cameraPos, cameraSpeed);
+
+
+        //Make main game class
         new AnimationTimer() {
+            long frames = 0;
+
             @Override
             public void handle(long now) {
-                if (isKeyPressed(KeyCode.LEFT)) WorldView.getInstance().move(Cardinal.WEST);
-                if (isKeyPressed(KeyCode.UP)) WorldView.getInstance().move(Cardinal.NORTH);
-                if (isKeyPressed(KeyCode.DOWN)) WorldView.getInstance().move(Cardinal.SOUTH);
-                if (isKeyPressed(KeyCode.RIGHT)) WorldView.getInstance().move(Cardinal.EAST);
+                CAMERA_MOVE_LEFT.define(() -> WorldView.getInstance().move(Cardinal.WEST));
+                CAMERA_MOVE_UP.define(() -> WorldView.getInstance().move(Cardinal.NORTH));
+                CAMERA_MOVE_DOWN.define(() -> WorldView.getInstance().move(Cardinal.SOUTH));
+                CAMERA_MOVE_RIGHT.define(() -> WorldView.getInstance().move(Cardinal.EAST));
+
+                CAMERA_SPEED_INCREASE.define(() -> WorldView.getInstance().increaseCameraSpeed());
+                CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
+                CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
+
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
                     castles.getChildren().removeIf(it -> true);
                     castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
-                    cameraPos.setText(
-                            String.format(
-                                    "(%f, %f)",
-                                    WorldView.getInstance().getCameraPosition().x,
-                                    WorldView.getInstance().getCameraPosition().y)
-                    );
                 }
+                frames++;
             }
         }.start();
 

@@ -1,17 +1,17 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
+import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
 import javafx.scene.shape.Rectangle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class WorldView {
-    public static int cameraSpeed = 5;
+public class WorldView extends Observable {
     private static WorldView instance = null;
+    private int cameraSpeed = 5;
     private List<CastleView> castles;
     private int cameraX;
     private int cameraY;
@@ -27,6 +27,33 @@ public class WorldView {
     public static WorldView getInstance() {
         if (instance == null) instance = new WorldView();
         return instance;
+    }
+
+    public void addObservers(Observer... observers) {
+        Arrays.asList(observers).forEach(super::addObserver);
+    }
+
+    public int getCameraSpeed() {
+        return cameraSpeed;
+    }
+
+    public void setCameraSpeed(int cameraSpeed) {
+        this.cameraSpeed = cameraSpeed;
+        if (this.cameraSpeed < 1) this.cameraSpeed = 1;
+        setChanged();
+        notifyObservers(GameEvent.CAMERA_SPEED);
+    }
+
+    public void decreaseCameraSpeed() {
+        setCameraSpeed(cameraSpeed - 1);
+    }
+
+    public void increaseCameraSpeed() {
+        setCameraSpeed(cameraSpeed + 1);
+    }
+
+    public void resetCameraSpeed() {
+        setCameraSpeed(5);
     }
 
     public List<CastleView> getCastles() {
@@ -61,6 +88,8 @@ public class WorldView {
         if (cameraY < 0) cameraY = 0;
         if (cameraX > World.FIELD_WIDTH) cameraX = World.FIELD_WIDTH;
         if (cameraY > World.FIELD_HEIGHT) cameraY = World.FIELD_HEIGHT;
+        setChanged();
+        notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
     public Point2D getCameraPosition() {

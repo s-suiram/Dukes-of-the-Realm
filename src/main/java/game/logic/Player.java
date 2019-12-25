@@ -1,7 +1,7 @@
 package game.logic;
 
 
-import javafx.geometry.Point2D;
+import com.sun.javafx.geom.Point2D;
 
 import java.util.ArrayList;
 import java.util.List;

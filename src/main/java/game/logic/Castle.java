@@ -1,9 +1,9 @@
 package game.logic;
 
+import com.sun.javafx.geom.Point2D;
 import game.logic.troop.Troop;
 import game.logic.troop.TroopProducer;
 import game.logic.troop.TroopType;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class Castle {
 
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
-        boundingRect = new Rectangle2D(position.getX(), position.getY(), 150, 150);
+        boundingRect = new Rectangle2D(position.x, position.y, 150, 150);
     }
 
     public boolean startLevelUp() {
