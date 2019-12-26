@@ -4,7 +4,7 @@ import com.sun.javafx.geom.Point2D;
 import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
-import javafx.scene.layout.Pane;
+import javafx.scene.Group;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -98,17 +98,15 @@ public class WorldView extends Observable {
         cameraPos.x -= x;
     }
 
-    public List<Pane> getTransformedCastleRects() {
-        List<Pane> rects = getInstance()
+    public List<Group> getTransformedCastleRects() {
+        List<Group> rects = getInstance()
                 .getCastles().stream()
                 .map(CastleView::getRepresentation)
                 .collect(Collectors.toList());
-
         rects.forEach(r -> {
             r.setTranslateX(-cameraPos.x);
             r.setTranslateY(-cameraPos.y);
         });
-
         return rects;
     }
 }

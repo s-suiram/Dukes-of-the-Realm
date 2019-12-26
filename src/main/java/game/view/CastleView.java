@@ -2,7 +2,7 @@ package game.view;
 
 import game.logic.Castle;
 import game.logic.NeutralDukes;
-import javafx.scene.layout.Pane;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -15,11 +15,11 @@ public class CastleView {
     private Rectangle representation;
     private Castle c;
     private Rectangle door;
-    private Pane group;
+    private Group group;
 
     public CastleView(Castle c) {
         this.c = c;
-        this.group = new Pane();
+        this.group = new Group();
         representation = new Rectangle(c.getBoundingRect().getMinX(),
                 c.getBoundingRect().getMinY(),
                 c.getBoundingRect().getWidth(),
@@ -65,20 +65,10 @@ public class CastleView {
         }
         group.getChildren().addAll(representation, door);
         //door.toFront();
-        group.setPrefWidth(Castle.WIDTH);
-        group.setPrefHeight(Castle.HEIGHT);
-        group.setTranslateX(c.getBoundingRect().getMinX());
-        group.setTranslateY(c.getBoundingRect().getMinY());
-        group.autosize();
-        group.setPickOnBounds(true);
-        System.out.println(group.getTranslateX() + " " + group.getTranslateY() + " " + group.getWidth() + " " + group.getHeight());
-
-        group.setOnMouseMoved(event -> {
-            System.out.println("oui");
-        });
+        group.setOnMouseClicked(e -> System.out.println("click castle"));
     }
 
-    public Pane getRepresentation() {
+    public Group getRepresentation() {
         return group;
     }
 
