@@ -27,6 +27,8 @@ public class App extends Application {
     private static int[] lastpos = {0, 0};
     private static int[] delta = {0, 0};
     private static boolean drag = false;
+    private  static  final  int framedragSkip = 10;
+    private  static  int frameDragCount = 0;
 
     static {
         keysPressed = new HashMap<>(KeyCode.values().length);
@@ -57,7 +59,6 @@ public class App extends Application {
 
         lastpos[0] = (int) e.getX();
         lastpos[1] = (int) e.getY();
-        System.out.println(delta[0] + " " + delta[1]);
         drag = true;
     }
 
@@ -78,13 +79,17 @@ public class App extends Application {
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         s.setOnMouseDragged(e -> {
-            App.handleMouseDrag(e);
-            System.out.println("drag");
-        });
+            frameDragCount++;
+            if(frameDragCount == framedragSkip) {
+                App.handleMouseDrag(e);
+                frameDragCount = 0;
+            }
+    });
 
         s.setOnMouseReleased(e -> {
             if (drag) handleDragRelase(e);
         });
+
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
@@ -137,7 +142,12 @@ public class App extends Application {
                 CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
 
-                WorldView.getInstance().move(delta[0], delta[1]);
+               if( frameDragCount == 0){
+                   System.out.println(delta[0] + " " + delta[1]);
+
+                   WorldView.getInstance().move(delta[0],delta[1]);
+
+               }
 
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
                     castles.getChildren().removeIf(it -> true);
