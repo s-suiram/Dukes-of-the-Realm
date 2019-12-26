@@ -8,8 +8,8 @@ import javafx.scene.shape.Rectangle;
 
 public class CastleView {
 
-    private static final int DOOR_WIDTH = 100;
-    private static final int DOOR_HEIGHT = 30;
+    private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
+    private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
 
     private Color col;
     private Rectangle representation;
@@ -26,7 +26,9 @@ public class CastleView {
                 c.getBoundingRect().getHeight());
 
         double doorOffset = representation.getWidth() / 2 - DOOR_WIDTH / 2.0;
-        representation.setFill(c.getOwner() instanceof NeutralDukes ? Color.GREY : Color.RED);
+        representation.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
+        representation.setStrokeWidth(10);
+        representation.setFill(Color.TRANSPARENT);
         switch (c.getDoor()) {
             case NORTH:
                 door = new Rectangle(

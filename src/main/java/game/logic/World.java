@@ -77,7 +77,8 @@ public class World {
                         .stream()
                         .anyMatch(castle -> new Rectangle2D((int) randPoint.x - spaceBetweenCastle, (int) randPoint.y - spaceBetweenCastle, Castle.WIDTH + 2 * spaceBetweenCastle, Castle.HEIGHT + 2 * spaceBetweenCastle)
                                 .intersects(castle.getBoundingRect())));
-                p.addCastle(Cardinal.NORTH, new Point2D(randPoint.x, randPoint.y));
+                Cardinal randDoor = Cardinal.values()[r.nextInt(4)];
+                p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
             }
         });
         getInstance().getCastles().forEach(c -> System.out.println(c.getBoundingRect().getMinX() + " " + c.getBoundingRect().getMinY()));
