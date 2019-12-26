@@ -49,10 +49,7 @@ public class App extends Application {
         VBox HUD = new VBox();
         root.getChildren().addAll(castles, HUD);
         root.setStyle("-fx-background-color: #668054");
-        s.setOnKeyPressed(e -> {
-            keysPressed.put(e.getCode(), true);
-            System.out.println(e.getCode());
-        });
+        s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
 

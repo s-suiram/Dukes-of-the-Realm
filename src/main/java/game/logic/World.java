@@ -1,10 +1,12 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
+import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class World {
 
@@ -53,10 +55,39 @@ public class World {
         instance.getPlayer("Neutral3").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(600, 200)));
     }
 
+    private static void randomGen() {
+        instance.addFightingDukes("Fighting1");
+        instance.addFightingDukes("Fighting2");
+        instance.addFightingDukes("Fighting3");
+
+        instance.addNeutralDukes("Neutral1");
+        instance.addNeutralDukes("Neutral2");
+        instance.addNeutralDukes("Neutral3");
+        int spaceBetweenCastle = 100;
+        int nbCastlePerDukes = 5;
+        World.getInstance().getPlayers().forEach(p -> {
+            for (int i = 0; i < nbCastlePerDukes; i++) {
+                Random r = new Random();
+                final Point2D randPoint = new Point2D();
+                do {
+                    randPoint.x = r.nextInt(FIELD_WIDTH - Castle.WIDTH);
+                    randPoint.y = r.nextInt(FIELD_HEIGHT - Castle.HEIGHT);
+                } while (getInstance()
+                        .getCastles()
+                        .stream()
+                        .anyMatch(castle -> new Rectangle2D((int) randPoint.x - spaceBetweenCastle, (int) randPoint.y - spaceBetweenCastle, Castle.WIDTH + 2 * spaceBetweenCastle, Castle.HEIGHT + 2 * spaceBetweenCastle)
+                                .intersects(castle.getBoundingRect())));
+                p.addCastle(Cardinal.NORTH, new Point2D(randPoint.x, randPoint.y));
+            }
+        });
+        getInstance().getCastles().forEach(c -> System.out.println(c.getBoundingRect().getMinX() + " " + c.getBoundingRect().getMinY()));
+    }
+
     public static World getInstance() {
         if (instance == null) {
             instance = new World();
-            initSomeThings();
+            //initSomeThings();
+            randomGen();
         }
         return instance;
     }

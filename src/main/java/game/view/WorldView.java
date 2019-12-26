@@ -86,8 +86,8 @@ public class WorldView extends Observable {
         }
         if (cameraX < 0) cameraX = 0;
         if (cameraY < 0) cameraY = 0;
-        if (cameraX > World.FIELD_WIDTH) cameraX = World.FIELD_WIDTH;
-        if (cameraY > World.FIELD_HEIGHT) cameraY = World.FIELD_HEIGHT;
+        if (cameraX > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraX = World.FIELD_WIDTH - App.WINDOW_WIDTH;
+        if (cameraY > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraY = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
         setChanged();
         notifyObservers(GameEvent.CAMERA_MOVE);
     }

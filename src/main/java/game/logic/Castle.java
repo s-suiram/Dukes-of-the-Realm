@@ -11,8 +11,9 @@ import java.util.List;
 
 public class Castle {
 
+    public static int WIDTH = 100;
+    public static int HEIGHT = 100;
     private static int tempCounter = 0;
-
     private Rectangle2D boundingRect;
 
     private Player owner;
@@ -39,7 +40,7 @@ public class Castle {
 
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
-        boundingRect = new Rectangle2D(position.x, position.y, 150, 150);
+        boundingRect = new Rectangle2D(position.x, position.y, WIDTH, HEIGHT);
     }
 
     public boolean startLevelUp() {
