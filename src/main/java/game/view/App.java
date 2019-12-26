@@ -1,11 +1,15 @@
 package game.view;
 
+import com.sun.javafx.geom.Point2D;
 import game.logic.Cardinal;
+import game.logic.World;
 import game.view.observable.ObserverLabel;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -22,6 +26,9 @@ public class App extends Application {
     public static int WINDOW_WIDTH = 1000;
     public static int WINDOW_HEIGHT = 800;
     public static Map<KeyCode, Boolean> keysPressed;
+    private static int[] lastpos = {0, 0};
+    private static int[] delta = {0, 0};
+    private static boolean drag = false;
 
     static {
         keysPressed = new HashMap<>(KeyCode.values().length);
@@ -41,6 +48,27 @@ public class App extends Application {
         return b;
     }
 
+    private static void handleMouseDrag(MouseEvent e) {
+        if (!drag) {
+            delta[0] = 0;
+            delta[1] = 0;
+        } else {
+            delta[0] = (int) (e.getX() - lastpos[0]);
+            delta[1] = (int) (e.getY() - lastpos[1]);
+        }
+
+        lastpos[0] = (int) e.getX();
+        lastpos[1] = (int) e.getY();
+        System.out.println(delta[0] + " " + delta[1]);
+        drag = true;
+    }
+
+    private static void handleDragRelase(MouseEvent e) {
+        drag = false;
+        delta[0] = 0;
+        delta[1] = 0;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
@@ -51,6 +79,14 @@ public class App extends Application {
         root.setStyle("-fx-background-color: #668054");
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
+        s.setOnMouseDragged(e -> {
+            App.handleMouseDrag(e);
+            System.out.println("drag");
+        });
+
+        s.setOnMouseReleased(e -> {
+           if ( drag) handleDragRelase(e);
+        });
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
 
         primaryStage.setScene(s);
@@ -88,6 +124,8 @@ public class App extends Application {
                 CAMERA_SPEED_INCREASE.define(() -> WorldView.getInstance().increaseCameraSpeed());
                 CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
+
+                WorldView.getInstance().move(delta[0], delta[1]);
 
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
                     castles.getChildren().removeIf(it -> true);

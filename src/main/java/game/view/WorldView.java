@@ -93,6 +93,12 @@ public class WorldView extends Observable {
         notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
+    public void move(int x, int y) {
+        cameraMoved = true;
+        cameraY -= y;
+        cameraX -= x;
+    }
+
     public Point2D getCameraPosition() {
         return new Point2D(cameraX, cameraY);
     }
