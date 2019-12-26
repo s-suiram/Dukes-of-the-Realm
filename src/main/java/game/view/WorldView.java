@@ -10,18 +10,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorldView extends Observable {
+
     private static WorldView instance = null;
     private int cameraSpeed = 5;
     private List<CastleView> castles;
-    private int cameraX;
-    private int cameraY;
     private boolean cameraMoved = false;
+
+    public final Point2D cameraPos;
 
     private WorldView() {
         castles = new ArrayList<>();
         World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c)));
-        cameraX = 0;
-        cameraY = 0;
+        cameraPos = new Point2D(0,0);
     }
 
     public static WorldView getInstance() {
@@ -72,34 +72,30 @@ public class WorldView extends Observable {
         cameraMoved = true;
         switch (direction) {
             case NORTH:
-                cameraY -= cameraSpeed;
+                cameraPos.y -= cameraSpeed;
                 break;
             case SOUTH:
-                cameraY += cameraSpeed;
+                cameraPos.y += cameraSpeed;
                 break;
             case EAST:
-                cameraX += cameraSpeed;
+                cameraPos.x += cameraSpeed;
                 break;
             case WEST:
-                cameraX -= cameraSpeed;
+                cameraPos.x -= cameraSpeed;
                 break;
         }
-        if (cameraX < 0) cameraX = 0;
-        if (cameraY < 0) cameraY = 0;
-        if (cameraX > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraX = World.FIELD_WIDTH - App.WINDOW_WIDTH;
-        if (cameraY > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraY = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
+        if (cameraPos.x < 0) cameraPos.x = 0;
+        if (cameraPos.y < 0) cameraPos.y = 0;
+        if (cameraPos.x > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraPos.x = World.FIELD_WIDTH - App.WINDOW_WIDTH;
+        if (cameraPos.y > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraPos.y = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
         setChanged();
         notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
     public void move(int x, int y) {
         cameraMoved = true;
-        cameraY -= y;
-        cameraX -= x;
-    }
-
-    public Point2D getCameraPosition() {
-        return new Point2D(cameraX, cameraY);
+        cameraPos.y -= y;
+        cameraPos.x -= x;
     }
 
     public List<Pane> getTransformedCastleRects() {
@@ -109,8 +105,8 @@ public class WorldView extends Observable {
                 .collect(Collectors.toList());
 
         rects.forEach(r -> {
-            r.setTranslateX(-cameraX);
-            r.setTranslateY(-cameraY);
+            r.setTranslateX(-cameraPos.x);
+            r.setTranslateY(-cameraPos.y);
         });
 
         return rects;

@@ -1,5 +1,6 @@
 package game.view;
 
+import game.controller.MouseEventHandler;
 import game.logic.Cardinal;
 import game.view.observable.ObserverLabel;
 import javafx.animation.AnimationTimer;
@@ -48,25 +49,6 @@ public class App extends Application {
         return b;
     }
 
-    private static void handleMouseDrag(MouseEvent e) {
-        if (!drag) {
-            delta[0] = 0;
-            delta[1] = 0;
-        } else {
-            delta[0] = (int) (e.getX() - lastpos[0]);
-            delta[1] = (int) (e.getY() - lastpos[1]);
-        }
-
-        lastpos[0] = (int) e.getX();
-        lastpos[1] = (int) e.getY();
-        drag = true;
-    }
-
-    private static void handleDragRelase(MouseEvent e) {
-        drag = false;
-        delta[0] = 0;
-        delta[1] = 0;
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -78,17 +60,7 @@ public class App extends Application {
         root.setStyle("-fx-background-color: #668054");
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
-        s.setOnMouseDragged(e -> {
-            frameDragCount++;
-            if(frameDragCount == framedragSkip) {
-                App.handleMouseDrag(e);
-                frameDragCount = 0;
-            }
-    });
-
-        s.setOnMouseReleased(e -> {
-            if (drag) handleDragRelase(e);
-        });
+        MouseEventHandler handler = new MouseEventHandler(s);
 
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
         primaryStage.setScene(s);
@@ -101,8 +73,8 @@ public class App extends Application {
 
         s.setOnMouseMoved(e -> {
             mouseLabel.setText(String.format("Mouse pos: %f, %f", e.getX(), e.getY()));
-            double x = e.getX() + WorldView.getInstance().getCameraPosition().x;
-            double y = e.getY() + WorldView.getInstance().getCameraPosition().y;
+            double x = e.getX() + WorldView.getInstance().cameraPos.x;
+            double y = e.getY() + WorldView.getInstance().cameraPos.y;
 
             mousePlusCamLabel.setText(String.format("Mouse + camera pos: %f, %f", x, y));
         });
@@ -117,15 +89,14 @@ public class App extends Application {
         cameraPos.setText(
                 String.format(
                         "(%f, %f)",
-                        WorldView.getInstance().getCameraPosition().x,
-                        WorldView.getInstance().getCameraPosition().y)
-        );
+                        WorldView.getInstance().cameraPos.x,
+                        WorldView.getInstance().cameraPos.y
+        ));
 
         cameraSpeed.setText(String.valueOf(WorldView.getInstance().getCameraSpeed()));
 
         WorldView.getInstance().addObservers(cameraPos, cameraSpeed);
         HUD.getChildren().addAll(cameraPos, cameraSpeed, mouseLabel, mousePlusCamLabel);
-
 
         //Make main game class
         new AnimationTimer() {
@@ -141,13 +112,6 @@ public class App extends Application {
                 CAMERA_SPEED_INCREASE.define(() -> WorldView.getInstance().increaseCameraSpeed());
                 CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
-
-               if( frameDragCount == 0){
-                   System.out.println(delta[0] + " " + delta[1]);
-
-                   WorldView.getInstance().move(delta[0],delta[1]);
-
-               }
 
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
                     castles.getChildren().removeIf(it -> true);

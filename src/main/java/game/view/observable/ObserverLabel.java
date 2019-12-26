@@ -22,8 +22,8 @@ public class ObserverLabel extends Label implements Observer {
                 case CAMERA_MOVE:
                     setText(String.format(
                             "(%f, %f)",
-                            WorldView.getInstance().getCameraPosition().x,
-                            WorldView.getInstance().getCameraPosition().y));
+                            WorldView.getInstance().cameraPos.x,
+                            WorldView.getInstance().cameraPos.y));
                     break;
                 case CAMERA_SPEED:
                     setText(String.valueOf(WorldView.getInstance().getCameraSpeed()));
