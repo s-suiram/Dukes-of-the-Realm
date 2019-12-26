@@ -4,6 +4,7 @@ import com.sun.javafx.geom.Point2D;
 import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
+import javafx.scene.Group;
 import javafx.scene.shape.Rectangle;
 
 import java.util.*;
@@ -96,8 +97,8 @@ public class WorldView extends Observable {
         return new Point2D(cameraX, cameraY);
     }
 
-    public List<Rectangle> getTransformedCastleRects() {
-        List<Rectangle> rects = getInstance()
+    public List<Group> getTransformedCastleRects() {
+        List<Group> rects = getInstance()
                 .getCastles().stream()
                 .map(CastleView::getRepresentation)
                 .collect(Collectors.toList());
