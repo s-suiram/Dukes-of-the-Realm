@@ -1,14 +1,12 @@
 package game.view;
 
-import com.sun.javafx.geom.Point2D;
 import game.logic.Cardinal;
-import game.logic.World;
 import game.view.observable.ObserverLabel;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -85,14 +83,28 @@ public class App extends Application {
         });
 
         s.setOnMouseReleased(e -> {
-           if ( drag) handleDragRelase(e);
+            if (drag) handleDragRelase(e);
         });
         castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
-
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.setTitle("Dukes of the realm");
         primaryStage.show();
+
+        Label mouseLabel = new Label();
+        Label mousePlusCamLabel = new Label();
+
+        s.setOnMouseMoved(e -> {
+            mouseLabel.setText(String.format("Mouse pos: %f, %f", e.getX(), e.getY()));
+            double x = e.getX() + WorldView.getInstance().getCameraPosition().x;
+            double y = e.getY() + WorldView.getInstance().getCameraPosition().y;
+
+            mousePlusCamLabel.setText(String.format("Mouse + camera pos: %f, %f", x, y));
+        });
+
+        castles.setPickOnBounds(true);
+        castles.setOnMouseClicked(e -> System.out.println("lol"));
+
 
         ObserverLabel cameraPos = new ObserverLabel(CAMERA_MOVE);
         ObserverLabel cameraSpeed = new ObserverLabel(CAMERA_SPEED);
@@ -107,7 +119,7 @@ public class App extends Application {
         cameraSpeed.setText(String.valueOf(WorldView.getInstance().getCameraSpeed()));
 
         WorldView.getInstance().addObservers(cameraPos, cameraSpeed);
-        HUD.getChildren().addAll(cameraPos, cameraSpeed);
+        HUD.getChildren().addAll(cameraPos, cameraSpeed, mouseLabel, mousePlusCamLabel);
 
 
         //Make main game class

@@ -81,7 +81,6 @@ public class World {
                 p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
             }
         });
-        getInstance().getCastles().forEach(c -> System.out.println(c.getBoundingRect().getMinX() + " " + c.getBoundingRect().getMinY()));
     }
 
     public static World getInstance() {
