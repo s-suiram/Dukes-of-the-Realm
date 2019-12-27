@@ -104,10 +104,11 @@ public class App extends Application {
 
         Label pause = new Label("PAUSED");
         root.getChildren().add(pause);
-        pause.setStyle("-fx-font-size: 50pt");
+        pause.setStyle("-fx-font-size: 99pt");
+        pause.setTextFill(Color.rgb(45, 62, 80));
         pause.setVisible(false);
-        pause.autosize();
-        pause.setTranslateX(WINDOW_WIDTH / 2.0 - pause.widthProperty().get() / 2.0);
+        pause.impl_processCSS(true);
+        pause.setTranslateX(WINDOW_WIDTH / 2.0 - pause.prefWidth(-1) / 2.0);
 //        pause.setTranslateY(0);
 
         pause.setCenterShape(true);
