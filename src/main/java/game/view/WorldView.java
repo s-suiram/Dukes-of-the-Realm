@@ -11,7 +11,7 @@ public class WorldView extends Observable {
 
     private static WorldView instance = null;
     public final Point2D cameraPos;
-    private int cameraSpeed = 5;
+    private int cameraSpeed = 10;
     private List<CastleView> castles;
     private boolean cameraMoved = false;
 
@@ -53,7 +53,7 @@ public class WorldView extends Observable {
     }
 
     public void resetCameraSpeed() {
-        setCameraSpeed(5);
+        setCameraSpeed(10);
     }
 
     public List<CastleView> getCastles() {

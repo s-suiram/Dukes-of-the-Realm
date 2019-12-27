@@ -14,15 +14,15 @@ public class CastleView {
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
     private Color col;
-    private Castle c;
+    private Castle model;
     private Rectangle door;
     private Group group;
     private ContextualMenuCastle contextualMenu;
 
     public CastleView(Castle c, Scene s) {
-        this.c = c;
+        this.model = c;
         this.group = new Group();
-        contextualMenu = new ContextualMenuCastle(this);
+        contextualMenu = new ContextualMenuCastle(getModel());
         Rectangle rectangle = new Rectangle(c.getBoundingRect().getMinX(),
                 c.getBoundingRect().getMinY(),
                 c.getBoundingRect().getWidth(),
@@ -92,8 +92,8 @@ public class CastleView {
         return group;
     }
 
-    public Castle getC() {
-        return c;
+    public Castle getModel() {
+        return model;
     }
 
     public ContextualMenuCastle getContextualMenu() {

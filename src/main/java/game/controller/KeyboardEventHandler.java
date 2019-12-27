@@ -25,10 +25,12 @@ public class KeyboardEventHandler {
 
         s.setOnKeyPressed(event -> {
             keysPressed.put(event.getCode(), true);
-            if(firstType.get(event.getCode())){
-                firstType.put(event.getCode(),false);
+            if (firstType.get(event.getCode())) {
+                firstType.put(event.getCode(), false);
                 performed.put(event.getCode(), false);
             }
+
+            doKeyTypedAction(KeyCode.ESCAPE, () -> System.exit(0));
 
             doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
             doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
@@ -63,7 +65,7 @@ public class KeyboardEventHandler {
 
     private void doKeyTypedAction(KeyCode key, Action action) {
         if (!performed.get(key)) {
-            System.out.println(key.getName());
+            //System.out.println(key.getName());
             action.perform();
             performed.put(key,true);
         }

@@ -4,6 +4,7 @@ import com.sun.javafx.geom.Point2D;
 import game.controller.KeyboardEventHandler;
 import game.controller.MouseEventHandler;
 import game.logic.Cardinal;
+import game.logic.World;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Cursor;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.stream.Collectors;
@@ -51,6 +53,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setFullScreen(true);
+        WINDOW_WIDTH = (int) Screen.getPrimary().getBounds().getMaxX();
+        WINDOW_HEIGHT = (int) Screen.getPrimary().getBounds().getMaxY();
+
         Group root = new Group();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
 
@@ -96,7 +102,7 @@ public class App extends Application {
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
                 handleCameraMove(s);
-                //World.getInstance().step();
+                World.getInstance().step();
                 frames++;
             }
         }.start();

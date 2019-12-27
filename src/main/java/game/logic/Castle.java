@@ -61,7 +61,12 @@ public class Castle {
     }
 
     public void step() {
-        money += level * 10;
+        if (owner instanceof NeutralDukes) {
+            money += level;
+        } else {
+            money += level * 10;
+        }
+
         producer.step().ifPresent(troop -> troops.add(troop));
 
         if (timeToLevelUp > -1) {

@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class World {
 
-    public static int FIELD_WIDTH = 2000;
-    public static int FIELD_HEIGHT = 2000;
+    public static int FIELD_WIDTH = 4000;
+    public static int FIELD_HEIGHT = 4000;
 
     private static World instance;
 
@@ -63,7 +63,7 @@ public class World {
         instance.addNeutralDukes("Neutral1");
         instance.addNeutralDukes("Neutral2");
         instance.addNeutralDukes("Neutral3");
-        int spaceBetweenCastle = 100;
+        int minSpace = 300;
         int nbCastlePerDukes = 5;
         World.getInstance().getPlayers().forEach(p -> {
             for (int i = 0; i < nbCastlePerDukes; i++) {
@@ -75,7 +75,7 @@ public class World {
                 } while (getInstance()
                         .getCastles()
                         .stream()
-                        .anyMatch(castle -> new Rectangle2D((int) randPoint.x - spaceBetweenCastle, (int) randPoint.y - spaceBetweenCastle, Castle.WIDTH + 2 * spaceBetweenCastle, Castle.HEIGHT + 2 * spaceBetweenCastle)
+                        .anyMatch(castle -> new Rectangle2D((int) randPoint.x - minSpace, (int) randPoint.y - minSpace, Castle.WIDTH + 2 * minSpace, Castle.HEIGHT + 2 * minSpace)
                                 .intersects(castle.getBoundingRect())));
                 Cardinal randDoor = Cardinal.values()[r.nextInt(4)];
                 p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
