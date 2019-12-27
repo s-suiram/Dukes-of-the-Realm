@@ -12,29 +12,33 @@ import java.util.function.Consumer;
 
 public class KeyboardEventHandler {
 
-
     private static KeyboardEventHandler instance;
-    private final String PLUS = "+";
-    private final String MINUS = "-";
-    private final String MULTIPLY = "*";
-    public Map<KeyCode, Boolean> keysPressed = new HashMap<>();
-    public Map<String, Boolean> keysTyped = new HashMap<>();
+
+    private Map<KeyCode, Boolean> keysPressed = new HashMap<>();
+    private Map<KeyCode, Boolean> performed = new HashMap<>();
+    private Map<KeyCode, Boolean> firstType = new HashMap<>();
 
     private KeyboardEventHandler(Scene s) {
         EnumSet.allOf(KeyCode.class).forEach(k -> keysPressed.put(k, false));
-        keysTyped.put(PLUS, false);
-        keysTyped.put(MINUS, false);
-        keysTyped.put(MULTIPLY, false);
+        EnumSet.allOf(KeyCode.class).forEach(k -> performed.put(k, true));
+        EnumSet.allOf(KeyCode.class).forEach(k -> firstType.put(k, true));
 
         s.setOnKeyPressed(event -> {
             keysPressed.put(event.getCode(), true);
+            if(firstType.get(event.getCode())){
+                firstType.put(event.getCode(),false);
+                performed.put(event.getCode(), false);
+            }
+
+            doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
+            doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
+            doKeyTypedAction(KeyCode.MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
         });
-        s.setOnKeyTyped(event -> {
-            System.out.println(event.getCharacter());
-            keysTyped.put(event.getCharacter(), true);
-            event.consume();
+
+        s.setOnKeyReleased(event -> {
+            performed.put(event.getCode(), false);
+            keysPressed.put(event.getCode(), false);
         });
-        s.setOnKeyReleased(event -> keysPressed.put(event.getCode(), false));
     }
 
     public static void init(Scene s) {
@@ -47,7 +51,6 @@ public class KeyboardEventHandler {
 
     public void handle() {
         handleKeysPressed();
-        handleKeysTyped();
     }
 
     private void handleKeysPressed() {
@@ -57,16 +60,12 @@ public class KeyboardEventHandler {
         doKeyPressedAction(KeyCode.D, WorldView.getInstance()::move, Cardinal.EAST);
     }
 
-    private void handleKeysTyped() {
-        doKeyTypedAction(PLUS, WorldView.getInstance()::increaseCameraSpeed);
-        doKeyTypedAction(MINUS, WorldView.getInstance()::decreaseCameraSpeed);
-        doKeyTypedAction(MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
-    }
 
-    private void doKeyTypedAction(String key, Action action) {
-        if (keysTyped.getOrDefault(key, false)) {
+    private void doKeyTypedAction(KeyCode key, Action action) {
+        if (!performed.get(key)) {
+            System.out.println(key.getName());
             action.perform();
-            keysTyped.put(key, false);
+            performed.put(key,true);
         }
     }
 
