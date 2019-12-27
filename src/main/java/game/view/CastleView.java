@@ -3,7 +3,9 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -17,7 +19,7 @@ public class CastleView {
     private Group group;
     private ContextualMenuCastle contextualMenu;
 
-    public CastleView(Castle c) {
+    public CastleView(Castle c, Scene s) {
         this.c = c;
         this.group = new Group();
         contextualMenu = new ContextualMenuCastle(this);
@@ -70,6 +72,8 @@ public class CastleView {
         contextualMenu.setTranslateY(rectangle.getY());
 
         group.getChildren().addAll(rectangle, door, contextualMenu);
+
+        group.setOnMouseEntered(e -> s.setCursor(Cursor.HAND));
 
         group.setOnMouseClicked(event -> {
                     WorldView.getInstance().clearAllContextualMenu();

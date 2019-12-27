@@ -3,6 +3,7 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Cardinal;
 import game.logic.World;
+import javafx.scene.Scene;
 
 import java.util.*;
 
@@ -14,15 +15,19 @@ public class WorldView extends Observable {
     private List<CastleView> castles;
     private boolean cameraMoved = false;
 
-    private WorldView() {
+    private WorldView(Scene s) {
         castles = new ArrayList<>();
-        World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c)));
+        World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c, s)));
         cameraPos = new Point2D(0, 0);
     }
 
     public static WorldView getInstance() {
-        if (instance == null) instance = new WorldView();
+        if (instance == null) throw new NullPointerException("instance not initialized");
         return instance;
+    }
+
+    public static void init(Scene s) {
+        instance = new WorldView(s);
     }
 
     public void addObservers(Observer... observers) {

@@ -22,6 +22,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
 
     private MouseEventHandler(Scene s) {
         this.delta = new Point2D();
+        mousePos = new Point2D();
         this.mouseDragStartPos = new Point2D();
         s.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
         s.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
@@ -60,14 +61,13 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         }
     }
 
+    public Point2D getMousePos() {
+        return mousePos;
+    }
+
     private void handleMouseMoved(MouseEvent e) {
         mousePos.x = (float) e.getX();
         mousePos.y = (float) e.getY();
-        handleCameraMoving(e);
-    }
-
-    private void handleCameraMoving(MouseEvent e) {
-
     }
 
     private void handleDragStart(MouseEvent e) {
@@ -87,6 +87,6 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     private void handleDragStop() {
         dragged = false;
         delta.setLocation(0, 0);
-        s.setCursor(Cursor.DEFAULT);
+        s.setCursor(Cursor.OPEN_HAND);
     }
 }

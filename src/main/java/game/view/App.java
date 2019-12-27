@@ -1,9 +1,12 @@
 package game.view;
 
+import com.sun.javafx.geom.Point2D;
 import game.controller.KeyboardEventHandler;
 import game.controller.MouseEventHandler;
+import game.logic.Cardinal;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -24,10 +27,36 @@ public class App extends Application {
         launch(args);
     }
 
+    public void handleCameraMove(Scene s) {
+        int distToScreen = 50;
+        Point2D p = MouseEventHandler.getInstance().getMousePos();
+        com.sun.javafx.geom.Rectangle left = new com.sun.javafx.geom.Rectangle(0, 0, distToScreen, App.WINDOW_HEIGHT);
+        com.sun.javafx.geom.Rectangle right = new com.sun.javafx.geom.Rectangle(App.WINDOW_WIDTH - distToScreen, 0, distToScreen, App.WINDOW_HEIGHT);
+        com.sun.javafx.geom.Rectangle up = new com.sun.javafx.geom.Rectangle(0, 0, App.WINDOW_WIDTH, distToScreen);
+        com.sun.javafx.geom.Rectangle down = new com.sun.javafx.geom.Rectangle(0, App.WINDOW_HEIGHT - distToScreen, App.WINDOW_WIDTH, distToScreen);
+
+        if (left.contains((int) p.x, (int) p.y)) {
+            WorldView.getInstance().move(Cardinal.WEST);
+        }
+        if (right.contains((int) p.x, (int) p.y)) {
+            WorldView.getInstance().move(Cardinal.EAST);
+        }
+        if (up.contains((int) p.x, (int) p.y)) {
+            WorldView.getInstance().move(Cardinal.NORTH);
+        }
+        if (down.contains((int) p.x, (int) p.y)) {
+            WorldView.getInstance().move(Cardinal.SOUTH);
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Group root = new Group();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
+
+        KeyboardEventHandler.init(s);
+        MouseEventHandler.init(s);
+        WorldView.init(s);
 
         VBox HUD = new VBox();
         Group castles = new Group(
@@ -41,11 +70,9 @@ public class App extends Application {
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
         greenBackground.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
-
+        greenBackground.setOnMouseEntered(e -> s.setCursor(Cursor.OPEN_HAND));
         root.getChildren().addAll(greenBackground, castles, HUD);
 
-        KeyboardEventHandler.init(s);
-        MouseEventHandler.init(s);
 
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
@@ -68,6 +95,7 @@ public class App extends Application {
             public void handle(long now) {
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
+                handleCameraMove(s);
                 //World.getInstance().step();
                 frames++;
             }
