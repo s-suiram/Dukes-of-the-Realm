@@ -4,8 +4,10 @@ import com.sun.javafx.geom.Point2D;
 import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
-import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,21 +15,37 @@ import java.util.stream.Collectors;
 public class WorldView extends Observable {
 
     private static WorldView instance = null;
+    public final Point2D cameraPos;
     private int cameraSpeed = 5;
     private List<CastleView> castles;
     private boolean cameraMoved = false;
-
-    public final Point2D cameraPos;
+    private Rectangle2D fieldBoundPos;
+    private Rectangle fieldBound;
 
     private WorldView() {
         castles = new ArrayList<>();
         World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c)));
-        cameraPos = new Point2D(0,0);
+        cameraPos = new Point2D(0, 0);
+        fieldBoundPos = new Rectangle2D(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
+        fieldBound = new Rectangle(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
+
+        fieldBound.setStroke(Color.BLACK);
+        //fieldBound.setStrokeWidth(10);
+        fieldBound.setFill(Color.TRANSPARENT);
     }
 
     public static WorldView getInstance() {
         if (instance == null) instance = new WorldView();
         return instance;
+    }
+
+    public Rectangle getFieldBound() {
+        return fieldBound;
+    }
+
+    public void updateFieldBound() {
+        fieldBound.setTranslateX(fieldBoundPos.getMinX() - cameraPos.x);
+        fieldBound.setTranslateY(fieldBoundPos.getMinY() - cameraPos.y);
     }
 
     public void addObservers(Observer... observers) {
@@ -69,6 +87,13 @@ public class WorldView extends Observable {
         return false;
     }
 
+    private void checkCameraBound() {
+        if (cameraPos.x < 0) cameraPos.x = 0;
+        if (cameraPos.y < 0) cameraPos.y = 0;
+        if (cameraPos.x > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraPos.x = World.FIELD_WIDTH - App.WINDOW_WIDTH;
+        if (cameraPos.y > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraPos.y = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
+    }
+
     public void move(Cardinal direction) {
         cameraMoved = true;
         switch (direction) {
@@ -85,10 +110,7 @@ public class WorldView extends Observable {
                 cameraPos.x -= cameraSpeed;
                 break;
         }
-        if (cameraPos.x < 0) cameraPos.x = 0;
-        if (cameraPos.y < 0) cameraPos.y = 0;
-        if (cameraPos.x > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraPos.x = World.FIELD_WIDTH - App.WINDOW_WIDTH;
-        if (cameraPos.y > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraPos.y = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
+        checkCameraBound();
         setChanged();
         notifyObservers(GameEvent.CAMERA_MOVE);
     }
@@ -97,6 +119,9 @@ public class WorldView extends Observable {
         cameraMoved = true;
         cameraPos.y -= y;
         cameraPos.x -= x;
+        checkCameraBound();
+        setChanged();
+        notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
     public List<Group> getTransformedCastleRects() {
@@ -105,10 +130,6 @@ public class WorldView extends Observable {
                 .map(c -> c.getRepresentation(cameraPos))
                 .collect(Collectors.toList());
 
-        rects.forEach(r -> {
-            r.setTranslateX(-cameraPos.x + r.getTranslateX());
-            r.setTranslateY(-cameraPos.y +  r.getTranslateY());
-        });
 
         return rects;
     }
