@@ -5,14 +5,13 @@ import game.logic.Cardinal;
 import game.view.observable.ObserverLabel;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -22,14 +21,14 @@ import static game.controller.GameEvent.*;
 
 public class App extends Application {
 
+    private static final int framedragSkip = 10;
     public static int WINDOW_WIDTH = 1000;
     public static int WINDOW_HEIGHT = 800;
     public static Map<KeyCode, Boolean> keysPressed;
     private static int[] lastpos = {0, 0};
     private static int[] delta = {0, 0};
     private static boolean drag = false;
-    private  static  final  int framedragSkip = 10;
-    private  static  int frameDragCount = 0;
+    private static int frameDragCount = 0;
 
     static {
         keysPressed = new HashMap<>(KeyCode.values().length);
@@ -52,11 +51,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        StackPane root = new StackPane();
+        Group root = new Group();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
         VBox HUD = new VBox();
-        root.getChildren().addAll(HUD);
-        root.setStyle("-fx-background-color: #668054");
+        Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        greenBackground.setFill(Color.web("668054"));
+        root.getChildren().addAll(greenBackground, HUD);
+        //root.setStyle("-fx-background-color: #668054");
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         MouseEventHandler handler = new MouseEventHandler(s);
@@ -81,7 +82,6 @@ public class App extends Application {
         });
 
 
-
         ObserverLabel cameraPos = new ObserverLabel(CAMERA_MOVE);
         ObserverLabel cameraSpeed = new ObserverLabel(CAMERA_SPEED);
 
@@ -90,7 +90,7 @@ public class App extends Application {
                         "(%f, %f)",
                         WorldView.getInstance().cameraPos.x,
                         WorldView.getInstance().cameraPos.y
-        ));
+                ));
 
         cameraSpeed.setText(String.valueOf(WorldView.getInstance().getCameraSpeed()));
 
@@ -113,7 +113,7 @@ public class App extends Application {
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
 
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
-                        WorldView.getInstance().getTransformedCastleRects();
+                    WorldView.getInstance().getTransformedCastleRects();
                 }
                 frames++;
             }

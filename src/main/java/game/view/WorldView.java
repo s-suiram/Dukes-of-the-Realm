@@ -30,7 +30,7 @@ public class WorldView extends Observable {
         fieldBound = new Rectangle(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
 
         fieldBound.setStroke(Color.BLACK);
-        //fieldBound.setStrokeWidth(10);
+        fieldBound.setStrokeWidth(1);
         fieldBound.setFill(Color.TRANSPARENT);
     }
 

@@ -3,12 +3,9 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
-import javafx.event.EventType;
 import javafx.scene.Group;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.input.MouseEvent;
 
 
 
@@ -71,14 +68,8 @@ public class CastleView {
                 break;
         }
         group.getChildren().addAll(representation, door);
-        //group.setPrefWidth(Castle.WIDTH);
-        //group.setPrefHeight(Castle.HEIGHT);
-        group.setTranslateX(c.getBoundingRect().getMinX());
-        group.setTranslateY(c.getBoundingRect().getMinY());
-        System.out.println(c.getBoundingRect().getMinX());
         group.autosize();
         group.setPickOnBounds(true);
-       // System.out.println(group.getTranslateX() + " " + group.getTranslateY() + " " + group.getWidth() + " " + group.getHeight());
         group.setOnMouseClicked(event -> {
             System.out.println("nigga");
             System.out.println(event.getSource().getClass().toString());
@@ -88,7 +79,6 @@ public class CastleView {
     public Group getRepresentation(Point2D cam) {
         group.setTranslateX( c.getBoundingRect().getMinX() - cam.x);
         group.setTranslateY( c.getBoundingRect().getMinY() - cam.y);
-        System.out.println(c.getBoundingRect().getMinX() + cam.x);
         return  group;
     }
 
