@@ -104,12 +104,6 @@ public class WorldView extends Observable {
                 .getCastles().stream()
                 .map(c -> c.getRepresentation(cameraPos))
                 .collect(Collectors.toList());
-
-        rects.forEach(r -> {
-            r.setTranslateX(-cameraPos.x + r.getTranslateX());
-            r.setTranslateY(-cameraPos.y +  r.getTranslateY());
-        });
-
         return rects;
     }
 }

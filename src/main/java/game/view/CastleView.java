@@ -86,8 +86,8 @@ public class CastleView {
     }
 
     public Group getRepresentation(Point2D cam) {
-        group.setTranslateX( c.getBoundingRect().getMinX() + cam.x);
-        group.setTranslateY( c.getBoundingRect().getMinY() + cam.y);
+        group.setTranslateX( c.getBoundingRect().getMinX() - cam.x);
+        group.setTranslateY( c.getBoundingRect().getMinY() - cam.y);
         System.out.println(c.getBoundingRect().getMinX() + cam.x);
         return  group;
     }
