@@ -74,7 +74,6 @@ public class KeyboardEventHandler {
         if (!combo) return;
 
         if (!performed.get(key)) {
-            //System.out.println(key.getName());
             action.perform();
             performed.put(key, true);
         }

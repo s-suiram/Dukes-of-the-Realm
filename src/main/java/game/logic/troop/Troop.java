@@ -1,11 +1,17 @@
 package game.logic.troop;
 
+import com.sun.javafx.geom.Point2D;
+
 public abstract class Troop {
+
+    public  static  final  int SIZE = 10;
+
     final int cost;
     final int speed;
     final int damage;
     final int hp;
     final String name;
+    public final Point2D pos;
 
     public Troop(int cost, int time, int speed, int damage, int hp, String name) {
         this.cost = cost;
@@ -13,6 +19,11 @@ public abstract class Troop {
         this.damage = damage;
         this.hp = hp;
         this.name = name;
+        pos = new Point2D();
+    }
+
+    public Point2D getPos() {
+        return pos;
     }
 
     public int getCost() {

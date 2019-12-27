@@ -84,11 +84,13 @@ public class App extends Application {
                         .collect(Collectors.toList())
         );
 
+        Group troops = new Group();
+
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
         greenBackground.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
         greenBackground.setOnMouseEntered(e -> s.setCursor(Cursor.OPEN_HAND));
-        root.getChildren().addAll(greenBackground, castles, HUD);
+        root.getChildren().addAll(greenBackground, castles,troops, HUD);
 
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> WINDOW_WIDTH = newVal.intValue());
         primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> WINDOW_HEIGHT = newVal.intValue());
@@ -123,7 +125,7 @@ public class App extends Application {
             @Override
             public void handle(long now) {
                 KeyboardEventHandler.getInstance().handle();
-                WorldView.getInstance().draw();
+                WorldView.getInstance().draw(troops);
                 handleCameraMove(s);
                 if (!paused) {
                     World.getInstance().step();

@@ -30,14 +30,15 @@ public class CastleView {
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
-        rectangle.setStrokeWidth(10);
+        final int thiccness = 5;
+        rectangle.setStrokeWidth(thiccness*2);
         rectangle.setFill(Color.TRANSPARENT);
 
         switch (c.getDoor()) {
             case NORTH:
                 door = new Rectangle(
                         doorOffset + rectangle.getX(),
-                        rectangle.getY(),
+                        rectangle.getY() - thiccness,
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
@@ -45,14 +46,14 @@ public class CastleView {
             case SOUTH:
                 door = new Rectangle(
                         doorOffset + rectangle.getX(),
-                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT,
+                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT + thiccness,
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
                 break;
             case EAST:
                 door = new Rectangle(
-                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT,
+                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT + thiccness,
                         rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH
@@ -60,7 +61,7 @@ public class CastleView {
                 break;
             case WEST:
                 door = new Rectangle(
-                        rectangle.getX(),
+                        rectangle.getX() - thiccness,
                         rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH

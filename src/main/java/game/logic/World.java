@@ -1,12 +1,14 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
+import game.logic.troop.Troop;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class World {
 
@@ -115,9 +117,15 @@ public class World {
     }
 
     public List<Castle> getCastles() {
-        List<Castle> c = new ArrayList<>();
-        players.forEach(p -> c.addAll(p.getCastles()));
-        return c;
+        return players.stream()
+                .flatMap(player -> player.getCastles().stream())
+                .collect(Collectors.toList());
+    }
+
+    public List<Troop> getTroops() {
+        return getCastles().stream()
+                .flatMap(castle -> castle.getOstsTroops().stream())
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,11 +1,16 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import game.logic.Cardinal;
 import game.logic.World;
+import game.logic.troop.Onager;
+import game.logic.troop.Troop;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorldView extends Observable {
 
@@ -13,12 +18,19 @@ public class WorldView extends Observable {
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
     private List<CastleView> castles;
+    private List<TroopView> troops;
     private boolean cameraMoved = false;
+    private Scene s;
 
     private WorldView(Scene s) {
+        this.s =s;
         castles = new ArrayList<>();
         World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c, s)));
         cameraPos = new Point2D(0, 0);
+        troops = new ArrayList<>();
+        Troop test = new Onager();
+        test.pos.setLocation(100,100);
+        troops.add( new TroopView(test));
     }
 
     public static WorldView getInstance() {
@@ -103,8 +115,20 @@ public class WorldView extends Observable {
         setChanged();
     }
 
-    public void draw() {
+    public void draw(Group troopsGroup) {
         getCastles().forEach(c -> c.draw(cameraPos));
+        troopsGroup.getChildren().removeAll(troops);
+        troops.clear();
+        troops.addAll(World.getInstance()
+                .getTroops()
+                .stream()
+                .map(t -> TroopView.troopToView.getOrDefault(t, new TroopView(t)))
+                .collect(Collectors.toList())
+        );
+        troopsGroup.getChildren().addAll(troops);
+
+
+        troops.forEach(c -> c.draw(cameraPos));
     }
 
     public void clearAllContextualMenu() {

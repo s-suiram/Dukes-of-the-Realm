@@ -1,13 +1,12 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
-import game.logic.troop.Troop;
-import game.logic.troop.TroopProducer;
-import game.logic.troop.TroopType;
+import game.logic.troop.*;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Castle {
 
@@ -22,6 +21,7 @@ public class Castle {
     private int level;
     private int timeToLevelUp;
     private List<Troop> troops;
+    private List<Ost> Osts;
 
     private Cardinal door;
 
@@ -41,6 +41,12 @@ public class Castle {
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
         boundingRect = new Rectangle2D(position.x, position.y, WIDTH, HEIGHT);
+        Osts = new ArrayList<>();
+        List<Troop> test = new ArrayList<>();
+        test.add(new Onager());
+        test.add(new Pikeman());
+        test.add(new Knight());
+        Osts.add(new Ost(test, this, null));
     }
 
     public boolean startLevelUp() {
@@ -87,6 +93,14 @@ public class Castle {
 
     public int getLevel() {
         return level;
+    }
+
+    public List<Ost> getOsts() {
+        return Osts;
+    }
+
+    public List<Troop> getOstsTroops() {
+        return Osts.stream().flatMap(o -> o.getTroops().stream()).collect(Collectors.toList());
     }
 
     public void setLevel(int level) {
