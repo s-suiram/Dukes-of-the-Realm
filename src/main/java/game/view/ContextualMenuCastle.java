@@ -5,6 +5,7 @@ import game.logic.troop.Knight;
 import game.logic.troop.Onager;
 import game.logic.troop.Pikeman;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -12,9 +13,10 @@ import javafx.scene.layout.VBox;
 public class ContextualMenuCastle extends Group {
 
     Castle castle;
-
+    boolean notEnoughMoney;
     private Label money;
     private Label level;
+    private Label levelUpFeedback;
     private Label p_val;
     private Label k_val;
     private Label o_val;
@@ -22,9 +24,15 @@ public class ContextualMenuCastle extends Group {
     public ContextualMenuCastle(Castle c) {
         super();
         this.castle = c;
-
+        notEnoughMoney = false;
         money = new Label();
+
         level = new Label();
+        Button levelup = new Button("Level Up");
+        levelUpFeedback = new Label("      ");
+        HBox levelupBox = new HBox(level, levelup, levelUpFeedback);
+
+        levelup.setOnAction(e -> notEnoughMoney = !c.startLevelUp());
 
         p_val = new Label();
         k_val = new Label();
@@ -36,7 +44,7 @@ public class ContextualMenuCastle extends Group {
         HBox onager = new HBox(new Label("Onager: "), o_val);
 
         //Graphical nodes
-        VBox menu = new VBox(money, level, pikeman, knight, onager);
+        VBox menu = new VBox(money, levelupBox, pikeman, knight, onager);
         getChildren().addAll(menu);
         menu.setSpacing(1);
         menu.setStyle("-fx-background-color: rgba(200, 200, 200, 0.8)");
@@ -49,5 +57,14 @@ public class ContextualMenuCastle extends Group {
         p_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Pikeman).count()));
         k_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Knight).count()));
         o_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Onager).count()));
+        if (notEnoughMoney) {
+            levelUpFeedback.setText("Not enough money");
+        } else {
+            if (castle.getTimeToLevelUp() == -1)
+                levelUpFeedback.setText(castle.getLevel() > 1 ? String.format("You reach level %d", castle.getLevel()) : "");
+            else
+                levelUpFeedback.setText(String.format("%d remaining", castle.getTimeToLevelUp()));
+
+        }
     }
 }

@@ -44,7 +44,7 @@ public class Castle {
     }
 
     public boolean startLevelUp() {
-        if (money - ((level + 1) * 1000) >= 0) {
+        if (timeToLevelUp == -1 && money - ((level + 1) * 1000) >= 0) {
             money -= (level + 1) * 1000;
             timeToLevelUp = 100 + 50 * (level + 1);
             return true;
@@ -93,7 +93,7 @@ public class Castle {
         this.level = level;
     }
 
-    public Integer getTimeToLevelUp() {
+    public int getTimeToLevelUp() {
         return timeToLevelUp;
     }
 
