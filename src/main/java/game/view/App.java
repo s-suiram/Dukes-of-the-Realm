@@ -21,14 +21,9 @@ import static game.controller.GameEvent.*;
 
 public class App extends Application {
 
-    private static final int framedragSkip = 10;
     public static int WINDOW_WIDTH = 1000;
     public static int WINDOW_HEIGHT = 800;
     public static Map<KeyCode, Boolean> keysPressed;
-    private static int[] lastpos = {0, 0};
-    private static int[] delta = {0, 0};
-    private static boolean drag = false;
-    private static int frameDragCount = 0;
 
     static {
         keysPressed = new HashMap<>(KeyCode.values().length);
@@ -62,8 +57,7 @@ public class App extends Application {
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         MouseEventHandler handler = new MouseEventHandler(s);
 
-        WorldView.getInstance().getTransformedCastleRects().forEach(c -> root.getChildren().add(c));
-
+        WorldView.getInstance().getCastles().forEach(c -> root.getChildren().add(c.getGroup()));
 
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
@@ -112,9 +106,6 @@ public class App extends Application {
                 CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
 
-                if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
-                    WorldView.getInstance().getTransformedCastleRects();
-                }
                 frames++;
             }
         }.start();

@@ -30,7 +30,6 @@ public class WorldView extends Observable {
         fieldBound = new Rectangle(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
 
         fieldBound.setStroke(Color.BLACK);
-        fieldBound.setStrokeWidth(1);
         fieldBound.setFill(Color.TRANSPARENT);
     }
 
@@ -124,13 +123,7 @@ public class WorldView extends Observable {
         notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
-    public List<Group> getTransformedCastleRects() {
-        List<Group> rects = getInstance()
-                .getCastles().stream()
-                .map(c -> c.getRepresentation(cameraPos))
-                .collect(Collectors.toList());
-
-
-        return rects;
+    public void draw() {
+        instance.getCastles().forEach(c -> c.draw(cameraPos));
     }
 }

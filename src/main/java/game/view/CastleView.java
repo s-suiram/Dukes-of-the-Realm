@@ -3,9 +3,12 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
+import javafx.event.EventType;
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.input.MouseEvent;
 
 
 
@@ -71,15 +74,17 @@ public class CastleView {
         group.autosize();
         group.setPickOnBounds(true);
         group.setOnMouseClicked(event -> {
-            System.out.println("nigga");
             System.out.println(event.getSource().getClass().toString());
         });
     }
 
-    public Group getRepresentation(Point2D cam) {
+    public void draw(Point2D cam) {
         group.setTranslateX( c.getBoundingRect().getMinX() - cam.x);
         group.setTranslateY( c.getBoundingRect().getMinY() - cam.y);
-        return  group;
+    }
+
+    public Group getGroup() {
+        return group;
     }
 
     public Castle getC() {
