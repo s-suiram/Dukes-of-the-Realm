@@ -3,14 +3,9 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
-import javafx.event.EventType;
 import javafx.scene.Group;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.input.MouseEvent;
-
-
 
 public class CastleView {
 
@@ -18,7 +13,6 @@ public class CastleView {
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
 
     private Color col;
-    private Rectangle representation;
     private Castle c;
     private Rectangle door;
     private Group group;
@@ -27,7 +21,7 @@ public class CastleView {
         this.c = c;
         this.group = new Group();
 
-        representation = new Rectangle(c.getBoundingRect().getMinX(),
+        Rectangle representation = new Rectangle(c.getBoundingRect().getMinX(),
                 c.getBoundingRect().getMinY(),
                 c.getBoundingRect().getWidth(),
                 c.getBoundingRect().getHeight());
@@ -73,9 +67,9 @@ public class CastleView {
         group.getChildren().addAll(representation, door);
         group.autosize();
         group.setPickOnBounds(true);
-        group.setOnMouseClicked(event -> {
-            System.out.println(event.getSource().getClass().toString());
-        });
+        group.setOnMouseClicked(event ->
+            System.out.println(event.getSource().getClass().toString())
+        );
     }
 
     public void draw(Point2D cam) {

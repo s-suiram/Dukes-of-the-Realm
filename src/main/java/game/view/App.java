@@ -55,7 +55,7 @@ public class App extends Application {
         //root.setStyle("-fx-background-color: #668054");
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
-        MouseEventHandler handler = new MouseEventHandler(s);
+        MouseEventHandler.init(s);
 
         WorldView.getInstance().getCastles().forEach(c -> root.getChildren().add(c.getGroup()));
 
@@ -105,6 +105,8 @@ public class App extends Application {
                 CAMERA_SPEED_INCREASE.define(() -> WorldView.getInstance().increaseCameraSpeed());
                 CAMERA_SPEED_DECREASE.define(() -> WorldView.getInstance().decreaseCameraSpeed());
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
+
+                WorldView.getInstance().draw();
 
                 frames++;
             }

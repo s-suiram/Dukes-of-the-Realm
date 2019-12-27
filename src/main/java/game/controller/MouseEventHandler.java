@@ -1,7 +1,6 @@
 package game.controller;
 
 import com.sun.javafx.geom.Point2D;
-import game.logic.World;
 import game.view.WorldView;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -11,18 +10,32 @@ import javafx.scene.input.MouseEvent;
 
 public class MouseEventHandler implements EventHandler<MouseEvent> {
 
+    private static  MouseEventHandler instance;
+
     private boolean dragged = false;
     private Point2D delta;
     private Point2D mouseDragStartPos;
     private Scene s;
 
 
-    public MouseEventHandler(Scene s) {
+    private MouseEventHandler(Scene s) {
         this.delta = new Point2D();
         this.mouseDragStartPos = new Point2D();
         s.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
         s.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
         this.s = s;
+    }
+
+    public static void init(Scene s) {
+        instance = new MouseEventHandler(s);
+    }
+
+    public static MouseEventHandler getInstance() {
+        if( instance == null){
+            throw  new NullPointerException("instance not initialized");
+        } else {
+            return  instance;
+        }
     }
 
     @Override
