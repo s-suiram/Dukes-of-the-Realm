@@ -1,7 +1,6 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
-import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
 
@@ -38,7 +37,6 @@ public class WorldView extends Observable {
         this.cameraSpeed = cameraSpeed;
         if (this.cameraSpeed < 1) this.cameraSpeed = 1;
         setChanged();
-        notifyObservers(GameEvent.CAMERA_SPEED);
     }
 
     public void decreaseCameraSpeed() {
@@ -90,7 +88,6 @@ public class WorldView extends Observable {
         }
         checkCameraBound();
         setChanged();
-        notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
     public void move(int x, int y) {
@@ -99,7 +96,6 @@ public class WorldView extends Observable {
         cameraPos.x -= x;
         checkCameraBound();
         setChanged();
-        notifyObservers(GameEvent.CAMERA_MOVE);
     }
 
     public void draw() {
