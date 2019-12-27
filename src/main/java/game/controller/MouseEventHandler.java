@@ -17,12 +17,15 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     private Point2D mouseDragStartPos;
     private Scene s;
 
+    private Point2D mousePos;
+
 
     private MouseEventHandler(Scene s) {
         this.delta = new Point2D();
         this.mouseDragStartPos = new Point2D();
         s.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
         s.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
+        s.addEventFilter(MouseEvent.MOUSE_MOVED, this);
         this.s = s;
     }
 
@@ -51,6 +54,20 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
             handleDragStop();
         }
+
+        if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
+            handleMouseMoved(event);
+        }
+    }
+
+    private void handleMouseMoved(MouseEvent e) {
+        mousePos.x = (float) e.getX();
+        mousePos.y = (float) e.getY();
+        handleCameraMoving(e);
+    }
+
+    private void handleCameraMoving(MouseEvent e) {
+
     }
 
     private void handleDragStart(MouseEvent e) {

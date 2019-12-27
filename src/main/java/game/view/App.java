@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.stream.Collectors;
@@ -38,18 +37,16 @@ public class App extends Application {
                         .map(CastleView::getGroup)
                         .collect(Collectors.toList())
         );
-        System.out.println(Screen.getPrimary().getBounds().getMaxX());
+
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
-        greenBackground.setOnMouseClicked(e -> CastleView.clearContextualMenu());
+        greenBackground.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
 
-        root.getChildren().addAll(greenBackground, castles, HUD, CastleView.getContextualMenu());
+        root.getChildren().addAll(greenBackground, castles, HUD);
 
         KeyboardEventHandler.init(s);
         MouseEventHandler.init(s);
 
-        primaryStage.setWidth(WINDOW_WIDTH);
-        primaryStage.setHeight(WINDOW_HEIGHT);
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.sizeToScene();
@@ -58,7 +55,10 @@ public class App extends Application {
 
         Label mouseCamPos = new Label();
         HUD.getChildren().add(mouseCamPos);
-        s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
+
+        //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
+
+        WorldView.getInstance().clearAllContextualMenu();
 
         //Make main game class
         new AnimationTimer() {
@@ -68,7 +68,6 @@ public class App extends Application {
             public void handle(long now) {
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
-                System.out.println(CastleView.getContextualMenu().getChildren());
                 //World.getInstance().step();
                 frames++;
             }

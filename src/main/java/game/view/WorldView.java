@@ -102,5 +102,8 @@ public class WorldView extends Observable {
         getCastles().forEach(c -> c.draw(cameraPos));
     }
 
+    public void clearAllContextualMenu() {
+        getCastles().forEach(c -> c.setVisibleContextual(false));
+    }
 
 }

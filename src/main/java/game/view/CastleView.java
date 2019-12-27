@@ -11,84 +11,77 @@ public class CastleView {
 
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
-    private static Group contextualMenu = new Group();
     private Color col;
     private Castle c;
     private Rectangle door;
     private Group group;
+    private ContextualMenuCastle contextualMenu;
 
     public CastleView(Castle c) {
         this.c = c;
         this.group = new Group();
-
-        Rectangle representation = new Rectangle(c.getBoundingRect().getMinX(),
+        contextualMenu = new ContextualMenuCastle(this);
+        Rectangle rectangle = new Rectangle(c.getBoundingRect().getMinX(),
                 c.getBoundingRect().getMinY(),
                 c.getBoundingRect().getWidth(),
                 c.getBoundingRect().getHeight());
 
-        double doorOffset = representation.getWidth() / 2 - DOOR_WIDTH / 2.0;
-        representation.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
-        representation.setStrokeWidth(10);
-        representation.setFill(Color.TRANSPARENT);
+        double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
+        rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
+        rectangle.setStrokeWidth(10);
+        rectangle.setFill(Color.TRANSPARENT);
 
         switch (c.getDoor()) {
             case NORTH:
                 door = new Rectangle(
-                        doorOffset + representation.getX(),
-                        representation.getY(),
+                        doorOffset + rectangle.getX(),
+                        rectangle.getY(),
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
                 break;
             case SOUTH:
                 door = new Rectangle(
-                        doorOffset + representation.getX(),
-                        representation.getY() + representation.getHeight() - DOOR_HEIGHT,
+                        doorOffset + rectangle.getX(),
+                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT,
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
                 break;
             case EAST:
                 door = new Rectangle(
-                        representation.getX() + representation.getWidth() - DOOR_HEIGHT,
-                        representation.getY() + doorOffset,
+                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT,
+                        rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH
                 );
                 break;
             case WEST:
                 door = new Rectangle(
-                        representation.getX(),
-                        representation.getY() + doorOffset,
+                        rectangle.getX(),
+                        rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH
                 );
                 break;
         }
-        group.getChildren().addAll(representation, door);
+
+        contextualMenu.setTranslateX(rectangle.getX());
+        contextualMenu.setTranslateY(rectangle.getY());
+
+        group.getChildren().addAll(rectangle, door, contextualMenu);
 
         group.setOnMouseClicked(event -> {
-                    clearContextualMenu();
-                    contextualMenu.getChildren().add(new ContextualMenuCastle(this));
-                    System.out.println(c.getBoundingRect().getMaxX() + " " + c.getBoundingRect().getMaxY());
-
+                    WorldView.getInstance().clearAllContextualMenu();
+                    setVisibleContextual(true);
                 }
         );
-    }
-
-    public static Group getContextualMenu() {
-        return contextualMenu;
-    }
-
-    public static void clearContextualMenu() {
-        getContextualMenu().getChildren().clear();
     }
 
     public void draw(Point2D cam) {
         group.setTranslateX(-cam.x);
         group.setTranslateY(-cam.y);
-        if (!contextualMenu.getChildren().isEmpty())
-            ((ContextualMenuCastle) contextualMenu.getChildren().get(0)).draw();
+        contextualMenu.draw();
     }
 
     public Group getGroup() {
@@ -97,5 +90,13 @@ public class CastleView {
 
     public Castle getC() {
         return c;
+    }
+
+    public ContextualMenuCastle getContextualMenu() {
+        return contextualMenu;
+    }
+
+    public void setVisibleContextual(boolean b) {
+        contextualMenu.setVisible(b);
     }
 }
