@@ -2,33 +2,48 @@ package game.controller;
 
 import game.logic.Cardinal;
 import game.view.WorldView;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
+import javax.swing.*;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class KeyboardEventHandler {
 
 
     private static KeyboardEventHandler instance;
 
-    private Scene s;
-    public static Map<KeyCode, Boolean> keys = new HashMap<>();
-
+    public Map<KeyCode, Boolean> keysPressed = new HashMap<>();
+    public Map<String, Boolean> keysTyped = new HashMap<>();
+    private final String PLUS = "+";
+    private final String MINUS = "-";
+    private final String MULTIPLY = "*";
 
     private KeyboardEventHandler(Scene s) {
-        this.s = s;
-        EnumSet.allOf(KeyCode.class).forEach(k -> keys.put(k, false));
+        EnumSet.allOf(KeyCode.class).forEach(k -> keysPressed.put(k, false));
+        keysTyped.put(PLUS, false);
+        keysTyped.put(MINUS, false);
+        keysTyped.put(MULTIPLY, false);
+
+        s.setOnKeyPressed(event -> {
+            keysPressed.put(event.getCode(), true);
+        });
+        s.setOnKeyTyped(event -> {
+            System.out.println(event.getCharacter());
+            keysTyped.put(event.getCharacter(), true);
+            event.consume();
+        });
+        s.setOnKeyReleased(event -> keysPressed.put(event.getCode(), false));
     }
 
     public static void init(Scene s) {
         instance = new KeyboardEventHandler(s);
-        s.setOnKeyPressed(event -> keys.put(event.getCode(), true));
-        s.setOnKeyReleased(event -> keys.put(event.getCode(), false));
     }
 
     public static KeyboardEventHandler getInstance() {
@@ -36,29 +51,39 @@ public class KeyboardEventHandler {
     }
 
     public void handle() {
+        handleKeysPressed();
+        handleKeysTyped();
+    }
 
-        if (keys.get(KeyCode.Z)) {
-            WorldView.getInstance().move(Cardinal.NORTH);
-        }
-        if (keys.get(KeyCode.Q)) {
-            WorldView.getInstance().move(Cardinal.WEST);
-        }
-        if (keys.get(KeyCode.S)) {
-            WorldView.getInstance().move(Cardinal.SOUTH);
-        }
-        if (keys.get(KeyCode.D)) {
-            WorldView.getInstance().move(Cardinal.EAST);
-        }
-        if (keys.get(KeyCode.ADD)) {
-            WorldView.getInstance().increaseCameraSpeed();
-        }
-        if (keys.get(KeyCode.SUBTRACT)) {
-            WorldView.getInstance().decreaseCameraSpeed();
-        }
-        if (keys.get(KeyCode.MULTIPLY)) {
-            WorldView.getInstance().resetCameraSpeed();
-        }
+    private void handleKeysPressed() {
+        doKeyPressedAction(KeyCode.Z, WorldView.getInstance()::move, Cardinal.NORTH);
+        doKeyPressedAction(KeyCode.Q, WorldView.getInstance()::move, Cardinal.WEST);
+        doKeyPressedAction(KeyCode.S, WorldView.getInstance()::move, Cardinal.SOUTH);
+        doKeyPressedAction(KeyCode.D, WorldView.getInstance()::move, Cardinal.EAST);
+    }
 
+    private void handleKeysTyped() {
+        doKeyTypedAction(PLUS, WorldView.getInstance()::increaseCameraSpeed);
+        doKeyTypedAction(MINUS, WorldView.getInstance()::decreaseCameraSpeed);
+        doKeyTypedAction(MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
+    }
 
+    private void doKeyTypedAction(String key, Action action) {
+        if (keysTyped.getOrDefault(key, false)) {
+            action.perform();
+            keysTyped.put(key, false);
+        }
+    }
+
+    private void doKeyPressedAction(KeyCode k, Consumer<Cardinal> consumer, Cardinal car) {
+        if (keysPressed.get(k)) {
+            consumer.accept(car);
+        }
+    }
+
+    private void doKeyPressedAction(KeyCode k, Action action) {
+        if (keysPressed.get(k)) {
+            action.perform();
+        }
     }
 }

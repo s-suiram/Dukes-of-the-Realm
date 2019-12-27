@@ -101,4 +101,6 @@ public class WorldView extends Observable {
     public void draw() {
         getCastles().forEach(c -> c.draw(cameraPos));
     }
+
+
 }

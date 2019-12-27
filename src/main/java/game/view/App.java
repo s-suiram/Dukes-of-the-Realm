@@ -65,7 +65,6 @@ public class App extends Application {
 
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
-                System.out.println(root.getChildren());
                 root.getChildren().removeIf(node -> node instanceof ContextualMenuCastle && ((ContextualMenuCastle) node).isConsumed());
                 WorldView.getInstance().getCastles().stream()
                         .map(CastleView::getMenuCastle)
@@ -79,6 +78,5 @@ public class App extends Application {
             }
         }.start();
     }
-
 }
 
