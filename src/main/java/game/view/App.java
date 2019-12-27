@@ -54,15 +54,16 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
-        Pane castles = new Pane();
         VBox HUD = new VBox();
-        root.getChildren().addAll(castles, HUD);
+        root.getChildren().addAll(HUD);
         root.setStyle("-fx-background-color: #668054");
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         MouseEventHandler handler = new MouseEventHandler(s);
 
-        castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
+        WorldView.getInstance().getTransformedCastleRects().forEach(c -> root.getChildren().add(c));
+
+
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.setTitle("Dukes of the realm");
@@ -79,8 +80,6 @@ public class App extends Application {
             mousePlusCamLabel.setText(String.format("Mouse + camera pos: %f, %f", x, y));
         });
 
-        castles.setPickOnBounds(true);
-        castles.setOnMouseClicked(e -> System.out.println("lol"));
 
 
         ObserverLabel cameraPos = new ObserverLabel(CAMERA_MOVE);
@@ -114,12 +113,12 @@ public class App extends Application {
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
 
                 if (WorldView.getInstance().checkAndRestoreCameraMoved()) {
-                    castles.getChildren().removeIf(it -> true);
-                    castles.getChildren().addAll(WorldView.getInstance().getTransformedCastleRects());
+                        WorldView.getInstance().getTransformedCastleRects();
                 }
                 frames++;
             }
         }.start();
+
 
     }
 

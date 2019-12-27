@@ -45,7 +45,6 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         mouseDragStartPos.x = (float) e.getX();
         mouseDragStartPos.y = (float) e.getY();
         s.setCursor(Cursor.CLOSED_HAND);
-
     }
 
     private void handleDrag(MouseEvent e) {
@@ -53,7 +52,6 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         delta.x = (float) (e.getX() - mouseDragStartPos.x);
         delta.y = (float) (e.getY() - mouseDragStartPos.y);
         WorldView.getInstance().move((int)delta.x, (int)delta.y);
-        System.out.println(delta);
     }
 
     private void handleDragStop() {

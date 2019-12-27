@@ -5,6 +5,7 @@ import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,12 +102,14 @@ public class WorldView extends Observable {
     public List<Group> getTransformedCastleRects() {
         List<Group> rects = getInstance()
                 .getCastles().stream()
-                .map(CastleView::getRepresentation)
+                .map(c -> c.getRepresentation(cameraPos))
                 .collect(Collectors.toList());
+
         rects.forEach(r -> {
-            r.setTranslateX(-cameraPos.x);
-            r.setTranslateY(-cameraPos.y);
+            r.setTranslateX(-cameraPos.x + r.getTranslateX());
+            r.setTranslateY(-cameraPos.y +  r.getTranslateY());
         });
+
         return rects;
     }
 }
