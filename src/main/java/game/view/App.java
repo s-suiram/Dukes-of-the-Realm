@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static game.controller.GameEvent.*;
@@ -43,7 +44,6 @@ public class App extends Application {
         keysPressed.put(k, false);
         return b;
     }
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -93,6 +93,7 @@ public class App extends Application {
         WorldView.getInstance().addObservers(cameraPos, cameraSpeed);
         HUD.getChildren().addAll(cameraPos, cameraSpeed, mouseLabel, mousePlusCamLabel);
 
+
         //Make main game class
         new AnimationTimer() {
             long frames = 0;
@@ -109,13 +110,18 @@ public class App extends Application {
                 CAMERA_SPEED_RESET.define(() -> WorldView.getInstance().resetCameraSpeed());
 
                 WorldView.getInstance().draw();
+                System.out.println(root.getChildren());
+                root.getChildren().removeIf(node -> node instanceof ContextualMenuCastle && ((ContextualMenuCastle) node).isConsumed());
+                WorldView.getInstance().getCastles().stream()
+                        .map(CastleView::getMenuCastle)
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .ifPresent(cmenu -> {
+                            if (!root.getChildren().contains(cmenu)) root.getChildren().add(cmenu);
+                        });
 
                 frames++;
             }
         }.start();
-
-
     }
-
-
 }
