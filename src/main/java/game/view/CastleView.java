@@ -66,11 +66,12 @@ public class CastleView {
                 break;
         }
         group.getChildren().addAll(representation, door);
-        group.autosize();
-        group.setPickOnBounds(true);
+
         group.setOnMouseClicked(event -> {
                     clearContextualMenu();
                     contextualMenu.getChildren().add(new ContextualMenuCastle(this));
+                    System.out.println(c.getBoundingRect().getMaxX() + " " + c.getBoundingRect().getMaxY());
+
                 }
         );
     }
@@ -80,7 +81,6 @@ public class CastleView {
     }
 
     public static void clearContextualMenu() {
-        getContextualMenu().getChildren().forEach(c -> c.setVisible(false));
         getContextualMenu().getChildren().clear();
     }
 

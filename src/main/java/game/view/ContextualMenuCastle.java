@@ -32,9 +32,4 @@ public class ContextualMenuCastle extends Group {
     public void draw() {
         money.setText("Money: " + cv.getC().getMoney());
     }
-
-    public void clear() {
-        money.setText("");
-        setVisible(false);
-    }
 }

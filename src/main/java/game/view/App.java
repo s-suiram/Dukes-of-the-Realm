@@ -6,11 +6,12 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.util.stream.Collectors;
 
@@ -28,27 +29,36 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         Group root = new Group();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
-        VBox HUD = new VBox();
-        Group castles = new Group(WorldView.getInstance().getCastles().stream().map(CastleView::getGroup).collect(Collectors.toList()));
 
+        VBox HUD = new VBox();
+        Group castles = new Group(
+                WorldView.getInstance()
+                        .getCastles()
+                        .stream()
+                        .map(CastleView::getGroup)
+                        .collect(Collectors.toList())
+        );
+        System.out.println(Screen.getPrimary().getBounds().getMaxX());
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
         greenBackground.setOnMouseClicked(e -> CastleView.clearContextualMenu());
 
-        root.getChildren().addAll(greenBackground, HUD, castles,
-                CastleView.getContextualMenu());
+        root.getChildren().addAll(greenBackground, castles, HUD, CastleView.getContextualMenu());
 
         KeyboardEventHandler.init(s);
         MouseEventHandler.init(s);
 
+        primaryStage.setWidth(WINDOW_WIDTH);
+        primaryStage.setHeight(WINDOW_HEIGHT);
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.setTitle("Dukes of the realm");
         primaryStage.show();
 
-        System.out.println(s.getHeight() + " " + s.getWidth());
-        System.out.println(primaryStage.getHeight() + " " + primaryStage.getWidth());
+        Label mouseCamPos = new Label();
+        HUD.getChildren().add(mouseCamPos);
+        s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
 
         //Make main game class
         new AnimationTimer() {
@@ -58,6 +68,8 @@ public class App extends Application {
             public void handle(long now) {
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
+                System.out.println(CastleView.getContextualMenu().getChildren());
+                //World.getInstance().step();
                 frames++;
             }
         }.start();
