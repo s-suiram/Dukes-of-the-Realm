@@ -1,6 +1,7 @@
 package game.controller;
 
 import game.logic.Cardinal;
+import game.view.App;
 import game.view.WorldView;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -35,6 +36,8 @@ public class KeyboardEventHandler {
             doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
             doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
             doKeyTypedAction(KeyCode.MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
+            doKeyTypedAction(KeyCode.ENTER, () -> App.getStage().setFullScreen(!App.getStage().isFullScreen()), event.isAltDown());
+            doKeyTypedAction(KeyCode.SPACE, () -> App.paused = !App.paused);
         });
 
         s.setOnKeyReleased(event -> {
@@ -64,10 +67,16 @@ public class KeyboardEventHandler {
 
 
     private void doKeyTypedAction(KeyCode key, Action action) {
+        doKeyTypedAction(key, action, true);
+    }
+
+    private void doKeyTypedAction(KeyCode key, Action action, boolean combo) {
+        if (!combo) return;
+
         if (!performed.get(key)) {
             //System.out.println(key.getName());
             action.perform();
-            performed.put(key,true);
+            performed.put(key, true);
         }
     }
 

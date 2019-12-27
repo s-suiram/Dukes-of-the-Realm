@@ -22,11 +22,20 @@ import java.util.stream.Collectors;
 
 public class App extends Application {
 
-    public static int WINDOW_WIDTH = 1000;
-    public static int WINDOW_HEIGHT = 800;
+    public static int DEFAULT_WINDOWED_X = 1000;
+    public static int DEFAULT_WINDOWED_Y = 800;
+
+    public static int WINDOW_WIDTH = DEFAULT_WINDOWED_X;
+    public static int WINDOW_HEIGHT = DEFAULT_WINDOWED_Y;
+    public static boolean paused;
+    private static Stage stage;
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 
     public void handleCameraMove(Scene s) {
@@ -53,6 +62,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        paused = false;
+        stage = primaryStage;
         primaryStage.setFullScreen(true);
         WINDOW_WIDTH = (int) Screen.getPrimary().getBounds().getMaxX();
         WINDOW_HEIGHT = (int) Screen.getPrimary().getBounds().getMaxY();
@@ -79,9 +90,11 @@ public class App extends Application {
         greenBackground.setOnMouseEntered(e -> s.setCursor(Cursor.OPEN_HAND));
         root.getChildren().addAll(greenBackground, castles, HUD);
 
+        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> WINDOW_WIDTH = newVal.intValue());
+        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> WINDOW_HEIGHT = newVal.intValue());
+
 
         primaryStage.setScene(s);
-        primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.setTitle("Dukes of the realm");
         primaryStage.show();
@@ -89,6 +102,15 @@ public class App extends Application {
         Label mouseCamPos = new Label();
         HUD.getChildren().add(mouseCamPos);
 
+        Label pause = new Label("PAUSED");
+        root.getChildren().add(pause);
+        pause.setStyle("-fx-font-size: 50pt");
+        pause.setVisible(false);
+        pause.autosize();
+        pause.setTranslateX(WINDOW_WIDTH / 2.0 - pause.widthProperty().get() / 2.0);
+//        pause.setTranslateY(0);
+
+        pause.setCenterShape(true);
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
 
         WorldView.getInstance().clearAllContextualMenu();
@@ -102,7 +124,11 @@ public class App extends Application {
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
                 handleCameraMove(s);
-                World.getInstance().step();
+                if (!paused) {
+                    World.getInstance().step();
+                    pause.setVisible(false);
+                } else pause.setVisible(true);
+
                 frames++;
             }
         }.start();
