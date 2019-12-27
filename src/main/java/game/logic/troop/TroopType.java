@@ -11,10 +11,6 @@ public enum TroopType {
         this.time = time;
     }
 
-    public int getTime() {
-        return time;
-    }
-
     public static TroopType fromString(String s) {
         switch (s.toLowerCase()) {
             case "knight":
@@ -26,5 +22,9 @@ public enum TroopType {
             default:
                 throw new IllegalArgumentException(s + " is not a trooptype value");
         }
+    }
+
+    public int getTime() {
+        return time;
     }
 }

@@ -41,7 +41,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     @Override
     public void handle(MouseEvent event) {
         if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-            if( !dragged){
+            if (!dragged) {
                 handleDragStart(event);
             } else {
                 handleDrag(event);
@@ -61,15 +61,15 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     }
 
     private void handleDrag(MouseEvent e) {
-        WorldView.getInstance().move(-(int)delta.x, -(int)delta.y);
+        WorldView.getInstance().move(-(int) delta.x, -(int) delta.y);
         delta.x = (float) (e.getX() - mouseDragStartPos.x);
         delta.y = (float) (e.getY() - mouseDragStartPos.y);
-        WorldView.getInstance().move((int)delta.x, (int)delta.y);
+        WorldView.getInstance().move((int) delta.x, (int) delta.y);
     }
 
     private void handleDragStop() {
         dragged = false;
-        delta.setLocation(0,0);
+        delta.setLocation(0, 0);
         s.setCursor(Cursor.DEFAULT);
     }
 }

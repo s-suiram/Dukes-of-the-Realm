@@ -30,6 +30,7 @@ public class CastleView {
         representation.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         representation.setStrokeWidth(10);
         representation.setFill(Color.TRANSPARENT);
+
         switch (c.getDoor()) {
             case NORTH:
                 door = new Rectangle(
@@ -68,13 +69,13 @@ public class CastleView {
         group.autosize();
         group.setPickOnBounds(true);
         group.setOnMouseClicked(event ->
-            System.out.println(event.getSource().getClass().toString())
+                System.out.println(event.getSource().getClass().toString())
         );
     }
 
     public void draw(Point2D cam) {
-        group.setTranslateX( c.getBoundingRect().getMinX() - cam.x);
-        group.setTranslateY( c.getBoundingRect().getMinY() - cam.y);
+        group.setTranslateX(-cam.x);
+        group.setTranslateY(-cam.y);
     }
 
     public Group getGroup() {

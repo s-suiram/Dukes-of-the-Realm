@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static game.controller.GameEvent.*;
 
@@ -49,16 +50,17 @@ public class App extends Application {
         Group root = new Group();
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
         VBox HUD = new VBox();
+        Group castles = new Group(WorldView.getInstance().getCastles().stream().map(CastleView::getGroup).collect(Collectors.toList()));
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
-        root.getChildren().addAll(greenBackground, HUD);
-        //root.setStyle("-fx-background-color: #668054");
+        root.getChildren().addAll(greenBackground, HUD, castles);
+
         s.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
         s.setOnKeyReleased(e -> keysPressed.put(e.getCode(), false));
         MouseEventHandler.init(s);
 
-        WorldView.getInstance().getCastles().forEach(c -> root.getChildren().add(c.getGroup()));
-
+        primaryStage.setWidth(WINDOW_WIDTH);
+        primaryStage.setHeight(WINDOW_HEIGHT);
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
         primaryStage.setTitle("Dukes of the realm");

@@ -4,13 +4,8 @@ import com.sun.javafx.geom.Point2D;
 import game.controller.GameEvent;
 import game.logic.Cardinal;
 import game.logic.World;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class WorldView extends Observable {
 
@@ -19,32 +14,16 @@ public class WorldView extends Observable {
     private int cameraSpeed = 5;
     private List<CastleView> castles;
     private boolean cameraMoved = false;
-    private Rectangle2D fieldBoundPos;
-    private Rectangle fieldBound;
 
     private WorldView() {
         castles = new ArrayList<>();
         World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c)));
         cameraPos = new Point2D(0, 0);
-        fieldBoundPos = new Rectangle2D(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
-        fieldBound = new Rectangle(0, 0, World.FIELD_WIDTH, World.FIELD_HEIGHT);
-
-        fieldBound.setStroke(Color.BLACK);
-        fieldBound.setFill(Color.TRANSPARENT);
     }
 
     public static WorldView getInstance() {
         if (instance == null) instance = new WorldView();
         return instance;
-    }
-
-    public Rectangle getFieldBound() {
-        return fieldBound;
-    }
-
-    public void updateFieldBound() {
-        fieldBound.setTranslateX(fieldBoundPos.getMinX() - cameraPos.x);
-        fieldBound.setTranslateY(fieldBoundPos.getMinY() - cameraPos.y);
     }
 
     public void addObservers(Observer... observers) {
@@ -124,6 +103,6 @@ public class WorldView extends Observable {
     }
 
     public void draw() {
-        instance.getCastles().forEach(c -> c.draw(cameraPos));
+        getCastles().forEach(c -> c.draw(cameraPos));
     }
 }
