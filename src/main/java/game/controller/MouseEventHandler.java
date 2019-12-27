@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 public class MouseEventHandler implements EventHandler<MouseEvent> {
 
-    private static  MouseEventHandler instance;
+    private static MouseEventHandler instance;
 
     private boolean dragged = false;
     private Point2D delta;
@@ -31,10 +31,10 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     }
 
     public static MouseEventHandler getInstance() {
-        if( instance == null){
-            throw  new NullPointerException("instance not initialized");
+        if (instance == null) {
+            throw new NullPointerException("instance not initialized");
         } else {
-            return  instance;
+            return instance;
         }
     }
 

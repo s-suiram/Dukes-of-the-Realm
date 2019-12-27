@@ -7,22 +7,18 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.util.Objects;
-
 public class CastleView {
 
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
-
+    private static Group contextualMenu = new Group();
     private Color col;
     private Castle c;
     private Rectangle door;
     private Group group;
-    private ContextualMenuCastle menuCastle;
 
     public CastleView(Castle c) {
         this.c = c;
-        menuCastle = null;
         this.group = new Group();
 
         Rectangle representation = new Rectangle(c.getBoundingRect().getMinX(),
@@ -73,24 +69,26 @@ public class CastleView {
         group.autosize();
         group.setPickOnBounds(true);
         group.setOnMouseClicked(event -> {
-                    WorldView.getInstance()
-                            .getCastles()
-                            .stream()
-                            .map(CastleView::getMenuCastle)
-                            .filter(Objects::nonNull)
-                            .forEach(ContextualMenuCastle::consume);
-                    menuCastle = new ContextualMenuCastle(this);
+                    clearContextualMenu();
+                    contextualMenu.getChildren().add(new ContextualMenuCastle(this));
                 }
         );
     }
 
-    public void deleteContextual() {
-        menuCastle = null;
+    public static Group getContextualMenu() {
+        return contextualMenu;
+    }
+
+    public static void clearContextualMenu() {
+        getContextualMenu().getChildren().forEach(c -> c.setVisible(false));
+        getContextualMenu().getChildren().clear();
     }
 
     public void draw(Point2D cam) {
         group.setTranslateX(-cam.x);
         group.setTranslateY(-cam.y);
+        if (!contextualMenu.getChildren().isEmpty())
+            ((ContextualMenuCastle) contextualMenu.getChildren().get(0)).draw();
     }
 
     public Group getGroup() {
@@ -99,9 +97,5 @@ public class CastleView {
 
     public Castle getC() {
         return c;
-    }
-
-    public ContextualMenuCastle getMenuCastle() {
-        return menuCastle;
     }
 }

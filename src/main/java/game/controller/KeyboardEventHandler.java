@@ -5,25 +5,20 @@ import game.view.WorldView;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
-import javax.swing.*;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class KeyboardEventHandler {
 
 
     private static KeyboardEventHandler instance;
-
-    public Map<KeyCode, Boolean> keysPressed = new HashMap<>();
-    public Map<String, Boolean> keysTyped = new HashMap<>();
     private final String PLUS = "+";
     private final String MINUS = "-";
     private final String MULTIPLY = "*";
+    public Map<KeyCode, Boolean> keysPressed = new HashMap<>();
+    public Map<String, Boolean> keysTyped = new HashMap<>();
 
     private KeyboardEventHandler(Scene s) {
         EnumSet.allOf(KeyCode.class).forEach(k -> keysPressed.put(k, false));
