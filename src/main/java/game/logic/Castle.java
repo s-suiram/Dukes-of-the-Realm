@@ -66,10 +66,10 @@ public class Castle {
     }
 
     public void generateOst() {
-        int nb = 6;//(int) (Math.random() * 30) + 10;
+        int nb = 12;//(int) (Math.random() * 30) + 10;
         List<Troop> troops = new ArrayList<>();
         for (int i = 0; i < nb; i++) {
-            int rnd = (int) (Math.random() * 3);
+            int rnd = 1;//(int) (Math.random() * 3);
             troops.add(rnd == 0 ? new Onager() : rnd == 1 ? new Pikeman() : new Knight());
         }
         Osts.add(new Ost(troops, this, null));

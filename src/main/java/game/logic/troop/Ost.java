@@ -26,7 +26,7 @@ public class Ost {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
-        speed = troops.stream().mapToInt(t -> t.speed).min().orElse(0);
+        speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
         //isTargetAlly = origin.getOwner() == target.getOwner();
         troopIndex = 0;
         troops.sort((o1, o2) -> Integer.compare(o2.speed, o1.speed));
