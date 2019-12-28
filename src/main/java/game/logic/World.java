@@ -1,6 +1,7 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
+import game.logic.troop.Ost;
 import game.logic.troop.Troop;
 import javafx.geometry.Rectangle2D;
 
@@ -94,10 +95,12 @@ public class World {
         return instance;
     }
 
-    public void step() {
-        for (Player p : players) {
-            p.getCastles().forEach(Castle::step);
-        }
+    public void castleStep() {
+        getCastles().forEach(Castle::step);
+    }
+
+    public void ostStep() {
+        getOsts().forEach(Ost::step);
     }
 
     public List<Player> getPlayers() {
@@ -125,6 +128,12 @@ public class World {
     public List<Troop> getTroops() {
         return getCastles().stream()
                 .flatMap(castle -> castle.getOstsTroops().stream())
+                .collect(Collectors.toList());
+    }
+
+    public List<Ost> getOsts() {
+        return getCastles().stream()
+                .flatMap(c -> c.getOsts().stream())
                 .collect(Collectors.toList());
     }
 

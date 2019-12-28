@@ -82,13 +82,13 @@ public class CommandParser {
     static void step(List<String> args) {
         if (args.size() > 1) {
             try {
-                for (int i = 0; i < Integer.parseInt(args.get(1)); i++) World.getInstance().step();
+                for (int i = 0; i < Integer.parseInt(args.get(1)); i++) World.getInstance().castleStep();
             } catch (NumberFormatException e) {
                 invalidArgs(args.get(0), "First arg is not a number");
             }
             return;
         }
-        World.getInstance().step();
+        World.getInstance().castleStep();
     }
 
     static void help(List<String> args) {

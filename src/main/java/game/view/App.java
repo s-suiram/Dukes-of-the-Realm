@@ -111,7 +111,6 @@ public class App extends Application {
         pause.setVisible(false);
         pause.impl_processCSS(true);
         pause.setTranslateX(WINDOW_WIDTH / 2.0 - pause.prefWidth(-1) / 2.0);
-//        pause.setTranslateY(0);
 
         pause.setCenterShape(true);
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
@@ -128,7 +127,12 @@ public class App extends Application {
                 WorldView.getInstance().draw(troops);
                 handleCameraMove(s);
                 if (!paused) {
-                    World.getInstance().step();
+                    if (frames % 10 == 0)
+                        World.getInstance().castleStep();
+
+                    if (frames % 60 == 0)
+                        World.getInstance().ostStep();
+
                     pause.setVisible(false);
                 } else pause.setVisible(true);
 
