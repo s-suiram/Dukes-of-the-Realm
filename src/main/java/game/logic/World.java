@@ -2,15 +2,12 @@ package game.logic;
 
 import com.sun.javafx.geom.Point2D;
 import game.logic.troop.Ost;
-import game.logic.troop.Troop;
-import game.view.App;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class World {
 
@@ -67,7 +64,7 @@ public class World {
 
     public void step() {
         frames++;
-        if( frames %60 == 0) {
+        if (frames % 60 == 0) {
             if (frames % 10 == 0)
                 Castle.getCastles().forEach(Castle::step);
             Ost.getOsts().forEach(Ost::step);

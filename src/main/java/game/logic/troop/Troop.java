@@ -3,15 +3,13 @@ package game.logic.troop;
 import com.sun.javafx.geom.Point2D;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Troop {
 
-    protected static final Set<Troop> TROOPS = new HashSet<>();
-
     public static final int SIZE = 10;
+    protected static final Set<Troop> TROOPS = new HashSet<>();
     public final Point2D pos;
     public final int speed;
     public final int damage;
@@ -39,12 +37,12 @@ public abstract class Troop {
         return pos;
     }
 
-    public void kill(){
+    public void kill() {
         TROOPS.remove(this);
     }
 
-    public void step(){
-        if( hp == 0 ){
+    public void step() {
+        if (hp == 0) {
             kill();
         }
     }

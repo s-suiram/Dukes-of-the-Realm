@@ -52,6 +52,7 @@ public class Castle {
     public static Set<Castle> getCastles() {
         return Collections.unmodifiableSet(CASTLES);
     }
+
     public int levelUpPrice() {
         return (level + 1) * 1000;
     }

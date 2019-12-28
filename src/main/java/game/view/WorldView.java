@@ -6,10 +6,8 @@ import game.logic.Castle;
 import game.logic.World;
 import game.logic.troop.Troop;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class WorldView extends Observable {
 
@@ -36,7 +34,7 @@ public class WorldView extends Observable {
         return instance;
     }
 
-    public static void init( Group castleParent, Group troopParent) {
+    public static void init(Group castleParent, Group troopParent) {
         instance = new WorldView(castleParent, troopParent);
     }
 
@@ -115,9 +113,9 @@ public class WorldView extends Observable {
 
     public void draw() {
 
-        for( int i = 0; i < troopsViews.size(); i++){
+        for (int i = 0; i < troopsViews.size(); i++) {
             TroopView tv = troopsViews.get(i);
-            if( !Troop.isAlive(tv.getTroop())){
+            if (!Troop.isAlive(tv.getTroop())) {
                 tv.getTroop().kill();
                 tv.exitParent();
                 troopsViews.remove(i);
@@ -126,8 +124,8 @@ public class WorldView extends Observable {
         }
 
         Troop.getTroops().forEach(troop -> {
-            if( !troopsViews.contains(TroopView.getView(troop))){
-                troopsViews.add(new TroopView(troop,troopParent));
+            if (!troopsViews.contains(TroopView.getView(troop))) {
+                troopsViews.add(new TroopView(troop, troopParent));
             }
         });
 

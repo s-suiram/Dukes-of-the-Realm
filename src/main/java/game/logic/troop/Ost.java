@@ -12,7 +12,7 @@ public class Ost {
     private static final int SPACING_VALUE = Troop.SIZE * 2;
     private static final int OFFSET = (int) (Castle.WIDTH * 0.2);
     private static final int FRAME_SKIP = 20;
-
+    private final Point2D spacing;
     private List<Troop> troops;
     private int troopIndex;
     private Castle origin;
@@ -20,7 +20,6 @@ public class Ost {
     private boolean isTargetAlly;
     private Point2D startingPos;
     private int speed;
-    private final Point2D spacing;
 
     public Ost(List<Troop> troops, Castle origin, Castle target) {
         this.troops = troops;
@@ -38,6 +37,10 @@ public class Ost {
         walkThroughDoor();
     }
 
+    public static Set<Ost> getOsts() {
+        return Collections.unmodifiableSet(OSTS);
+    }
+
     public List<Troop> getTroops() {
         return troops;
     }
@@ -48,10 +51,6 @@ public class Ost {
             if (troopIndex < troops.size())
                 walkThroughDoor();
         }
-    }
-
-    public static Set<Ost> getOsts(){
-        return Collections.unmodifiableSet(OSTS);
     }
 
     private void move() {
@@ -99,7 +98,7 @@ public class Ost {
     }
 
     private void walkThroughDoor() {
-        if(troopIndex < troops.size() )
+        if (troopIndex < troops.size())
             troops.get(troopIndex++).pos.setLocation(startingPos.x - spacing.x, startingPos.y - spacing.y);
         if (troopIndex < troops.size())
             troops.get(troopIndex++).pos.setLocation(startingPos);
