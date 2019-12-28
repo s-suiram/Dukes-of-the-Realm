@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Ost {
 
+    private static final int MAX_THROUGH = 3;
+    private static final Point2D SPACING = new Point2D();
     private static final int SPACING_VALUE = Troop.SIZE * 2;
     private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
     private static final int FRAME_SKIP = 20;
