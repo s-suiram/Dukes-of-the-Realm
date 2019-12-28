@@ -14,26 +14,31 @@ import javafx.scene.layout.VBox;
 public class ContextualMenuCastle extends Group {
 
     Castle castle;
-    boolean enoughMoney;
+    boolean lvlup_enoughMoney;
     private Label money;
     private Label level;
     private Label levelUpFeedback;
     private Label levelUpPrice;
     private Label p_val;
     private Button p_add;
+    private Label p_feedback;
+    private boolean p_enoughMoney;
     private Label k_val;
     private Button k_add;
+    private Label k_feedback;
+    private boolean k_enoughMoney;
     private Label o_val;
     private Button o_add;
+    private Label o_feedback;
+    private boolean o_enoughMoney;
 
     private Label queue;
 
     public ContextualMenuCastle(Castle c) {
         super();
         this.castle = c;
-        enoughMoney = true;
+        lvlup_enoughMoney = true;
         money = new Label();
-
         level = new Label();
         Button levelup = new Button("Level Up");
         levelUpPrice = new Label();
@@ -41,22 +46,28 @@ public class ContextualMenuCastle extends Group {
         levelUpFeedback = new Label("");
         HBox levelupBox = new HBox(level, levelup, levelUpPrice, levelUpFeedback);
         levelupBox.setSpacing(50);
-        levelup.setOnAction(e -> enoughMoney = c.startLevelUp());
+        levelup.setOnAction(e -> lvlup_enoughMoney = c.startLevelUp());
 
         p_val = new Label();
         p_add = new Button("+");
+        p_feedback = new Label();
+        p_enoughMoney = true;
         k_val = new Label();
         k_add = new Button("+");
+        k_feedback = new Label();
+        k_enoughMoney = true;
         o_val = new Label();
         o_add = new Button("+");
+        o_feedback = new Label();
+        o_enoughMoney = true;
 
-        p_add.setOnAction(e -> castle.produce(TroopType.PIKE_MAN));
-        k_add.setOnAction(e -> castle.produce(TroopType.KNIGHT));
-        o_add.setOnAction(e -> castle.produce(TroopType.ONAGER));
+        p_add.setOnAction(e -> p_enoughMoney = castle.produce(TroopType.PIKE_MAN));
+        k_add.setOnAction(e -> k_enoughMoney = castle.produce(TroopType.KNIGHT));
+        o_add.setOnAction(e -> o_enoughMoney = castle.produce(TroopType.ONAGER));
 
-        HBox pikeman = new HBox(new Label("Pikeman: "), p_val, p_add);
-        HBox knight = new HBox(new Label("Knight: "), k_val, k_add);
-        HBox onager = new HBox(new Label("Onager: "), o_val, o_add);
+        HBox pikeman = new HBox(new Label("Pikeman: "), p_val, p_add, p_feedback);
+        HBox knight = new HBox(new Label("Knight: "), k_val, k_add, k_feedback);
+        HBox onager = new HBox(new Label("Onager: "), o_val, o_add, o_feedback);
 
         p_add.setFocusTraversable(false);
         k_add.setFocusTraversable(false);
@@ -67,8 +78,13 @@ public class ContextualMenuCastle extends Group {
         onager.setSpacing(50);
 
         queue = new Label();
+        Button cancelLast = new Button("Delete first of queue");
+        HBox queueBox = new HBox(cancelLast, queue);
 
-        VBox menu = new VBox(money, levelupBox, pikeman, knight, onager, queue);
+        cancelLast.setFocusTraversable(false);
+        cancelLast.setOnAction(e -> c.getProducer().cancel());
+
+        VBox menu = new VBox(money, levelupBox, pikeman, knight, onager, queueBox);
         getChildren().addAll(menu);
         menu.setSpacing(20);
         menu.setStyle("-fx-background-color: rgba(200, 200, 200, 0.8)");
@@ -82,7 +98,7 @@ public class ContextualMenuCastle extends Group {
         p_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Pikeman).count()));
         k_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Knight).count()));
         o_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Onager).count()));
-        if (!enoughMoney) {
+        if (!lvlup_enoughMoney) {
             levelUpFeedback.setText("Not enough money");
         } else {
             if (castle.getTimeToLevelUp() == -1)
@@ -98,7 +114,10 @@ public class ContextualMenuCastle extends Group {
                         .append(t.getT())
                         .append("(")
                         .append(t.getRemainingTime())
-                        .append(") < "));
+                        .append(" left) < "));
         queue.setText("Queue: " + (queueBuilder.toString().isEmpty() ? "empty" : queueBuilder.toString().substring(0, queueBuilder.lastIndexOf("<"))));
+        p_feedback.setText(p_enoughMoney ? "" : "Not enough money");
+        k_feedback.setText(k_enoughMoney ? "" : "Not enough money");
+        o_feedback.setText(o_enoughMoney ? "" : "Not enough money");
     }
 }

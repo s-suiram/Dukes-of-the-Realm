@@ -64,9 +64,10 @@ public class World {
 
     public void step() {
         frames++;
-        if (frames % 60 == 0) {
-            if (frames % 10 == 0)
-                Castle.getCastles().forEach(Castle::step);
+        if (frames % 10 == 0) {
+            Castle.getCastles().forEach(Castle::step);
+        }
+        if (frames % 20 == 0) {
             Ost.getOsts().forEach(Ost::step);
         }
         if (frames == 60) frames = 1;

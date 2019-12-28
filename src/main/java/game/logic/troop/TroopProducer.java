@@ -50,6 +50,10 @@ public class TroopProducer {
         return s.toString();
     }
 
+    public void cancel() {
+        queue.remove();
+    }
+
     public static class TroopRemainingTime {
         TroopType t;
 
