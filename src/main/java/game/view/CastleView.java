@@ -31,7 +31,7 @@ public class CastleView {
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         final int thiccness = 5;
-        rectangle.setStrokeWidth(thiccness*2);
+        rectangle.setStrokeWidth(thiccness * 2);
         rectangle.setFill(Color.TRANSPARENT);
 
         switch (c.getDoor()) {

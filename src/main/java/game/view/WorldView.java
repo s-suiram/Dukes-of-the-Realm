@@ -1,7 +1,6 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import game.logic.Cardinal;
 import game.logic.World;
 import game.logic.troop.Onager;
@@ -23,14 +22,14 @@ public class WorldView extends Observable {
     private Scene s;
 
     private WorldView(Scene s) {
-        this.s =s;
+        this.s = s;
         castles = new ArrayList<>();
         World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c, s)));
         cameraPos = new Point2D(0, 0);
         troops = new ArrayList<>();
         Troop test = new Onager();
-        test.pos.setLocation(100,100);
-        troops.add( new TroopView(test));
+        test.pos.setLocation(100, 100);
+        troops.add(new TroopView(test));
     }
 
     public static WorldView getInstance() {
@@ -116,7 +115,7 @@ public class WorldView extends Observable {
     }
 
     public void draw(Group troopsGroup) {
-        getCastles().forEach(c -> c.draw(cameraPos));
+
         troopsGroup.getChildren().removeAll(troops);
         troops.clear();
         troops.addAll(World.getInstance()
@@ -127,8 +126,9 @@ public class WorldView extends Observable {
         );
         troopsGroup.getChildren().addAll(troops);
 
-
         troops.forEach(c -> c.draw(cameraPos));
+        getCastles().forEach(c -> c.draw(cameraPos));
+
     }
 
     public void clearAllContextualMenu() {

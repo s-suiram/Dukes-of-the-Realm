@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 public class ContextualMenuCastle extends Group {
 
     Castle castle;
-    boolean notEnoughMoney;
+    boolean enoughMoney;
     private Label money;
     private Label level;
     private Label levelUpFeedback;
@@ -24,15 +24,16 @@ public class ContextualMenuCastle extends Group {
     public ContextualMenuCastle(Castle c) {
         super();
         this.castle = c;
-        notEnoughMoney = false;
+        enoughMoney = true;
         money = new Label();
 
         level = new Label();
         Button levelup = new Button("Level Up");
-        levelUpFeedback = new Label("      ");
+        levelup.setFocusTraversable(false);
+        levelUpFeedback = new Label("");
         HBox levelupBox = new HBox(level, levelup, levelUpFeedback);
 
-        levelup.setOnAction(e -> notEnoughMoney = !c.startLevelUp());
+        levelup.setOnAction(e -> enoughMoney = c.startLevelUp());
 
         p_val = new Label();
         k_val = new Label();
@@ -57,7 +58,7 @@ public class ContextualMenuCastle extends Group {
         p_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Pikeman).count()));
         k_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Knight).count()));
         o_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Onager).count()));
-        if (notEnoughMoney) {
+        if (!enoughMoney) {
             levelUpFeedback.setText("Not enough money");
         } else {
             if (castle.getTimeToLevelUp() == -1)

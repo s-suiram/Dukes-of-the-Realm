@@ -95,16 +95,16 @@ public class Castle {
         return level;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public List<Ost> getOsts() {
         return Osts;
     }
 
     public List<Troop> getOstsTroops() {
         return Osts.stream().flatMap(o -> o.getTroops().stream()).collect(Collectors.toList());
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 
     public int getTimeToLevelUp() {
