@@ -5,8 +5,6 @@ import game.logic.Castle;
 import game.logic.NeutralDukes;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.effect.Light;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -30,7 +28,9 @@ public class CastleView extends HitboxedGroup {
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
+        rectangle.setFill(Color.TRANSPARENT);
         final int thickness = 5;
+        rectangle.setStrokeWidth(thickness * 2);
 
         switch (c.getDoor()) {
             case NORTH:
@@ -70,14 +70,14 @@ public class CastleView extends HitboxedGroup {
         contextualMenu.setTranslateX(rectangle.getX());
         contextualMenu.setTranslateY(rectangle.getY());
 
-        this.addAllNodes(rectangle, door, contextualMenu);
+        addAllNodes(rectangle, door, contextualMenu);
 
-        this.setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
+        setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
 
-        this.setOnMouseClicked(event -> {
-            WorldView.getInstance().clearAllContextualMenu();
-            this.toFront();
-            setVisibleContextual(true);
+        setOnMouseClicked(event -> {
+                    WorldView.getInstance().clearAllContextualMenu();
+                    this.toFront();
+                    setVisibleContextual(true);
                 }
         );
 

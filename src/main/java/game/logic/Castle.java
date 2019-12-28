@@ -79,6 +79,7 @@ public class Castle {
     public boolean produce(TroopType t) {
         if (money >= t.getCost()) {
             producer.addTroop(t);
+            money -= t.getCost();
             return true;
         }
         return false;

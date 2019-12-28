@@ -75,7 +75,7 @@ public class App extends Application {
         Group troops = new Group();
         World.getInstance();
 
-        WorldView.init(castles,troops);
+        WorldView.init(castles, troops);
 
         VBox HUD = new VBox();
 
@@ -112,7 +112,6 @@ public class App extends Application {
         System.out.println(castles.getChildren().size());
         //Make main game class
         new AnimationTimer() {
-
             @Override
             public void handle(long now) {
 
