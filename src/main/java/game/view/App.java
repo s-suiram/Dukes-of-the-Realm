@@ -126,7 +126,7 @@ public class App extends Application {
                 WorldView.getInstance().draw(troops);
                 handleCameraMove(s);
                 if (!paused) {
-                    World.getInstance().step(frames);
+                    World.getInstance().step();
                     pause.setVisible(false);
                 } else pause.setVisible(true);
 

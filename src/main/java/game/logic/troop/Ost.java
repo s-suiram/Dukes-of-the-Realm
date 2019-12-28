@@ -7,8 +7,6 @@ import java.util.List;
 
 public class Ost {
 
-    private static final int MAX_THROUGH = 3;
-    private static final Point2D SPACING = new Point2D();
     private static final int SPACING_VALUE = Troop.SIZE * 2;
     private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
     private static final int FRAME_SKIP = 20;
@@ -21,12 +19,14 @@ public class Ost {
     private Point2D startingPos;
     private int speed;
     private int frameCount;
+    private final Point2D spacing;
 
     public Ost(List<Troop> troops, Castle origin, Castle target) {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
-        speed = troops.stream().mapToInt(t -> t.speed).min().orElse(0);
+        this.spacing = new Point2D();
+        speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
         //isTargetAlly = origin.getOwner() == target.getOwner();
         troopIndex = 0;
         troops.sort((o1, o2) -> Integer.compare(o2.speed, o1.speed));
@@ -40,7 +40,7 @@ public class Ost {
         return troops;
     }
 
-    public void step(int frame) {
+    public void step() {
         move();
         if (++frameCount == FRAME_SKIP) {
             frameCount = 0;
@@ -75,32 +75,32 @@ public class Ost {
         switch (origin.getDoor()) {
             case NORTH:
                 startingPos.setLocation(center.x, center.y - OFFSET);
-                SPACING.setLocation(SPACING_VALUE, 0);
+                spacing.setLocation(SPACING_VALUE, 0);
                 break;
             case SOUTH:
                 startingPos.setLocation(center.x, center.y + OFFSET);
-                SPACING.setLocation(SPACING_VALUE, 0);
+                spacing.setLocation(SPACING_VALUE, 0);
                 break;
             case EAST:
                 startingPos.setLocation(center.x + OFFSET, center.y);
-                SPACING.setLocation(0, SPACING_VALUE);
+                spacing.setLocation(0, SPACING_VALUE);
                 break;
             case WEST:
                 startingPos.setLocation(center.x - OFFSET, center.y);
-                SPACING.setLocation(0, SPACING_VALUE);
+                spacing.setLocation(0, SPACING_VALUE);
                 break;
         }
         origin.getTroops().removeAll(troops);
     }
 
     private void walkThroughDoor() {
-        troops.get(troopIndex++).pos.setLocation(startingPos.x - SPACING.x, startingPos.y - SPACING.y);
-        if (troopIndex < troops.size()) {
+        if(troopIndex < troops.size() )
+            troops.get(troopIndex++).pos.setLocation(startingPos.x - spacing.x, startingPos.y - spacing.y);
+        if (troopIndex < troops.size())
             troops.get(troopIndex++).pos.setLocation(startingPos);
-        }
-        if (troopIndex < troops.size()) {
-            troops.get(troopIndex++).pos.setLocation(startingPos.x + SPACING.x, startingPos.y + SPACING.y);
-        }
+        if (troopIndex < troops.size())
+            troops.get(troopIndex++).pos.setLocation(startingPos.x + spacing.x, startingPos.y + spacing.y);
+
     }
 
 }

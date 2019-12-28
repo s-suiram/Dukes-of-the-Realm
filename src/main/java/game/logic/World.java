@@ -24,40 +24,6 @@ public class World {
         players = new ArrayList<>();
     }
 
-    private static void initSomeThings() {
-        instance.addFightingDukes("Fighting1");
-        instance.addFightingDukes("Fighting2");
-        instance.addFightingDukes("Fighting3");
-
-        instance.getPlayer("Fighting1").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(100, 100)));
-        instance.getPlayer("Fighting1").ifPresent(it -> it.addCastle(Cardinal.EAST, new Point2D(300, 100)));
-        instance.getPlayer("Fighting1").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(600, 300)));
-
-        instance.getPlayer("Fighting2").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(1200, 1100)));
-        instance.getPlayer("Fighting2").ifPresent(it -> it.addCastle(Cardinal.EAST, new Point2D(300, 1300)));
-        instance.getPlayer("Fighting2").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(1600, 600)));
-
-        instance.getPlayer("Fighting3").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(100, 1800)));
-        instance.getPlayer("Fighting3").ifPresent(it -> it.addCastle(Cardinal.EAST, new Point2D(1300, 1300)));
-        instance.getPlayer("Fighting3").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(1500, 1400)));
-
-        instance.addNeutralDukes("Neutral1");
-        instance.addNeutralDukes("Neutral2");
-        instance.addNeutralDukes("Neutral3");
-
-        instance.getPlayer("Neutral1").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(1800, 900)));
-        instance.getPlayer("Neutral1").ifPresent(it -> it.addCastle(Cardinal.EAST, new Point2D(500, 1300)));
-        instance.getPlayer("Neutral1").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(300, 300)));
-
-        instance.getPlayer("Neutral2").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(1500, 1800)));
-        instance.getPlayer("Neutral2").ifPresent(it -> it.addCastle(Cardinal.WEST, new Point2D(300, 1300)));
-        instance.getPlayer("Neutral2").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(1600, 600)));
-
-        instance.getPlayer("Neutral3").ifPresent(it -> it.addCastle(Cardinal.NORTH, new Point2D(400, 1300)));
-        instance.getPlayer("Neutral3").ifPresent(it -> it.addCastle(Cardinal.EAST, new Point2D(800, 300)));
-        instance.getPlayer("Neutral3").ifPresent(it -> it.addCastle(Cardinal.SOUTH, new Point2D(600, 200)));
-    }
-
     private static void randomGen() {
         instance.addFightingDukes("Fighting1");
         instance.addFightingDukes("Fighting2");
@@ -98,17 +64,9 @@ public class World {
         return instance;
     }
 
-    public void castleStep() {
+    public void step() {
         getCastles().forEach(Castle::step);
-    }
-
-    public void ostStep() {
-
-    }
-
-    public void step(int frame) {
-        getCastles().forEach(Castle::step);
-        getOsts().forEach(o -> o.step(frame));
+        getOsts().forEach(Ost::step);
     }
 
     public List<Player> getPlayers() {
