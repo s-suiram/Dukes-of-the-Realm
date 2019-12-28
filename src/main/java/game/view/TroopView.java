@@ -22,15 +22,14 @@ public class TroopView extends HitboxedGroup {
         super(parentRef);
         this.t = t;
         Circle background = new Circle(0, 0, Troop.SIZE / 2.0);
-        Text name = new Text(t instanceof Pikeman ? "P" : t instanceof Onager ? "O" : "K");
+        Text name = new Text(t instanceof Pikeman ? "P": t instanceof Onager ? "O" : "K");
         name.setStroke(Color.BLACK);
-        //name.setTranslateY(Troop.SIZE-1);
-        //name.setTranslateX(2);
-        name.setTextAlignment(TextAlignment.CENTER);
+
+        //name.setTextAlignment(TextAlignment.CENTER);
         background.setFill(t instanceof Pikeman ? Color.RED : t instanceof Onager ? Color.BLUE : Color.WHITE);
         this.getChildren().addAll(background, name);
-        //this.setAlignment(Pos.CENTER);
         troopToView.put(t, this);
+        defineHitbox();
     }
 
     public static TroopView getView(Troop t) {
@@ -43,8 +42,8 @@ public class TroopView extends HitboxedGroup {
 
     @Override
     protected void drawImpl(Point2D cam) {
-        this.setTranslateX(t.getPos().x - Troop.SIZE / 2.0 - cam.x);
-        this.setTranslateY(t.getPos().y - Troop.SIZE - cam.y);
+        this.setTranslateX(t.getPos().x - Troop.SIZE/2 - cam.x);
+        this.setTranslateY(t.getPos().y - Troop.SIZE/2 - cam.y);
     }
 
 
