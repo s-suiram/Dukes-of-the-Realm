@@ -3,6 +3,7 @@ package game.logic;
 import com.sun.javafx.geom.Point2D;
 import game.logic.troop.Ost;
 import game.logic.troop.Troop;
+import game.view.App;
 import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
@@ -65,7 +66,8 @@ public class World {
     }
 
     public void step() {
-        getCastles().forEach(Castle::step);
+        if (App.frames % 10 == 0)
+            getCastles().forEach(Castle::step);
         getOsts().forEach(Ost::step);
     }
 

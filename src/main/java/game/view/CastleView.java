@@ -30,15 +30,15 @@ public class CastleView {
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
-        final int thiccness = 5;
-        rectangle.setStrokeWidth(thiccness * 2);
+        final int thickness = 5;
+        rectangle.setStrokeWidth(thickness * 2);
         rectangle.setFill(Color.TRANSPARENT);
 
         switch (c.getDoor()) {
             case NORTH:
                 door = new Rectangle(
                         doorOffset + rectangle.getX(),
-                        rectangle.getY() - thiccness,
+                        rectangle.getY() - thickness,
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
@@ -46,14 +46,14 @@ public class CastleView {
             case SOUTH:
                 door = new Rectangle(
                         doorOffset + rectangle.getX(),
-                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT + thiccness,
+                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT + thickness,
                         DOOR_WIDTH,
                         DOOR_HEIGHT
                 );
                 break;
             case EAST:
                 door = new Rectangle(
-                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT + thiccness,
+                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT + thickness,
                         rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH
@@ -61,7 +61,7 @@ public class CastleView {
                 break;
             case WEST:
                 door = new Rectangle(
-                        rectangle.getX() - thiccness,
+                        rectangle.getX() - thickness,
                         rectangle.getY() + doorOffset,
                         DOOR_HEIGHT,
                         DOOR_WIDTH
@@ -77,8 +77,9 @@ public class CastleView {
         group.setOnMouseEntered(e -> s.setCursor(Cursor.HAND));
 
         group.setOnMouseClicked(event -> {
-                    WorldView.getInstance().clearAllContextualMenu();
-                    setVisibleContextual(true);
+            WorldView.getInstance().clearAllContextualMenu();
+            getGroup().toFront();
+            setVisibleContextual(true);
                 }
         );
     }

@@ -28,6 +28,7 @@ public class App extends Application {
     public static int WINDOW_WIDTH = DEFAULT_WINDOWED_X;
     public static int WINDOW_HEIGHT = DEFAULT_WINDOWED_Y;
     public static boolean paused;
+    public static int frames;
     private static Stage stage;
 
     public static void main(String[] args) {
@@ -118,10 +119,10 @@ public class App extends Application {
 
         //Make main game class
         new AnimationTimer() {
-            int frames = 0;
 
             @Override
             public void handle(long now) {
+                frames++;
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw(troops);
                 handleCameraMove(s);
@@ -130,7 +131,7 @@ public class App extends Application {
                     pause.setVisible(false);
                 } else pause.setVisible(true);
 
-                frames++;
+                if (frames == 60) frames = 1;
             }
         }.start();
 
