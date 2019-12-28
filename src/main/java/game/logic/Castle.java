@@ -13,8 +13,9 @@ public class Castle {
     public static int WIDTH = 100;
     public static int HEIGHT = 100;
     private static int tempCounter = 0;
-    private Rectangle2D boundingRect;
 
+    private Rectangle2D boundingRect;
+    private Point2D center;
     private Player owner;
     private int tempId;
     private int money;
@@ -22,9 +23,7 @@ public class Castle {
     private int timeToLevelUp;
     private List<Troop> troops;
     private List<Ost> Osts;
-
     private Cardinal door;
-
     private TroopProducer producer;
 
     public Castle(Player owner, Cardinal door) {
@@ -41,12 +40,11 @@ public class Castle {
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
         boundingRect = new Rectangle2D(position.x, position.y, WIDTH, HEIGHT);
+        center = new Point2D(
+                (float) this.getBoundingRect().getMinX() + Castle.WIDTH / 2.0f,
+                (float) this.getBoundingRect().getMinY() + Castle.WIDTH / 2.0f
+        );
         Osts = new ArrayList<>();
-        List<Troop> test = new ArrayList<>();
-        test.add(new Onager());
-        test.add(new Pikeman());
-        test.add(new Knight());
-        Osts.add(new Ost(test, this, null));
     }
 
     public boolean startLevelUp() {
@@ -56,6 +54,16 @@ public class Castle {
             return true;
         }
         return false;
+    }
+
+    public void generateOst() {
+        int nb = 6;//(int) (Math.random() * 30) + 10;
+        List<Troop> troops = new ArrayList<>();
+        for (int i = 0; i < nb; i++) {
+            int rnd = (int) (Math.random() * 3);
+            troops.add(rnd == 0 ? new Onager() : rnd == 1 ? new Pikeman() : new Knight());
+        }
+        Osts.add(new Ost(troops,this,null));
     }
 
     public void produce(TroopType t, int n) {
@@ -101,6 +109,10 @@ public class Castle {
 
     public List<Ost> getOsts() {
         return Osts;
+    }
+
+    public Point2D getCenter() {
+        return center;
     }
 
     public List<Troop> getOstsTroops() {

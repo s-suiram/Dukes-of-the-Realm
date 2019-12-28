@@ -114,12 +114,11 @@ public class App extends Application {
 
         pause.setCenterShape(true);
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
-
         WorldView.getInstance().clearAllContextualMenu();
 
         //Make main game class
         new AnimationTimer() {
-            long frames = 0;
+            int frames = 0;
 
             @Override
             public void handle(long now) {
@@ -127,12 +126,7 @@ public class App extends Application {
                 WorldView.getInstance().draw(troops);
                 handleCameraMove(s);
                 if (!paused) {
-                    if (frames % 10 == 0)
-                        World.getInstance().castleStep();
-
-                    if (frames % 60 == 0)
-                        World.getInstance().ostStep();
-
+                    World.getInstance().step(frames);
                     pause.setVisible(false);
                 } else pause.setVisible(true);
 

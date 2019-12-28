@@ -84,6 +84,9 @@ public class World {
                 p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
             }
         });
+
+        getInstance().getCastles().forEach(Castle::generateOst);
+
     }
 
     public static World getInstance() {
@@ -100,7 +103,12 @@ public class World {
     }
 
     public void ostStep() {
-        getOsts().forEach(Ost::step);
+
+    }
+
+    public void step(int frame) {
+        getCastles().forEach(Castle::step);
+        getOsts().forEach(o -> o.step(frame));
     }
 
     public List<Player> getPlayers() {

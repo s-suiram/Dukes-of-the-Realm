@@ -11,6 +11,7 @@ public class Ost {
     private static final Point2D SPACING = new Point2D();
     private static final int SPACING_VALUE = Troop.SIZE * 2;
     private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
+    private static final int FRAME_SKIP = 20;
 
     private List<Troop> troops;
     private int troopIndex;
@@ -18,32 +19,59 @@ public class Ost {
     private Castle target;
     private boolean isTargetAlly;
     private Point2D startingPos;
+    private int speed;
+    private int frameCount;
 
     public Ost(List<Troop> troops, Castle origin, Castle target) {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
+        speed = troops.stream().mapToInt(Troop::getSpeed).min().orElseGet(() -> 0);
         //isTargetAlly = origin.getOwner() == target.getOwner();
         troopIndex = 0;
         troops.sort((o1, o2) -> Integer.compare(o2.speed, o1.speed));
         startingPos = new Point2D();
         computeStartingPos();
         walkThroughDoor();
+        frameCount = 0;
     }
 
     public List<Troop> getTroops() {
         return troops;
     }
 
-    public void step() {
+    public void step(int frame) {
+        move();
+        if( ++frameCount == FRAME_SKIP) {
+            frameCount = 0;
+            if (troopIndex < troops.size())
+                walkThroughDoor();
+        }
+    }
 
+    private void move() {
+        troops.stream()
+                .limit(troopIndex)
+                .forEach(troop -> {
+                    switch (origin.getDoor()) {
+                        case NORTH:
+                            troop.pos.y -= speed;
+                            break;
+                        case SOUTH:
+                            troop.pos.y += speed;
+                            break;
+                        case EAST:
+                            troop.pos.x += speed;
+                            break;
+                        case WEST:
+                            troop.pos.x -= speed;
+                            break;
+                    }
+                });
     }
 
     private void computeStartingPos() {
-        Point2D center = new Point2D(
-                (float) origin.getBoundingRect().getMinX() + Castle.WIDTH / 2.0f,
-                (float) origin.getBoundingRect().getMinY() + Castle.WIDTH / 2.0f
-        );
+        Point2D center = origin.getCenter();
         switch (origin.getDoor()) {
             case NORTH:
                 startingPos.setLocation(center.x, center.y - OFFSET);
@@ -66,10 +94,13 @@ public class Ost {
     }
 
     private void walkThroughDoor() {
-        troops.get(troopIndex).pos.setLocation(startingPos.x - SPACING.x, startingPos.y - SPACING.y);
-        troops.get(troopIndex + 1).pos.setLocation(startingPos);
-        troops.get(troopIndex + 2).pos.setLocation(startingPos.x + SPACING.x, startingPos.y + SPACING.y);
-        troopIndex += MAX_THROUGH;
+        troops.get(troopIndex++).pos.setLocation(startingPos.x - SPACING.x, startingPos.y - SPACING.y);
+        if (troopIndex < troops.size()) {
+            troops.get(troopIndex++).pos.setLocation(startingPos);
+        }
+        if (troopIndex < troops.size()) {
+            troops.get(troopIndex++).pos.setLocation(startingPos.x + SPACING.x, startingPos.y + SPACING.y);
+        }
     }
 
 }
