@@ -2,7 +2,14 @@ package game.logic.troop;
 
 import com.sun.javafx.geom.Point2D;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class Troop {
+
+    protected static final Set<Troop> TROOPS = new HashSet<>();
 
     public static final int SIZE = 10;
     public final Point2D pos;
@@ -17,10 +24,29 @@ public abstract class Troop {
         this.hp = hp;
         this.name = name;
         pos = new Point2D();
+        TROOPS.add(this);
+    }
+
+    public static boolean isAlive(Troop t) {
+        return TROOPS.contains(t);
+    }
+
+    public static Set<Troop> getTroops() {
+        return Collections.unmodifiableSet(TROOPS);
     }
 
     public Point2D getPos() {
         return pos;
+    }
+
+    public void kill(){
+        TROOPS.remove(this);
+    }
+
+    public void step(){
+        if( hp == 0 ){
+            kill();
+        }
     }
 
     @Override
@@ -38,4 +64,5 @@ public abstract class Troop {
         }
         return false;
     }
+
 }

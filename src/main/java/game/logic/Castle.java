@@ -4,11 +4,12 @@ import com.sun.javafx.geom.Point2D;
 import game.logic.troop.*;
 import javafx.geometry.Rectangle2D;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Castle {
+
+    private static final Set<Castle> CASTLES = new HashSet<>();
 
     public static int WIDTH = 100;
     public static int HEIGHT = 100;
@@ -35,6 +36,7 @@ public class Castle {
         this.door = door;
         producer = new TroopProducer();
         tempId = tempCounter++;
+        CASTLES.add(this);
     }
 
     public Castle(Player owner, Cardinal door, Point2D position) {
@@ -47,6 +49,9 @@ public class Castle {
         Osts = new ArrayList<>();
     }
 
+    public static Set<Castle> getCastles() {
+        return Collections.unmodifiableSet(CASTLES);
+    }
     public int levelUpPrice() {
         return (level + 1) * 1000;
     }
@@ -61,7 +66,7 @@ public class Castle {
     }
 
     public void generateOst() {
-        int nb = 12;//(int) (Math.random() * 30) + 10;
+        int nb = 3;//(int) (Math.random() * 30) + 10;
         List<Troop> troops = new ArrayList<>();
         for (int i = 0; i < nb; i++) {
             int rnd = (int) (Math.random() * 3);

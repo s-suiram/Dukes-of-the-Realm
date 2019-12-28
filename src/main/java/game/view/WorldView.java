@@ -2,8 +2,8 @@ package game.view;
 
 import com.sun.javafx.geom.Point2D;
 import game.logic.Cardinal;
+import game.logic.Castle;
 import game.logic.World;
-import game.logic.troop.Onager;
 import game.logic.troop.Troop;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -16,20 +16,19 @@ public class WorldView extends Observable {
     private static WorldView instance = null;
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
-    private List<CastleView> castles;
-    private List<TroopView> troops;
+    private List<CastleView> castleViews;
+    private List<TroopView> troopsViews;
     private boolean cameraMoved = false;
-    private Scene s;
+    private Group castleParent;
+    private Group troopParent;
 
-    private WorldView(Scene s) {
-        this.s = s;
-        castles = new ArrayList<>();
-        World.getInstance().getCastles().forEach(c -> castles.add(new CastleView(c, s)));
+    private WorldView(Group castleParent, Group troopParent) {
+        this.castleParent = castleParent;
+        this.troopParent = troopParent;
+        castleViews = new ArrayList<>();
+        Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
         cameraPos = new Point2D(0, 0);
-        troops = new ArrayList<>();
-        Troop test = new Onager();
-        test.pos.setLocation(100, 100);
-        troops.add(new TroopView(test));
+        troopsViews = new ArrayList<>();
     }
 
     public static WorldView getInstance() {
@@ -37,8 +36,8 @@ public class WorldView extends Observable {
         return instance;
     }
 
-    public static void init(Scene s) {
-        instance = new WorldView(s);
+    public static void init( Group castleParent, Group troopParent) {
+        instance = new WorldView(castleParent, troopParent);
     }
 
     public void addObservers(Observer... observers) {
@@ -67,8 +66,8 @@ public class WorldView extends Observable {
         setCameraSpeed(10);
     }
 
-    public List<CastleView> getCastles() {
-        return castles;
+    public List<CastleView> getCastleViews() {
+        return castleViews;
     }
 
     public boolean checkAndRestoreCameraMoved() {
@@ -114,25 +113,30 @@ public class WorldView extends Observable {
         setChanged();
     }
 
-    public void draw(Group troopsGroup) {
+    public void draw() {
 
-        troopsGroup.getChildren().removeAll(troops);
-        troops.clear();
-        troops.addAll(World.getInstance()
-                .getTroops()
-                .stream()
-                .map(t -> TroopView.troopToView.getOrDefault(t, new TroopView(t)))
-                .collect(Collectors.toList())
-        );
-        troopsGroup.getChildren().addAll(troops);
+        for( int i = 0; i < troopsViews.size(); i++){
+            TroopView tv = troopsViews.get(i);
+            if( !Troop.isAlive(tv.getTroop())){
+                tv.getTroop().kill();
+                tv.exitParent();
+                troopsViews.remove(i);
+                i--;
+            }
+        }
 
-        troops.forEach(c -> c.draw(cameraPos));
-        getCastles().forEach(c -> c.draw(cameraPos));
+        Troop.getTroops().forEach(troop -> {
+            if( !troopsViews.contains(TroopView.getView(troop))){
+                troopsViews.add(new TroopView(troop,troopParent));
+            }
+        });
 
+        troopsViews.forEach(c -> c.draw(cameraPos));
+        castleViews.forEach(c -> c.draw(cameraPos));
     }
 
     public void clearAllContextualMenu() {
-        getCastles().forEach(c -> c.setVisibleContextual(false));
+        getCastleViews().forEach(c -> c.setVisibleContextual(false));
     }
 
 }

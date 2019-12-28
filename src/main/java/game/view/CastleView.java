@@ -6,22 +6,22 @@ import game.logic.NeutralDukes;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.effect.Light;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class CastleView {
+public class CastleView extends HitboxedGroup {
 
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
     private Color col;
     private Castle model;
     private Rectangle door;
-    private Group group;
     private ContextualMenuCastle contextualMenu;
 
-    public CastleView(Castle c, Scene s) {
+    public CastleView(Castle c, Group parentRef) {
+        super(parentRef);
         this.model = c;
-        this.group = new Group();
         contextualMenu = new ContextualMenuCastle(getModel());
         Rectangle rectangle = new Rectangle(c.getBoundingRect().getMinX(),
                 c.getBoundingRect().getMinY(),
@@ -31,8 +31,6 @@ public class CastleView {
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         final int thickness = 5;
-        rectangle.setStrokeWidth(thickness * 2);
-        rectangle.setFill(Color.TRANSPARENT);
 
         switch (c.getDoor()) {
             case NORTH:
@@ -72,26 +70,25 @@ public class CastleView {
         contextualMenu.setTranslateX(rectangle.getX());
         contextualMenu.setTranslateY(rectangle.getY());
 
-        group.getChildren().addAll(rectangle, door, contextualMenu);
+        this.addAllNodes(rectangle, door, contextualMenu);
 
-        group.setOnMouseEntered(e -> s.setCursor(Cursor.HAND));
+        this.setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
 
-        group.setOnMouseClicked(event -> {
+        this.setOnMouseClicked(event -> {
             WorldView.getInstance().clearAllContextualMenu();
-            getGroup().toFront();
+            this.toFront();
             setVisibleContextual(true);
                 }
         );
+
+
     }
 
-    public void draw(Point2D cam) {
-        group.setTranslateX(-cam.x);
-        group.setTranslateY(-cam.y);
+    @Override
+    protected void drawImpl(Point2D cam) {
+        this.setTranslateX(-cam.x);
+        this.setTranslateY(-cam.y);
         contextualMenu.draw();
-    }
-
-    public Group getGroup() {
-        return group;
     }
 
     public Castle getModel() {
@@ -105,4 +102,5 @@ public class CastleView {
     public void setVisibleContextual(boolean b) {
         contextualMenu.setVisible(b);
     }
+
 }

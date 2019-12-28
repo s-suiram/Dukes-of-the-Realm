@@ -17,8 +17,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.util.stream.Collectors;
-
 
 public class App extends Application {
 
@@ -28,7 +26,6 @@ public class App extends Application {
     public static int WINDOW_WIDTH = DEFAULT_WINDOWED_X;
     public static int WINDOW_HEIGHT = DEFAULT_WINDOWED_Y;
     public static boolean paused;
-    public static int frames;
     private static Stage stage;
 
     public static void main(String[] args) {
@@ -74,18 +71,13 @@ public class App extends Application {
 
         KeyboardEventHandler.init(s);
         MouseEventHandler.init(s);
-        WorldView.init(s);
+        Group castles = new Group();
+        Group troops = new Group();
+        World.getInstance();
+
+        WorldView.init(castles,troops);
 
         VBox HUD = new VBox();
-        Group castles = new Group(
-                WorldView.getInstance()
-                        .getCastles()
-                        .stream()
-                        .map(CastleView::getGroup)
-                        .collect(Collectors.toList())
-        );
-
-        Group troops = new Group();
 
         Rectangle greenBackground = new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         greenBackground.setFill(Color.web("668054"));
@@ -117,21 +109,20 @@ public class App extends Application {
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
         WorldView.getInstance().clearAllContextualMenu();
 
+        System.out.println(castles.getChildren().size());
         //Make main game class
         new AnimationTimer() {
 
             @Override
             public void handle(long now) {
-                frames++;
+
                 KeyboardEventHandler.getInstance().handle();
-                WorldView.getInstance().draw(troops);
+                WorldView.getInstance().draw();
                 handleCameraMove(s);
                 if (!paused) {
                     World.getInstance().step();
                     pause.setVisible(false);
                 } else pause.setVisible(true);
-
-                if (frames == 60) frames = 1;
             }
         }.start();
 

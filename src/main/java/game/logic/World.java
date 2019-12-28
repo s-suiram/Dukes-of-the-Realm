@@ -16,6 +16,8 @@ public class World {
 
     public static int FIELD_WIDTH = 4000;
     public static int FIELD_HEIGHT = 4000;
+    public static int frames;
+
 
     private static World instance;
 
@@ -42,8 +44,7 @@ public class World {
                 do {
                     randPoint.x = r.nextInt(FIELD_WIDTH - Castle.WIDTH);
                     randPoint.y = r.nextInt(FIELD_HEIGHT - Castle.HEIGHT);
-                } while (getInstance()
-                        .getCastles()
+                } while (Castle.getCastles()
                         .stream()
                         .anyMatch(castle -> new Rectangle2D((int) randPoint.x - minSpace, (int) randPoint.y - minSpace, Castle.WIDTH + 2 * minSpace, Castle.HEIGHT + 2 * minSpace)
                                 .intersects(castle.getBoundingRect())));
@@ -52,8 +53,7 @@ public class World {
             }
         });
 
-        getInstance().getCastles().forEach(Castle::generateOst);
-
+        Castle.getCastles().forEach(Castle::generateOst);
     }
 
     public static World getInstance() {
@@ -66,9 +66,13 @@ public class World {
     }
 
     public void step() {
-        if (App.frames % 10 == 0)
-            getCastles().forEach(Castle::step);
-        getOsts().forEach(Ost::step);
+        frames++;
+        if( frames %60 == 0) {
+            if (frames % 10 == 0)
+                Castle.getCastles().forEach(Castle::step);
+            Ost.getOsts().forEach(Ost::step);
+        }
+        if (frames == 60) frames = 1;
     }
 
     public List<Player> getPlayers() {
@@ -87,24 +91,6 @@ public class World {
         players.add(new NeutralDukes(name));
     }
 
-    public List<Castle> getCastles() {
-        return players.stream()
-                .flatMap(player -> player.getCastles().stream())
-                .collect(Collectors.toList());
-    }
-
-    public List<Troop> getTroops() {
-        return getCastles().stream()
-                .flatMap(castle -> castle.getOstsTroops().stream())
-                .collect(Collectors.toList());
-    }
-
-    public List<Ost> getOsts() {
-        return getCastles().stream()
-                .flatMap(c -> c.getOsts().stream())
-                .collect(Collectors.toList());
-    }
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -113,10 +99,10 @@ public class World {
     }
 
     public Optional<Castle> castleById(int id) {
-        return getCastles().stream().filter(c -> c.hashCode() == id).findFirst();
+        return Castle.getCastles().stream().filter(c -> c.hashCode() == id).findFirst();
     }
 
     public boolean castleHere(Point2D here) {
-        return getCastles().stream().map(Castle::getBoundingRect).anyMatch(rect -> rect.contains(here.x, here.y));
+        return Castle.getCastles().stream().map(Castle::getBoundingRect).anyMatch(rect -> rect.contains(here.x, here.y));
     }
 }

@@ -2,15 +2,15 @@ package game.logic.troop;
 
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
+import game.logic.World;
 
-import java.util.List;
+import java.util.*;
 
 public class Ost {
 
-    private static final int MAX_THROUGH = 3;
-    private static final Point2D SPACING = new Point2D();
+    protected static final Set<Ost> OSTS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.SIZE * 2;
-    private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
+    private static final int OFFSET = (int) (Castle.WIDTH * 0.2);
     private static final int FRAME_SKIP = 20;
 
     private List<Troop> troops;
@@ -20,7 +20,6 @@ public class Ost {
     private boolean isTargetAlly;
     private Point2D startingPos;
     private int speed;
-    private int frameCount;
     private final Point2D spacing;
 
     public Ost(List<Troop> troops, Castle origin, Castle target) {
@@ -28,14 +27,15 @@ public class Ost {
         this.origin = origin;
         this.target = target;
         this.spacing = new Point2D();
+        troopIndex = 0;
         speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
         //isTargetAlly = origin.getOwner() == target.getOwner();
-        troopIndex = 0;
-        troops.sort((o1, o2) -> Integer.compare(o2.speed, o1.speed));
+        troops.sort(Comparator.comparingInt(o -> o.speed));
         startingPos = new Point2D();
+        OSTS.add(this);
+
         computeStartingPos();
         walkThroughDoor();
-        frameCount = 0;
     }
 
     public List<Troop> getTroops() {
@@ -44,11 +44,14 @@ public class Ost {
 
     public void step() {
         move();
-        if (++frameCount == FRAME_SKIP) {
-            frameCount = 0;
+        if (World.frames % FRAME_SKIP == 0) {
             if (troopIndex < troops.size())
                 walkThroughDoor();
         }
+    }
+
+    public static Set<Ost> getOsts(){
+        return Collections.unmodifiableSet(OSTS);
     }
 
     private void move() {
