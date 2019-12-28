@@ -10,8 +10,8 @@ import javafx.scene.shape.Rectangle;
 
 public abstract class HitboxedGroup extends Group {
 
-    private final Rectangle hitbox;
-    private final Rectangle centerPoint;
+    protected final Rectangle hitbox;
+    protected final Rectangle centerPoint;
     private final Group parentRef;
     private boolean hbhidden = false;
 
@@ -22,8 +22,31 @@ public abstract class HitboxedGroup extends Group {
         centerPoint.setFill(Color.BLACK);
         hitbox.setFill(Color.TRANSPARENT);
         hitbox.setStroke(Color.BLACK);
-        this.getChildren().addAll(hitbox, centerPoint);
+        addAllNodes(hitbox,centerPoint);
         parentRef.getChildren().add(this);
+    }
+
+    protected void defineHitbox(){
+        hitbox.setX(getLayoutBounds().getMinX());
+        hitbox.setY(getLayoutBounds().getMinY());
+        hitbox.setWidth(getLayoutBounds().getWidth());
+        hitbox.setHeight(getLayoutBounds().getHeight());
+    }
+
+    public double getWidth(){
+        return getLayoutBounds().getWidth();
+    }
+
+    public  double getHeight(){
+        return getLayoutBounds().getHeight();
+    }
+
+    public double getX() {
+        return getLayoutBounds().getMinX();
+    }
+
+    public double getY() {
+        return getLayoutBounds().getMinY();
     }
 
     public void showHitBox() {
@@ -60,14 +83,6 @@ public abstract class HitboxedGroup extends Group {
 
     public final void draw(Point2D cam) {
         drawImpl(cam);
-    }
-
-    private void updateVisibility() {
-        if (hbhidden) {
-            hideHitBox();
-        } else {
-            showHitBox();
-        }
     }
 
     public void exitParent() {

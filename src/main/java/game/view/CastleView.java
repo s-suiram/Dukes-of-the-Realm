@@ -3,6 +3,7 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -21,10 +22,7 @@ public class CastleView extends HitboxedGroup {
         super(parentRef);
         this.model = c;
         contextualMenu = new ContextualMenuCastle(getModel());
-        Rectangle rectangle = new Rectangle(c.getBoundingRect().getMinX(),
-                c.getBoundingRect().getMinY(),
-                c.getBoundingRect().getWidth(),
-                c.getBoundingRect().getHeight());
+        Rectangle rectangle = new Rectangle(0,0, Castle.WIDTH, Castle.HEIGHT);
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
@@ -80,14 +78,27 @@ public class CastleView extends HitboxedGroup {
                     setVisibleContextual(true);
                 }
         );
-
+        defineHitbox();
 
     }
 
     @Override
+    protected void defineHitbox() {
+        hitbox.setX(0);
+        hitbox.setY(0);
+        hitbox.setHeight(Castle.WIDTH);
+        hitbox.setWidth(Castle.WIDTH);
+        centerPoint.setX(model.getCenter().x);
+        centerPoint.setX(model.getCenter().y);
+        centerPoint.setWidth(1);
+        centerPoint.setHeight(1);
+        hitbox.toFront();
+    }
+
+    @Override
     protected void drawImpl(Point2D cam) {
-        this.setTranslateX(-cam.x);
-        this.setTranslateY(-cam.y);
+        this.setTranslateX(model.getBoundingRect().getMinX() -cam.x);
+        this.setTranslateY(model.getBoundingRect().getMinY() -cam.y);
         contextualMenu.draw();
     }
 

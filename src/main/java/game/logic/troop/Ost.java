@@ -10,7 +10,7 @@ public class Ost {
 
     protected static final Set<Ost> OSTS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.SIZE * 2;
-    private static final int OFFSET = (int) (Castle.WIDTH * 0.2);
+    private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
     private static final int FRAME_SKIP = 20;
     private final Point2D spacing;
     private List<Troop> troops;
