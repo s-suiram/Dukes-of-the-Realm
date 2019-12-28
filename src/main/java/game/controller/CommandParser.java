@@ -53,7 +53,7 @@ public class CommandParser {
     // troopform castleid troopname nbtroop
     private static void formTroop(List<String> args) {
         try {
-            World.getInstance().castleById(Integer.parseInt(args.get(1))).get().produce(TroopType.fromString(args.get(2)), Integer.parseInt(args.get(3)));
+            World.getInstance().castleById(Integer.parseInt(args.get(1))).get().produce(TroopType.fromString(args.get(2)));
         } catch (IndexOutOfBoundsException e) {
             invalidArgs(args.get(0));
         } catch (NumberFormatException e) {

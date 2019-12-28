@@ -45,6 +45,11 @@ public class Castle {
                 (float) this.getBoundingRect().getMinY() + Castle.WIDTH / 2.0f
         );
         Osts = new ArrayList<>();
+        List<Troop> test = new ArrayList<>();
+        test.add(new Onager());
+        test.add(new Pikeman());
+        test.add(new Knight());
+        Osts.add(new Ost(test, this, null));
     }
 
     public int levelUpPrice() {
@@ -67,15 +72,16 @@ public class Castle {
             int rnd = (int) (Math.random() * 3);
             troops.add(rnd == 0 ? new Onager() : rnd == 1 ? new Pikeman() : new Knight());
         }
-        Osts.add(new Ost(troops,this,null));
+        Osts.add(new Ost(troops, this, null));
     }
 
-    public void produce(TroopType t, int n) {
-        producer.addTroop(t, n);
-    }
 
-    public void produce(TroopType t) {
-        producer.addTroop(t);
+    public boolean produce(TroopType t) {
+        if (money >= t.getCost()) {
+            producer.addTroop(t);
+            return true;
+        }
+        return false;
     }
 
     public void step() {

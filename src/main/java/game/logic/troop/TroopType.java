@@ -1,14 +1,16 @@
 package game.logic.troop;
 
 public enum TroopType {
-    KNIGHT(20),
-    ONAGER(50),
-    PIKE_MAN(5);
+    KNIGHT(20, 500),
+    ONAGER(50, 1000),
+    PIKE_MAN(5, 100);
 
     final int time;
+    final int cost;
 
-    TroopType(int time) {
+    TroopType(int time, int cost) {
         this.time = time;
+        this.cost = cost;
     }
 
     public static TroopType fromString(String s) {
@@ -26,5 +28,9 @@ public enum TroopType {
 
     public int getTime() {
         return time;
+    }
+
+    public int getCost() {
+        return cost;
     }
 }

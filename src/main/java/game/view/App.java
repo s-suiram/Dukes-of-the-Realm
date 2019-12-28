@@ -95,6 +95,7 @@ public class App extends Application {
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> WINDOW_WIDTH = newVal.intValue());
         primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> WINDOW_HEIGHT = newVal.intValue());
 
+        WorldView.getInstance().clearAllContextualMenu();
 
         primaryStage.setScene(s);
         primaryStage.sizeToScene();

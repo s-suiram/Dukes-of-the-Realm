@@ -6,14 +6,12 @@ public abstract class Troop {
 
     public static final int SIZE = 10;
     public final Point2D pos;
-    final int cost;
-    final int speed;
-    final int damage;
-    final int hp;
-    final String name;
+    public final int speed;
+    public final int damage;
+    public final int hp;
+    public final String name;
 
-    public Troop(int cost, int time, int speed, int damage, int hp, String name) {
-        this.cost = cost;
+    public Troop(int speed, int damage, int hp, String name) {
         this.speed = speed;
         this.damage = damage;
         this.hp = hp;
@@ -25,26 +23,6 @@ public abstract class Troop {
         return pos;
     }
 
-    public int getCost() {
-        return cost;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
         return name + "\n";
@@ -53,8 +31,7 @@ public abstract class Troop {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Troop) {
-            return cost == ((Troop) obj).cost
-                    && speed == ((Troop) obj).speed
+            return speed == ((Troop) obj).speed
                     && damage == ((Troop) obj).damage
                     && hp == ((Troop) obj).hp
                     && name.equals(((Troop) obj).name);

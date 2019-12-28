@@ -26,7 +26,7 @@ public class Ost {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
-        speed = troops.stream().mapToInt(Troop::getSpeed).min().orElseGet(() -> 0);
+        speed = troops.stream().mapToInt(t -> t.speed).min().orElse(0);
         //isTargetAlly = origin.getOwner() == target.getOwner();
         troopIndex = 0;
         troops.sort((o1, o2) -> Integer.compare(o2.speed, o1.speed));
@@ -42,7 +42,7 @@ public class Ost {
 
     public void step(int frame) {
         move();
-        if( ++frameCount == FRAME_SKIP) {
+        if (++frameCount == FRAME_SKIP) {
             frameCount = 0;
             if (troopIndex < troops.size())
                 walkThroughDoor();
