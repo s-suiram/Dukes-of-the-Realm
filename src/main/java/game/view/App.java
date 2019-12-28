@@ -90,7 +90,7 @@ public class App extends Application {
         greenBackground.setFill(Color.web("668054"));
         greenBackground.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
         greenBackground.setOnMouseEntered(e -> s.setCursor(Cursor.OPEN_HAND));
-        root.getChildren().addAll(greenBackground, castles, troops, HUD);
+        root.getChildren().addAll(greenBackground, troops, castles, HUD);
 
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> WINDOW_WIDTH = newVal.intValue());
         primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> WINDOW_HEIGHT = newVal.intValue());
@@ -112,7 +112,6 @@ public class App extends Application {
         pause.impl_processCSS(true);
         pause.setTranslateX(WINDOW_WIDTH / 2.0 - pause.prefWidth(-1) / 2.0);
 
-        pause.setCenterShape(true);
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
         WorldView.getInstance().clearAllContextualMenu();
 

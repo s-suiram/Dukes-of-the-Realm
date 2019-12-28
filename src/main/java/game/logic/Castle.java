@@ -47,6 +47,10 @@ public class Castle {
         Osts = new ArrayList<>();
     }
 
+    public int levelUpPrice() {
+        return (level + 1) * 1000;
+    }
+
     public boolean startLevelUp() {
         if (timeToLevelUp == -1 && money - ((level + 1) * 1000) >= 0) {
             money -= (level + 1) * 1000;
