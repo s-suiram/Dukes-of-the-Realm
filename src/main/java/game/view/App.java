@@ -90,10 +90,6 @@ public class App extends Application {
 
         WorldView.getInstance().clearAllContextualMenu();
 
-        primaryStage.setScene(s);
-        primaryStage.sizeToScene();
-        primaryStage.setTitle("Dukes of the realm");
-        primaryStage.show();
 
         Label mouseCamPos = new Label();
         HUD.getChildren().add(mouseCamPos);
@@ -109,12 +105,15 @@ public class App extends Application {
         //s.setOnMouseMoved(e -> mouseCamPos.setText(String.format("mouse + cam pos: %f, %f", e.getX() + WorldView.getInstance().cameraPos.x, e.getY() + WorldView.getInstance().cameraPos.y)));
         WorldView.getInstance().clearAllContextualMenu();
 
-        System.out.println(castles.getChildren().size());
+        primaryStage.setScene(s);
+        primaryStage.sizeToScene();
+        primaryStage.setTitle("Dukes of the realm");
+        primaryStage.show();
+
         //Make main game class
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 KeyboardEventHandler.getInstance().handle();
                 WorldView.getInstance().draw();
                 handleCameraMove(s);

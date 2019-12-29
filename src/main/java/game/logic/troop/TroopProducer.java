@@ -51,7 +51,7 @@ public class TroopProducer {
     }
 
     public void cancel() {
-        queue.remove();
+        if (!queue.isEmpty()) queue.pop();
     }
 
     public static class TroopRemainingTime {

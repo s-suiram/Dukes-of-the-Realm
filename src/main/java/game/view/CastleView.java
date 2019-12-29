@@ -3,9 +3,9 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
-import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -13,16 +13,18 @@ public class CastleView extends HitboxedGroup {
 
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
+    private static CastleView selected;
     private Color col;
     private Castle model;
     private Rectangle door;
     private ContextualMenuCastle contextualMenu;
+    private Rectangle rectangle;
 
     public CastleView(Castle c, Group parentRef) {
         super(parentRef);
         this.model = c;
-        contextualMenu = new ContextualMenuCastle(getModel());
-        Rectangle rectangle = new Rectangle(0,0, Castle.WIDTH, Castle.HEIGHT);
+        contextualMenu = new ContextualMenuCastle(this);
+        rectangle = new Rectangle(0, 0, Castle.WIDTH, Castle.HEIGHT);
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         rectangle.setStroke(c.getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
@@ -73,13 +75,22 @@ public class CastleView extends HitboxedGroup {
         setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
 
         setOnMouseClicked(event -> {
-                    WorldView.getInstance().clearAllContextualMenu();
-                    this.toFront();
-                    setVisibleContextual(true);
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        if (selected == this) selected = null;
+                        else selected = this;
+                    }
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        WorldView.getInstance().clearAllContextualMenu();
+                        this.toFront();
+                        setVisibleContextual(true);
+                    }
                 }
         );
         defineHitbox();
+    }
 
+    public static CastleView getSelected() {
+        return selected;
     }
 
     @Override
@@ -97,8 +108,13 @@ public class CastleView extends HitboxedGroup {
 
     @Override
     protected void drawImpl(Point2D cam) {
-        this.setTranslateX(model.getBoundingRect().getMinX() -cam.x);
-        this.setTranslateY(model.getBoundingRect().getMinY() -cam.y);
+        if (this == getSelected()) {
+            rectangle.setFill(new Color(1.0, 1.0, 1.0, 0.4));
+        } else {
+            rectangle.setFill(Color.TRANSPARENT);
+        }
+        this.setTranslateX(model.getBoundingRect().getMinX() - cam.x);
+        this.setTranslateY(model.getBoundingRect().getMinY() - cam.y);
         contextualMenu.draw();
     }
 

@@ -73,9 +73,12 @@ public class Castle {
             int rnd = (int) (Math.random() * 3);
             troops.add(rnd == 0 ? new Onager() : rnd == 1 ? new Pikeman() : new Knight());
         }
-        Osts.add(new Ost(troops, this, null));
+        //Osts.add(new Ost(troops, this, null));
     }
 
+    public void addOst(List<Troop> troops, Castle dest) {
+        Osts.add(new Ost(troops, this, dest));
+    }
 
     public boolean produce(TroopType t) {
         if (money >= t.getCost()) {
@@ -145,6 +148,18 @@ public class Castle {
 
     public TroopProducer getProducer() {
         return producer;
+    }
+
+    public List<Onager> getOnagers() {
+        return troops.stream().filter(troop -> troop instanceof Onager).map(troop -> (Onager) troop).collect(Collectors.toList());
+    }
+
+    public List<Pikeman> getPikemen() {
+        return troops.stream().filter(troop -> troop instanceof Pikeman).map(troop -> (Pikeman) troop).collect(Collectors.toList());
+    }
+
+    public List<Knight> getKnights() {
+        return troops.stream().filter(troop -> troop instanceof Knight).map(troop -> (Knight) troop).collect(Collectors.toList());
     }
 
     @Override

@@ -2,7 +2,9 @@
   <dictionary name="Marius">
     <words>
       <w>onager</w>
+      <w>onagers</w>
       <w>pikeman</w>
+      <w>pikemen</w>
     </words>
   </dictionary>
 </component>

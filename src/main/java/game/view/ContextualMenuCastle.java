@@ -1,10 +1,8 @@
 package game.view;
 
 import game.logic.Castle;
-import game.logic.troop.Knight;
-import game.logic.troop.Onager;
-import game.logic.troop.Pikeman;
 import game.logic.troop.TroopType;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,30 +11,29 @@ import javafx.scene.layout.VBox;
 
 public class ContextualMenuCastle extends Group {
 
-    Castle castle;
-    boolean lvlup_enoughMoney;
+    private Castle castle;
+    private CastleView castleView;
+    private boolean lvlup_enoughMoney;
     private Label money;
     private Label level;
     private Label levelUpFeedback;
     private Label levelUpPrice;
     private Label p_val;
-    private Button p_add;
     private Label p_feedback;
-    private boolean p_enoughMoney;
     private Label k_val;
-    private Button k_add;
     private Label k_feedback;
-    private boolean k_enoughMoney;
     private Label o_val;
-    private Button o_add;
     private Label o_feedback;
-    private boolean o_enoughMoney;
-
+    private Label createSquad_feedback;
     private Label queue;
+    private VBox menu;
+    private SquadBuilderInterface squadBuilderInterface;
 
-    public ContextualMenuCastle(Castle c) {
+    public ContextualMenuCastle(CastleView c) {
         super();
-        this.castle = c;
+        this.castle = c.getModel();
+        this.castleView = c;
+        squadBuilderInterface = null;
         lvlup_enoughMoney = true;
         money = new Label();
         level = new Label();
@@ -46,24 +43,29 @@ public class ContextualMenuCastle extends Group {
         levelUpFeedback = new Label("");
         HBox levelupBox = new HBox(level, levelup, levelUpPrice, levelUpFeedback);
         levelupBox.setSpacing(50);
-        levelup.setOnAction(e -> lvlup_enoughMoney = c.startLevelUp());
+        levelup.setOnAction(e -> levelUpFeedback
+                .setText(
+                        (lvlup_enoughMoney = castle.startLevelUp())
+                                ? ""
+                                : "Not enough money")
+        );
 
         p_val = new Label();
-        p_add = new Button("+");
+        Button p_add = new Button("+");
+        p_add.setFocusTraversable(false);
         p_feedback = new Label();
-        p_enoughMoney = true;
         k_val = new Label();
-        k_add = new Button("+");
+        Button k_add = new Button("+");
+        k_add.setFocusTraversable(false);
         k_feedback = new Label();
-        k_enoughMoney = true;
         o_val = new Label();
-        o_add = new Button("+");
+        Button o_add = new Button("+");
+        o_add.setFocusTraversable(false);
         o_feedback = new Label();
-        o_enoughMoney = true;
 
-        p_add.setOnAction(e -> p_enoughMoney = castle.produce(TroopType.PIKE_MAN));
-        k_add.setOnAction(e -> k_enoughMoney = castle.produce(TroopType.KNIGHT));
-        o_add.setOnAction(e -> o_enoughMoney = castle.produce(TroopType.ONAGER));
+        p_add.setOnAction(e -> p_feedback.setText(castle.produce(TroopType.PIKE_MAN) ? "" : "Not enough money"));
+        k_add.setOnAction(e -> k_feedback.setText(castle.produce(TroopType.KNIGHT) ? "" : "Not enough money"));
+        o_add.setOnAction(e -> o_feedback.setText(castle.produce(TroopType.ONAGER) ? "" : "Not enough money"));
 
         HBox pikeman = new HBox(new Label("Pikeman: "), p_val, p_add, p_feedback);
         HBox knight = new HBox(new Label("Knight: "), k_val, k_add, k_feedback);
@@ -79,31 +81,64 @@ public class ContextualMenuCastle extends Group {
 
         queue = new Label();
         Button cancelLast = new Button("Delete first of queue");
-        HBox queueBox = new HBox(cancelLast, queue);
-
         cancelLast.setFocusTraversable(false);
-        cancelLast.setOnAction(e -> c.getProducer().cancel());
+        HBox queueBox = new HBox(cancelLast, queue);
+        queueBox.setSpacing(50);
 
-        VBox menu = new VBox(money, levelupBox, pikeman, knight, onager, queueBox);
+        cancelLast.setOnAction(e -> castle.getProducer().cancel());
+        Button createSquad = new Button("Create squad");
+        createSquad.setFocusTraversable(false);
+        createSquad_feedback = new Label();
+        HBox squadBox = new HBox(createSquad, createSquad_feedback);
+        squadBox.setSpacing(50);
+        menu = new VBox(money, levelupBox, pikeman, knight, onager, queueBox, squadBox);
+        createSquad.setOnAction(e -> {
+            if (CastleView.getSelected() == null) {
+                createSquad_feedback.setText("Select a castle first");
+            } else if (CastleView.getSelected() == castleView) {
+                createSquad_feedback.setText("Select another castle");
+            } else {
+                createSquad_feedback.setText("");
+                squadBuilderInterface = new SquadBuilderInterface(castle, CastleView.getSelected().getModel(), this);
+                getChildren().add(squadBuilderInterface);
+            }
+        });
         getChildren().addAll(menu);
         menu.setSpacing(20);
         menu.setStyle("-fx-background-color: rgba(200, 200, 200, 0.8)");
 
         menu.getChildren().forEach(node -> node.setStyle("-fx-font-size: 20pt"));
+
+        setOnMouseMoved(e -> getScene().setCursor(Cursor.HAND));
+    }
+
+    public void hidePanel() {
+        menu.setVisible(false);
+    }
+
+    public void showPanel() {
+        menu.setVisible(true);
+    }
+
+    public void deleteSquadBuilder() {
+        if (squadBuilderInterface != null) {
+            getChildren().remove(squadBuilderInterface);
+            squadBuilderInterface = null;
+            showPanel();
+        }
     }
 
     public void draw() {
         money.setText("Money: " + castle.getMoney());
         level.setText("Level: " + castle.getLevel());
-        p_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Pikeman).count()));
-        k_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Knight).count()));
-        o_val.setText(String.valueOf(castle.getTroops().stream().filter(troop -> troop instanceof Onager).count()));
-        if (!lvlup_enoughMoney) {
-            levelUpFeedback.setText("Not enough money");
-        } else {
-            if (castle.getTimeToLevelUp() == -1)
+        p_val.setText(String.valueOf(castle.getPikemen().size()));
+        k_val.setText(String.valueOf(castle.getKnights().size()));
+        o_val.setText(String.valueOf(castle.getOnagers().size()));
+        if (lvlup_enoughMoney) {
+            if (castle.getTimeToLevelUp() == -1) {
+                lvlup_enoughMoney = false;
                 levelUpFeedback.setText(castle.getLevel() > 1 ? String.format("You reach level %d", castle.getLevel()) : "");
-            else
+            } else
                 levelUpFeedback.setText(String.format("%d remaining", castle.getTimeToLevelUp()));
         }
         levelUpPrice.setText(String.format("Level up cost: %d", castle.levelUpPrice()));
@@ -116,8 +151,16 @@ public class ContextualMenuCastle extends Group {
                         .append(t.getRemainingTime())
                         .append(" left) < "));
         queue.setText("Queue: " + (queueBuilder.toString().isEmpty() ? "empty" : queueBuilder.toString().substring(0, queueBuilder.lastIndexOf("<"))));
-        p_feedback.setText(p_enoughMoney ? "" : "Not enough money");
-        k_feedback.setText(k_enoughMoney ? "" : "Not enough money");
-        o_feedback.setText(o_enoughMoney ? "" : "Not enough money");
+
+        if (!isVisible()) {
+            levelUpFeedback.setText("");
+            p_feedback.setText("");
+            k_feedback.setText("");
+            o_feedback.setText("");
+            createSquad_feedback.setText("");
+            deleteSquadBuilder();
+        }
+
+        if (squadBuilderInterface != null) squadBuilderInterface.draw();
     }
 }

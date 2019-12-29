@@ -52,15 +52,4 @@ public abstract class Troop {
         return name + "\n";
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Troop) {
-            return speed == ((Troop) obj).speed
-                    && damage == ((Troop) obj).damage
-                    && hp == ((Troop) obj).hp
-                    && name.equals(((Troop) obj).name);
-        }
-        return false;
-    }
-
 }

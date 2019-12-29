@@ -32,7 +32,7 @@ public class Ost {
         troops.sort(Comparator.comparingInt(o -> o.speed));
         startingPos = new Point2D();
         OSTS.add(this);
-
+        origin.getTroops().removeAll(troops);
         computeStartingPos();
         walkThroughDoor();
     }

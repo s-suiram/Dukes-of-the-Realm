@@ -3,7 +3,6 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -22,22 +21,22 @@ public abstract class HitboxedGroup extends Group {
         centerPoint.setFill(Color.BLACK);
         hitbox.setFill(Color.TRANSPARENT);
         hitbox.setStroke(Color.BLACK);
-        addAllNodes(hitbox,centerPoint);
+        addAllNodes(centerPoint);
         parentRef.getChildren().add(this);
     }
 
-    protected void defineHitbox(){
+    protected void defineHitbox() {
         hitbox.setX(getLayoutBounds().getMinX());
         hitbox.setY(getLayoutBounds().getMinY());
         hitbox.setWidth(getLayoutBounds().getWidth());
         hitbox.setHeight(getLayoutBounds().getHeight());
     }
 
-    public double getWidth(){
+    public double getWidth() {
         return getLayoutBounds().getWidth();
     }
 
-    public  double getHeight(){
+    public double getHeight() {
         return getLayoutBounds().getHeight();
     }
 
