@@ -4,7 +4,9 @@ import com.sun.javafx.geom.Point2D;
 import game.logic.troop.Onager;
 import game.logic.troop.Pikeman;
 import game.logic.troop.Troop;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -21,13 +23,10 @@ public class TroopView extends HitboxedGroup {
     public TroopView(Troop t, Group parentRef) {
         super(parentRef);
         this.t = t;
-        Circle background = new Circle(0, 0, Troop.SIZE / 2.0);
-        Text name = new Text(t instanceof Pikeman ? "P": t instanceof Onager ? "O" : "K");
-        name.setStroke(Color.BLACK);
-
+        Circle background = new Circle(Troop.SIZE/2, Troop.SIZE/2, Troop.SIZE / 2.0);
         //name.setTextAlignment(TextAlignment.CENTER);
         background.setFill(t instanceof Pikeman ? Color.RED : t instanceof Onager ? Color.BLUE : Color.WHITE);
-        this.getChildren().addAll(background, name);
+        this.getChildren().addAll(background);
         troopToView.put(t, this);
         defineHitbox();
     }
