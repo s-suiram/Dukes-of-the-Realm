@@ -31,10 +31,12 @@ public class ContextualMenuCastle extends Group {
 
     public ContextualMenuCastle(CastleView c) {
         super();
+        setVisible(false);
         this.castle = c.getModel();
         this.castleView = c;
         squadBuilderInterface = null;
         lvlup_enoughMoney = true;
+        Label owner = new Label(castle.getOwner().getName());
         money = new Label();
         level = new Label();
         Button levelup = new Button("Level Up");
@@ -67,9 +69,9 @@ public class ContextualMenuCastle extends Group {
         k_add.setOnAction(e -> k_feedback.setText(castle.produce(TroopType.KNIGHT) ? "" : "Not enough money"));
         o_add.setOnAction(e -> o_feedback.setText(castle.produce(TroopType.ONAGER) ? "" : "Not enough money"));
 
-        HBox pikeman = new HBox(new Label("Pikeman: "), p_val, p_add, p_feedback);
-        HBox knight = new HBox(new Label("Knight: "), k_val, k_add, k_feedback);
-        HBox onager = new HBox(new Label("Onager: "), o_val, o_add, o_feedback);
+        HBox pikeman = new HBox(new Label("Pikeman (Cost: " + TroopType.PIKE_MAN.getCost() + "): "), p_val, p_add, p_feedback);
+        HBox knight = new HBox(new Label("Knight (Cost: " + TroopType.KNIGHT.getCost() + "): "), k_val, k_add, k_feedback);
+        HBox onager = new HBox(new Label("Onager (Cost: " + TroopType.ONAGER.getCost() + "): "), o_val, o_add, o_feedback);
 
         p_add.setFocusTraversable(false);
         k_add.setFocusTraversable(false);
@@ -91,7 +93,7 @@ public class ContextualMenuCastle extends Group {
         createSquad_feedback = new Label();
         HBox squadBox = new HBox(createSquad, createSquad_feedback);
         squadBox.setSpacing(50);
-        menu = new VBox(money, levelupBox, pikeman, knight, onager, queueBox, squadBox);
+        menu = new VBox(owner, money, levelupBox, pikeman, knight, onager, queueBox, squadBox);
         createSquad.setOnAction(e -> {
             if (CastleView.getSelected() == null) {
                 createSquad_feedback.setText("Select a castle first");

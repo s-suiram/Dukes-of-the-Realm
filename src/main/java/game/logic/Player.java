@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player {
+    private static Player player; // The player in front of his computer
+
     private List<Castle> castles;
 
     private String name;
@@ -14,6 +16,14 @@ public abstract class Player {
     public Player(String name) {
         castles = new ArrayList<>();
         this.name = name;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static void setPlayer(Player player) {
+        Player.player = player;
     }
 
     public String getName() {

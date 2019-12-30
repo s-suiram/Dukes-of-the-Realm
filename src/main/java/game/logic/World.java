@@ -77,7 +77,7 @@ public class World {
 
     private static void parallelRandomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
         double padding = 0.25; //0.2 -> 20% smaller bounds
-        int fieldForCastle = 150;
+        int fieldForCastle = 150; //Space for one castle
 
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
@@ -117,24 +117,23 @@ public class World {
             }
         }
 
-        Stream.of(fightingNames, neutralNames).flatMap(Collection::stream).collect(Collectors.toList()).forEach(name -> {
-            getInstance().getPlayer(name).ifPresent(p -> {
-                for (int i = 0; i < nbCastlePerDuke; i++) {
-                    Rectangle2D picked = tiles.remove(rand(0, tiles.size()));
-                    int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
-                    int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
-                    p.addCastle(Cardinal.values()[rand(0, Cardinal.values().length)], new Point2D(x, y));
-                }
-            });
-        });
+        Stream.of(fightingNames, neutralNames).flatMap(Collection::stream).collect(Collectors.toList()).forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
+            for (int i = 0; i < nbCastlePerDuke; i++) {
+                Rectangle2D picked = tiles.remove(rand(0, tiles.size()));
+                int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
+                int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
+                p.addCastle(Cardinal.values()[rand(0, Cardinal.values().length)], new Point2D(x, y));
+            }
+        }));
+    }
+
+    public static void init() {
+        instance = new World();
+        parallelRandomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
     }
 
     public static World getInstance() {
-        if (instance == null) {
-            instance = new World();
-            //initSomeThings();
-            parallelRandomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
-        }
+        if (instance == null) throw new NullPointerException("Call init on World");
         return instance;
     }
 
