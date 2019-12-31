@@ -75,12 +75,14 @@ public class World {
         return generator.nextInt(max - min) + min;
     }
 
-    private static void parallelRandomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
-        double padding = 0.25; //0.2 -> 20% smaller bounds
-        int fieldForCastle = 150; //Space for one castle
+    private static void randomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
+        double padding = 0.1; //0.2 -> 20% smaller bounds
+        int fieldForCastle = 150; //Space on the field for one castle
 
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
+
+        Player.setPlayer(World.getInstance().getPlayer(fightingNames.get(0)).get());
 
         int nbNeutral = neutralNames.size();
         neutralNames.forEach(n -> getInstance().addNeutralDukes(n));
@@ -127,9 +129,10 @@ public class World {
         }));
     }
 
-    public static void init() {
+    public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
         instance = new World();
-        parallelRandomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
+//        randomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
+        randomGeneration(fightingNames, neutralNames, castlePerDuke);
     }
 
     public static World getInstance() {

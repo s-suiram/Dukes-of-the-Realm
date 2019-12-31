@@ -1,15 +1,32 @@
 package game;
 
-import game.view.Game;
+import game.view.scene.Game;
+import game.view.scene.NewGame;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class App extends Application {
 
-    private static Game game = new Game();
+    public final static int DEFAULT_WINDOW_WIDTH = 1000;
+    public final static int DEFAULT_WINDOW_HEIGHT = 800;
+    public final static boolean START_FULLSCREEN = false;
+    public final static String WINDOW_TITLE = "Dukes Of The Realm";
+
+    private static Game game;
+    private static NewGame newGame = new NewGame(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static NewGame getNewGame() {
+        return newGame;
+    }
+
+    public static void buildGame(List<String> f, List<String> n, int c) {
+        game = new Game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE, f, n, c);
     }
 
     public static Game getGame() {
@@ -18,6 +35,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        getGame().start(primaryStage);
+        getNewGame().start(primaryStage);
     }
 }

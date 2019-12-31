@@ -1,4 +1,4 @@
-package game.view;
+package game.view.scene;
 
 import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
@@ -18,9 +18,11 @@ public abstract class CustomScene {
     protected double windowWidth;
     protected double windowHeight;
     protected Scene scene;
+    boolean finished;
     private Consumer<Double> widthResize;
     private Consumer<Double> heightResize;
     private String windowTitle;
+    private AnimationTimer animationTimer;
 
     public CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle) {
         this.defaultWindowWidth = defaultWindowWidth;
@@ -29,6 +31,11 @@ public abstract class CustomScene {
         this.windowHeight = startFullScreen ? Screen.getPrimary().getBounds().getMaxY() : defaultWindowHeight;
         this.startFullscreen = startFullScreen;
         this.windowTitle = windowTitle;
+
+        widthResize = unused -> {
+        };
+        heightResize = unused -> {
+        };
 
         scene = new Scene(new Group(), windowWidth, windowHeight, Color.GREY);
     }
@@ -50,14 +57,17 @@ public abstract class CustomScene {
     }
 
     public void start(Stage s) {
+        finished = false;
         init(s);
 
-        new AnimationTimer() {
+        animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 loop(s, now);
             }
-        }.start();
+        };
+
+        animationTimer.start();
 
         if (startFullscreen) {
             s.setFullScreen(true);
@@ -73,10 +83,15 @@ public abstract class CustomScene {
             heightResize.accept(windowHeight);
         });
 
+        s.setFullScreenExitHint("");
         s.setScene(scene);
         s.sizeToScene();
         s.setTitle(windowTitle);
         s.show();
+    }
+
+    public void stop() {
+        animationTimer.stop();
     }
 
     public double getWindowWidth() {

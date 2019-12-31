@@ -1,10 +1,11 @@
-package game.view;
+package game.view.scene;
 
 import com.sun.javafx.geom.Point2D;
 import game.controller.KeyboardEventHandler;
 import game.controller.MouseEventHandler;
 import game.logic.Cardinal;
 import game.logic.World;
+import game.view.WorldView;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -15,15 +16,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class Game extends CustomScene {
     private boolean pause;
     private VBox pauseHud;
 
     private GameSetting settings;
 
+    private List<String> f, n;
+    private int castlePerPlayer;
 
-    public Game() {
-        super(1000, 800, false, "Dukes Of The Realm");
+    public Game(int defaultWindowWidth, int defaultWindowHeight,
+                boolean startFullScreen, String windowTitle,
+                List<String> f, List<String> n, int castlePerPlayer) {
+        super(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle);
+        this.f = f;
+        this.n = n;
+        this.castlePerPlayer = castlePerPlayer;
         settings = new GameSetting();
     }
 
@@ -32,7 +42,7 @@ public class Game extends CustomScene {
         Group castles = new Group();
         Group troops = new Group();
 
-        World.init();
+        World.init(f, n, castlePerPlayer);
         WorldView.init(castles, troops);
         KeyboardEventHandler.init(getScene(), s);
         MouseEventHandler.init(getScene());

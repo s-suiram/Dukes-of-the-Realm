@@ -74,7 +74,7 @@ public class KeyboardEventHandler {
     private void doKeyTypedAction(KeyCode key, Action action, boolean combo) {
         if (!combo) return;
 
-        if (!performed.get(key)) {
+        if (keysPressed.get(key) && !performed.get(key)) {
             action.perform();
             performed.put(key, true);
         }
