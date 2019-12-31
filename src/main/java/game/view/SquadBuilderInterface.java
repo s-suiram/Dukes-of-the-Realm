@@ -139,10 +139,10 @@ public class SquadBuilderInterface extends Group {
 
         VBox menu = new VBox(title, pikemanBox, knightBox, onagerBox, feedback, quitButtons);
         menu.setSpacing(20);
-        menu.getChildren().forEach(n -> n.setStyle("-fx-font-size: 20pt"));
+        menu.getChildren().forEach(n -> n.setStyle("-fx-font-size: 14pt"));
         menu.setStyle("-fx-background-color: rgba(83,124,156,0.79)");
         getChildren().add(menu);
-        title.setStyle("-fx-font-size: 40pt");
+        title.setStyle("-fx-font-size: 30pt");
     }
 
     private void transferPikeman(boolean plus) {

@@ -15,7 +15,6 @@ public class CastleView extends HitboxedGroup {
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
     private static CastleView selected;
-    private Color col;
     private Castle model;
     private Rectangle door;
     private ContextualMenuCastle contextualMenu;

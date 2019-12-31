@@ -109,7 +109,7 @@ public class ContextualMenuCastle extends Group {
         menu.setSpacing(20);
         menu.setStyle("-fx-background-color: rgba(200, 200, 200, 0.8)");
 
-        menu.getChildren().forEach(node -> node.setStyle("-fx-font-size: 20pt"));
+        menu.getChildren().forEach(node -> node.setStyle("-fx-font-size: 14pt;"));
 
         setOnMouseMoved(e -> getScene().setCursor(Cursor.HAND));
     }
