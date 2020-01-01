@@ -1,10 +1,11 @@
 package game.controller;
 
+import game.App;
 import game.logic.Cardinal;
-import game.view.App;
 import game.view.WorldView;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class KeyboardEventHandler {
     private Map<KeyCode, Boolean> performed = new HashMap<>();
     private Map<KeyCode, Boolean> firstType = new HashMap<>();
 
-    private KeyboardEventHandler(Scene s) {
+    private KeyboardEventHandler(Scene s, Stage stage) {
         EnumSet.allOf(KeyCode.class).forEach(k -> keysPressed.put(k, false));
         EnumSet.allOf(KeyCode.class).forEach(k -> performed.put(k, true));
         EnumSet.allOf(KeyCode.class).forEach(k -> firstType.put(k, true));
@@ -35,8 +36,8 @@ public class KeyboardEventHandler {
             doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
             doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
             doKeyTypedAction(KeyCode.MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
-            doKeyTypedAction(KeyCode.ENTER, () -> App.getStage().setFullScreen(!App.getStage().isFullScreen()), event.isAltDown());
-            doKeyTypedAction(KeyCode.SPACE, () -> App.paused = !App.paused);
+            doKeyTypedAction(KeyCode.ENTER, () -> stage.setFullScreen(!stage.isFullScreen()), event.isAltDown());
+            doKeyTypedAction(KeyCode.SPACE, () -> App.getGame().togglePause());
         });
 
         s.setOnKeyReleased(event -> {
@@ -45,8 +46,8 @@ public class KeyboardEventHandler {
         });
     }
 
-    public static void init(Scene s) {
-        instance = new KeyboardEventHandler(s);
+    public static void init(Scene s, Stage stage) {
+        instance = new KeyboardEventHandler(s, stage);
     }
 
     public static KeyboardEventHandler getInstance() {

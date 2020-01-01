@@ -1,6 +1,7 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
+import game.App;
 import game.logic.Cardinal;
 import game.logic.Castle;
 import game.logic.World;
@@ -75,8 +76,10 @@ public class WorldView {
     private void checkCameraBound() {
         if (cameraPos.x < 0) cameraPos.x = 0;
         if (cameraPos.y < 0) cameraPos.y = 0;
-        if (cameraPos.x > World.FIELD_WIDTH - App.WINDOW_WIDTH) cameraPos.x = World.FIELD_WIDTH - App.WINDOW_WIDTH;
-        if (cameraPos.y > World.FIELD_HEIGHT - App.WINDOW_HEIGHT) cameraPos.y = World.FIELD_HEIGHT - App.WINDOW_HEIGHT;
+        if (cameraPos.x > World.FIELD_WIDTH - App.getGame().getWindowWidth())
+            cameraPos.x = World.FIELD_WIDTH - (float) App.getGame().getWindowWidth();
+        if (cameraPos.y > World.FIELD_HEIGHT - App.getGame().getWindowHeight())
+            cameraPos.y = World.FIELD_HEIGHT - (float) App.getGame().getWindowHeight();
     }
 
     public void move(Cardinal direction) {
