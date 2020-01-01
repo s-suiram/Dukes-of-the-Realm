@@ -9,6 +9,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
 
 public class OstView extends HitboxedGroup implements Observer {
 
@@ -17,9 +18,12 @@ public class OstView extends HitboxedGroup implements Observer {
     public OstView(Group parentRef, Ost o) {
         super(parentRef, new Rectangle());
         this.o = o;
-        Point2D p = o.getCenter();
         o.addObserver(this);
         o.setViewDone();
+        addAllNodes(o.getTroops()
+                .stream()
+                .map(t -> new TroopView(t, this))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -30,7 +34,6 @@ public class OstView extends HitboxedGroup implements Observer {
         super.hitbox.setWidth(o.getShield().width);
         this.setTranslateX(o.getShield().x - cam.x);
         this.setTranslateY(o.getShield().y - cam.y);
-
     }
 
     @Override

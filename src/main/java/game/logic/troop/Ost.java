@@ -75,19 +75,6 @@ public class Ost extends Observable {
         return OSTS.contains(o);
     }
 
-    private static void rotate(Point2D p, int angle, Point2D o) {
-        double s = Math.sin(Math.toRadians(angle));
-        double c = Math.cos(Math.toRadians(angle));
-
-        p.x -= o.x;
-        p.y -= o.y;
-
-        double x = p.x * c - p.y * s;
-        double y = p.x * s + p.y * c;
-
-        p.setLocation((float) x + o.x, (float) y + o.y);
-    }
-
     public List<Troop> getTroops() {
         return troops;
     }
@@ -154,10 +141,6 @@ public class Ost extends Observable {
                     troop.translate(speedDir.x, speedDir.y);
                 });
 
-    }
-
-    private void rollback() {
-        troops.forEach(t -> t.translate(-speedDir.x, -speedDir.y));
     }
 
     private boolean intersectCastle() {
