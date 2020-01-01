@@ -66,14 +66,14 @@ public class CastleView extends HitboxedGroup {
                 break;
         }
 
-        contextualMenu.setTranslateX(rectangle.getX());
-        contextualMenu.setTranslateY(rectangle.getY());
+        contextualMenu.setTranslateX(rectangle.getX() - 20);
+        contextualMenu.setTranslateY(rectangle.getY() - 20);
 
         addAllNodes(rectangle, door, contextualMenu);
 
-        setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
+        rectangle.setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
 
-        setOnMouseClicked(event -> {
+        rectangle.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
                         if (selected == this) selected = null;
                         else selected = this;
