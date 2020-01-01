@@ -4,11 +4,12 @@ import com.sun.javafx.geom.Point2D;
 import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.Ost;
 import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class World {
 
@@ -16,9 +17,10 @@ public class World {
     public static int FIELD_HEIGHT = 4000;
     public static int frames;
 
+    public static Random generator = new Random();
 
     private static World instance;
-
+    Double d = 5.0;
     private List<Player> players;
     public final Rectangle bounds;
 
@@ -66,11 +68,85 @@ public class World {
 
     }
 
+    private static int getBestGrid(int nbCastle) {
+        int[] divisors = IntStream.range(1, nbCastle).parallel().filter(val -> nbCastle % val == 0).toArray();
+
+        int minDiff = Integer.MAX_VALUE;
+        int index = 0;
+
+        for (int i = 0; i < divisors.length - 1; i++) {
+            if (Math.abs((nbCastle / divisors[i]) - divisors[i]) < minDiff) {
+                minDiff = Math.abs((nbCastle / divisors[i]) - divisors[i]);
+                index = i;
+            }
+        }
+
+        return divisors[index];
+    }
+
+    public static int rand(int min, int max) {
+        return generator.nextInt(max - min) + min;
+    }
+
+    private static void parallelRandomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
+        double padding = 0.25; //0.2 -> 20% smaller bounds
+        int fieldForCastle = 150;
+
+        int nbFighter = fightingNames.size();
+        fightingNames.forEach(n -> getInstance().addFightingDukes(n));
+
+        int nbNeutral = neutralNames.size();
+        neutralNames.forEach(n -> getInstance().addNeutralDukes(n));
+
+        int nbCastle = nbCastlePerDuke * (nbFighter + nbNeutral);
+
+        FIELD_WIDTH = FIELD_HEIGHT = nbCastle * fieldForCastle;
+
+        if (FIELD_WIDTH < Screen.getPrimary().getBounds().getMaxX())
+            FIELD_WIDTH = (int) Screen.getPrimary().getBounds().getMaxX();
+
+        if (FIELD_HEIGHT < Screen.getPrimary().getBounds().getMaxY())
+            FIELD_HEIGHT = (int) Screen.getPrimary().getBounds().getMaxY();
+
+        int height, width;
+
+        height = getBestGrid(nbCastle);
+        width = nbCastle / height;
+
+        int widthPerTile, heightPerTile;
+        widthPerTile = FIELD_WIDTH / width;
+        heightPerTile = FIELD_HEIGHT / height;
+
+        List<Rectangle2D> tiles = new ArrayList<>(nbCastle);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                tiles.add(new Rectangle2D(
+                        (x * widthPerTile) + (widthPerTile * padding),
+                        (y * heightPerTile) + (heightPerTile * padding),
+                        widthPerTile * (1 - padding * 2),
+                        heightPerTile * (1 - padding * 2)
+                ));
+            }
+        }
+
+        Stream.of(fightingNames, neutralNames).flatMap(Collection::stream).collect(Collectors.toList()).forEach(name -> {
+            getInstance().getPlayer(name).ifPresent(p -> {
+                for (int i = 0; i < nbCastlePerDuke; i++) {
+                    Rectangle2D picked = tiles.remove(rand(0, tiles.size()));
+                    int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
+                    int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
+                    p.addCastle(Cardinal.values()[rand(0, Cardinal.values().length)], new Point2D(x, y));
+                }
+            });
+        });
+    }
+
     public static World getInstance() {
         if (instance == null) {
             instance = new World();
             //initSomeThings();
-            randomGen();
+            parallelRandomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
         }
         return instance;
     }
