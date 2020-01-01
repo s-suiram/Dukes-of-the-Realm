@@ -9,28 +9,41 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.stream.Collectors;
 
 public class OstView extends HitboxedGroup implements Observer {
 
     private Ost o;
+    private  double lastAngle;
 
     public OstView(Group parentRef, Ost o) {
         super(parentRef, new Rectangle());
         this.o = o;
-        Point2D p = o.getCenter();
         o.addObserver(this);
         o.setViewDone();
+       o.getTroops().forEach(troop -> {
+           TroopView tv = new TroopView(troop,this);
+                   tv.setTranslateX(troop.getCenterPos().x );
+                   tv.setTranslateY(troop.getCenterPos().y );
+       });
+       this.lastAngle = o.getAngle();
     }
 
     @Override
     protected void drawImpl(Point2D cam) {
-        hitbox.setStrokeWidth(3);
-        hitbox.setStroke(Color.BLACK);
-        super.hitbox.setHeight(o.getShield().height);
-        super.hitbox.setWidth(o.getShield().width);
+        hitbox.setHeight(o.getShield().height);
+        hitbox.setWidth(o.getShield().width);
+        getChildren().filtered(c -> c instanceof  TroopView).forEach(node -> {
+            TroopView t = ((TroopView) node);
+            t.setTranslateX(t.getTroop().getRelativeX());
+            t.setTranslateY(t.getTroop().getRelativeY());
+        });
         this.setTranslateX(o.getShield().x - cam.x);
         this.setTranslateY(o.getShield().y - cam.y);
 
+        if(o.dirChanged()){
+            this.setRotate(lastAngle-o.getAngle());
+        }
     }
 
     @Override

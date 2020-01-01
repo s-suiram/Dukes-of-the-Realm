@@ -7,6 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Collection;
 import java.util.Collections;
 
 
@@ -40,6 +41,10 @@ public abstract class HitboxedGroup extends Group {
 
     public void addAllNodes(Node... nodes) {
         this.getChildren().addAll(nodes);
+    }
+
+    public void addAllNodes(Collection<Node> n) {
+        n.forEach(this::addNode);
     }
 
     public void clearNodes() {

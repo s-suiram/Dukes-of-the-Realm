@@ -19,7 +19,6 @@ public class WorldView {
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
     private Set<CastleView> castleViews;
-    private Set<TroopView> troopsViews;
     private Set<OstView> ostViews;
     private boolean cameraMoved = false;
     private Group castleParent;
@@ -29,7 +28,6 @@ public class WorldView {
         this.castleParent = castleParent;
         this.troopParent = troopParent;
         castleViews = new HashSet<>();
-        troopsViews = new HashSet<>();
         ostViews = new HashSet<>();
         cameraPos = new Point2D(0, 0);
         Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
@@ -117,16 +115,11 @@ public class WorldView {
                 .map(o -> new OstView(troopParent, o))
                 .collect(Collectors.toSet())
         );
-        troopsViews.removeIf(TroopView::killed);
-        troopsViews.addAll(Troop.getTroops().stream()
-                .filter(Troop::viewNotDone)
-                .map(t -> new TroopView(t, troopParent))
-                .collect(Collectors.toSet())
-        );
-        troopsViews.forEach(c -> c.draw(cameraPos));
+        troopParent.getChildren().retainAll(ostViews);
         castleViews.forEach(c -> c.draw(cameraPos));
         ostViews.forEach(o -> o.draw(cameraPos));
     }
+
 
     public void clearAllContextualMenu() {
         castleViews.forEach(c -> c.setVisibleContextual(false));

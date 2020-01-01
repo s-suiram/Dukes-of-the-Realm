@@ -14,10 +14,12 @@ public class Castle {
 
     public static int WIDTH = 100;
     public static int HEIGHT = 100;
+    public static final int CENTER_CARD_OFFSET = HEIGHT/3;
     private static int tempCounter = 0;
 
     private Rectangle boundingRect;
     private Point2D center;
+    private Point2D centerCard;
     private Player owner;
     private int tempId;
     private int money;
@@ -42,11 +44,27 @@ public class Castle {
 
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
-        boundingRect = new Rectangle((int)position.x, (int)position.y, WIDTH, HEIGHT);
+        boundingRect = new Rectangle((int) position.x, (int) position.y, WIDTH, HEIGHT);
         center = new Point2D(
                 (float) this.getBoundingRect().x + Castle.WIDTH / 2.0f,
                 (float) this.getBoundingRect().y + Castle.WIDTH / 2.0f
         );
+        centerCard = new Point2D();
+        centerCard.setLocation(center);
+        switch (door) {
+            case NORTH:
+                centerCard.y -= CENTER_CARD_OFFSET;
+                break;
+            case EAST:
+                centerCard.x += CENTER_CARD_OFFSET;
+                break;
+            case WEST:
+                centerCard.x -= CENTER_CARD_OFFSET;
+                break;
+            case SOUTH:
+                centerCard.y += CENTER_CARD_OFFSET;
+                break;
+        }
         Osts = new ArrayList<>();
     }
 
@@ -97,7 +115,6 @@ public class Castle {
         }
     }
 
-
     public Player getOwner() {
         return owner;
     }
@@ -122,12 +139,20 @@ public class Castle {
         return center;
     }
 
+    public Point2D getCenterCard() {
+        return centerCard;
+    }
+
     public List<Troop> getOstsTroops() {
         return Osts.stream().flatMap(o -> o.getTroops().stream()).collect(Collectors.toList());
     }
 
     public int getTimeToLevelUp() {
         return timeToLevelUp;
+    }
+
+    public boolean isAllyOf(Castle c) {
+        return c.getOwner() == this.owner;
     }
 
     public List<Troop> getTroops() {

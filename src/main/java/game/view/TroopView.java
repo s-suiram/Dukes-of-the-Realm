@@ -15,7 +15,7 @@ import java.util.Observer;
 
 public class TroopView extends HitboxedGroup implements Observer {
 
-    private final Troop t;
+    protected final Troop t;
 
     public TroopView(Troop t, Group parentRef) {
         super(parentRef , new Rectangle(-Troop.RADIUS, -Troop.RADIUS, Troop.DIAMETER,Troop.DIAMETER));

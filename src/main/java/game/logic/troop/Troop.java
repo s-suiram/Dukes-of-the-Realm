@@ -24,6 +24,7 @@ public abstract class Troop extends Observable {
 
     private Point2D centerPos;
     private boolean viewDone;
+    private Ost parent;
 
     public Troop(int speed, int damage, int hp, String name) {
         this.speed = speed;
@@ -39,16 +40,24 @@ public abstract class Troop extends Observable {
         return TROOPS.contains(t);
     }
 
-    public static Set<Troop> getTroops() {
-        return Collections.unmodifiableSet(TROOPS);
-    }
-
     public Point2D getCenterPos() {
         return centerPos;
     }
 
     public int getSpeed() {
         return speed;
+    }
+
+    public void setOst(Ost o) {
+        this.parent = o;
+    }
+
+    public double getRelativeX(){
+        return centerPos.x - parent.getShield().x;
+    }
+
+    public double getRelativeY(){
+        return centerPos.y - parent.getShield().y;
     }
 
     public void kill() {
