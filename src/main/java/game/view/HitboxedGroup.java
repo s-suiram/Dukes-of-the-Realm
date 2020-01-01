@@ -3,61 +3,31 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+import java.util.Collections;
 
 
 public abstract class HitboxedGroup extends Group {
 
+    protected final Group parentRef;
     protected final Rectangle hitbox;
-    protected final Rectangle centerPoint;
-    private final Group parentRef;
-    private boolean hbhidden = false;
+    protected boolean killed = false;
 
-    public HitboxedGroup(Group parentRef) {
+    public HitboxedGroup(Group parentRef, Rectangle hitbox) {
         this.parentRef = parentRef;
-        hitbox = new Rectangle(0, 0, 0, 0);
-        centerPoint = new Rectangle(1, 1, 0, 0);
-        centerPoint.setFill(Color.BLACK);
-        hitbox.setFill(Color.TRANSPARENT);
+        this.addAllNodes(hitbox);
         hitbox.setStroke(Color.BLACK);
-        addAllNodes(centerPoint);
+        hitbox.setFill(Color.TRANSPARENT);
         parentRef.getChildren().add(this);
+        hitbox.toFront();
+        this.hitbox = hitbox;
     }
 
-    protected void defineHitbox() {
-        hitbox.setX(getLayoutBounds().getMinX());
-        hitbox.setY(getLayoutBounds().getMinY());
-        hitbox.setWidth(getLayoutBounds().getWidth());
-        hitbox.setHeight(getLayoutBounds().getHeight());
-    }
-
-    public double getWidth() {
-        return getLayoutBounds().getWidth();
-    }
-
-    public double getHeight() {
-        return getLayoutBounds().getHeight();
-    }
-
-    public double getX() {
-        return getLayoutBounds().getMinX();
-    }
-
-    public double getY() {
-        return getLayoutBounds().getMinY();
-    }
-
-    public void showHitBox() {
-        hitbox.setVisible(false);
-        centerPoint.setVisible(false);
-        hbhidden = false;
-    }
-
-    public void hideHitBox() {
-        hitbox.setVisible(true);
-        centerPoint.setVisible(true);
-        hbhidden = true;
+    public boolean killed() {
+        return killed;
     }
 
     public void addNode(Node n) {
@@ -89,5 +59,4 @@ public abstract class HitboxedGroup extends Group {
     }
 
     protected abstract void drawImpl(Point2D cam);
-
 }

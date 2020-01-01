@@ -1,8 +1,9 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
+import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.*;
-import javafx.geometry.Rectangle2D;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class Castle {
     public static int HEIGHT = 100;
     private static int tempCounter = 0;
 
-    private Rectangle2D boundingRect;
+    private Rectangle boundingRect;
     private Point2D center;
     private Player owner;
     private int tempId;
@@ -41,10 +42,10 @@ public class Castle {
 
     public Castle(Player owner, Cardinal door, Point2D position) {
         this(owner, door);
-        boundingRect = new Rectangle2D(position.x, position.y, WIDTH, HEIGHT);
+        boundingRect = new Rectangle((int)position.x, (int)position.y, WIDTH, HEIGHT);
         center = new Point2D(
-                (float) this.getBoundingRect().getMinX() + Castle.WIDTH / 2.0f,
-                (float) this.getBoundingRect().getMinY() + Castle.WIDTH / 2.0f
+                (float) this.getBoundingRect().x + Castle.WIDTH / 2.0f,
+                (float) this.getBoundingRect().y + Castle.WIDTH / 2.0f
         );
         Osts = new ArrayList<>();
     }
@@ -64,16 +65,6 @@ public class Castle {
             return true;
         }
         return false;
-    }
-
-    public void generateOst() {
-        int nb = 3;//(int) (Math.random() * 30) + 10;
-        List<Troop> troops = new ArrayList<>();
-        for (int i = 0; i < nb; i++) {
-            int rnd = (int) (Math.random() * 3);
-            troops.add(rnd == 0 ? new Onager() : rnd == 1 ? new Pikeman() : new Knight());
-        }
-        //Osts.add(new Ost(troops, this, null));
     }
 
     public void addOst(List<Troop> troops, Castle dest) {
@@ -105,6 +96,7 @@ public class Castle {
             }
         }
     }
+
 
     public Player getOwner() {
         return owner;
@@ -181,7 +173,7 @@ public class Castle {
         return tempId;
     }
 
-    public Rectangle2D getBoundingRect() {
+    public Rectangle getBoundingRect() {
         return boundingRect;
     }
 }

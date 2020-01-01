@@ -5,18 +5,22 @@ import game.App;
 import game.logic.Cardinal;
 import game.logic.Castle;
 import game.logic.World;
+import game.logic.troop.Onager;
+import game.logic.troop.Ost;
 import game.logic.troop.Troop;
 import javafx.scene.Group;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class WorldView extends Observable {
+public class WorldView {
 
     private static WorldView instance = null;
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
-    private List<CastleView> castleViews;
-    private List<TroopView> troopsViews;
+    private Set<CastleView> castleViews;
+    private Set<TroopView> troopsViews;
+    private Set<OstView> ostViews;
     private boolean cameraMoved = false;
     private Group castleParent;
     private Group troopParent;
@@ -24,10 +28,12 @@ public class WorldView extends Observable {
     private WorldView(Group castleParent, Group troopParent) {
         this.castleParent = castleParent;
         this.troopParent = troopParent;
-        castleViews = new ArrayList<>();
-        Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
+        castleViews = new HashSet<>();
+        troopsViews = new HashSet<>();
+        ostViews = new HashSet<>();
         cameraPos = new Point2D(0, 0);
-        troopsViews = new ArrayList<>();
+        Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
+
     }
 
     public static WorldView getInstance() {
@@ -39,9 +45,6 @@ public class WorldView extends Observable {
         instance = new WorldView(castleParent, troopParent);
     }
 
-    public void addObservers(Observer... observers) {
-        Arrays.asList(observers).forEach(super::addObserver);
-    }
 
     public int getCameraSpeed() {
         return cameraSpeed;
@@ -50,7 +53,6 @@ public class WorldView extends Observable {
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
         if (this.cameraSpeed < 1) this.cameraSpeed = 1;
-        setChanged();
     }
 
     public void decreaseCameraSpeed() {
@@ -63,10 +65,6 @@ public class WorldView extends Observable {
 
     public void resetCameraSpeed() {
         setCameraSpeed(10);
-    }
-
-    public List<CastleView> getCastleViews() {
-        return castleViews;
     }
 
     public boolean checkAndRestoreCameraMoved() {
@@ -103,7 +101,6 @@ public class WorldView extends Observable {
                 break;
         }
         checkCameraBound();
-        setChanged();
     }
 
     public void move(int x, int y) {
@@ -111,33 +108,27 @@ public class WorldView extends Observable {
         cameraPos.y -= y;
         cameraPos.x -= x;
         checkCameraBound();
-        setChanged();
     }
 
     public void draw() {
-
-        for (int i = 0; i < troopsViews.size(); i++) {
-            TroopView tv = troopsViews.get(i);
-            if (!Troop.isAlive(tv.getTroop())) {
-                tv.getTroop().kill();
-                tv.exitParent();
-                troopsViews.remove(i);
-                i--;
-            }
-        }
-
-        Troop.getTroops().forEach(troop -> {
-            if (!troopsViews.contains(TroopView.getView(troop))) {
-                troopsViews.add(new TroopView(troop, troopParent));
-            }
-        });
-
+        ostViews.removeIf(OstView::killed);
+        ostViews.addAll(Ost.getOsts().stream()
+                .filter(Ost::viewNotDone)
+                .map(o -> new OstView(troopParent, o))
+                .collect(Collectors.toSet())
+        );
+        troopsViews.removeIf(TroopView::killed);
+        troopsViews.addAll(Troop.getTroops().stream()
+                .filter(Troop::viewNotDone)
+                .map(t -> new TroopView(t, troopParent))
+                .collect(Collectors.toSet())
+        );
         troopsViews.forEach(c -> c.draw(cameraPos));
         castleViews.forEach(c -> c.draw(cameraPos));
+        ostViews.forEach(o -> o.draw(cameraPos));
     }
 
     public void clearAllContextualMenu() {
-        getCastleViews().forEach(c -> c.setVisibleContextual(false));
+        castleViews.forEach(c -> c.setVisibleContextual(false));
     }
-
 }
