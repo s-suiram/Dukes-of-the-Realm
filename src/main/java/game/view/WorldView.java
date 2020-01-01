@@ -115,11 +115,7 @@ public class WorldView {
                 .map(o -> new OstView(troopParent, o))
                 .collect(Collectors.toSet())
         );
-        ostViews.forEach(ostView ->
-            ostView.getChildren().removeIf(node ->
-                    node instanceof TroopView && ((TroopView) node).killed()
-            ));
-
+        troopParent.getChildren().retainAll(ostViews);
         castleViews.forEach(c -> c.draw(cameraPos));
         ostViews.forEach(o -> o.draw(cameraPos));
     }
