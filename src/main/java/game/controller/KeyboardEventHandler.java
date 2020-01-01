@@ -32,7 +32,6 @@ public class KeyboardEventHandler {
             }
 
             doKeyTypedAction(KeyCode.ESCAPE, () -> System.exit(0));
-
             doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
             doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
             doKeyTypedAction(KeyCode.MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
@@ -73,7 +72,7 @@ public class KeyboardEventHandler {
     private void doKeyTypedAction(KeyCode key, Action action, boolean combo) {
         if (!combo) return;
 
-        if (!performed.get(key)) {
+        if (keysPressed.get(key) && !performed.get(key)) {
             action.perform();
             performed.put(key, true);
         }

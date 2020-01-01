@@ -21,7 +21,7 @@ public class CastleView extends HitboxedGroup {
     private Rectangle rectangle;
 
     public CastleView(Castle c, Group parentRef) {
-        super(parentRef);
+        super(parentRef, new Rectangle(c.getBoundingRect().width, c.getBoundingRect().height));
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
         rectangle = new Rectangle(0, 0, Castle.WIDTH, Castle.HEIGHT);
@@ -86,24 +86,10 @@ public class CastleView extends HitboxedGroup {
                     }
                 }
         );
-        defineHitbox();
     }
 
     public static CastleView getSelected() {
         return selected;
-    }
-
-    @Override
-    protected void defineHitbox() {
-        hitbox.setX(0);
-        hitbox.setY(0);
-        hitbox.setHeight(Castle.WIDTH);
-        hitbox.setWidth(Castle.WIDTH);
-        centerPoint.setX(model.getCenter().x);
-        centerPoint.setX(model.getCenter().y);
-        centerPoint.setWidth(1);
-        centerPoint.setHeight(1);
-        hitbox.toFront();
     }
 
     @Override
@@ -113,9 +99,10 @@ public class CastleView extends HitboxedGroup {
         } else {
             rectangle.setFill(Color.TRANSPARENT);
         }
-        this.setTranslateX(model.getBoundingRect().getMinX() - cam.x);
-        this.setTranslateY(model.getBoundingRect().getMinY() - cam.y);
+        this.setTranslateX(model.getBoundingRect().x - cam.x);
+        this.setTranslateY(model.getBoundingRect().y - cam.y);
         contextualMenu.draw();
+
     }
 
     public Castle getModel() {

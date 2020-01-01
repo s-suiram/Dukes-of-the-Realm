@@ -62,12 +62,12 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         paused = false;
         stage = primaryStage;
-        primaryStage.setFullScreen(true);
+        //primaryStage.setFullScreen(true);
         WINDOW_WIDTH = (int) Screen.getPrimary().getBounds().getMaxX();
         WINDOW_HEIGHT = (int) Screen.getPrimary().getBounds().getMaxY();
 
         Group root = new Group();
-        Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.GREY);
+        Scene s = new Scene(root, DEFAULT_WINDOWED_X, DEFAULT_WINDOWED_Y, Color.GREY);
 
         KeyboardEventHandler.init(s);
         MouseEventHandler.init(s);

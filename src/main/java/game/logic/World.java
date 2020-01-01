@@ -1,6 +1,7 @@
 package game.logic;
 
 import com.sun.javafx.geom.Point2D;
+import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.Ost;
 import javafx.geometry.Rectangle2D;
 
@@ -19,9 +20,11 @@ public class World {
     private static World instance;
 
     private List<Player> players;
+    public final Rectangle bounds;
 
     public World() {
         players = new ArrayList<>();
+        bounds = new Rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
     }
 
     private static void randomGen() {
@@ -43,14 +46,24 @@ public class World {
                     randPoint.y = r.nextInt(FIELD_HEIGHT - Castle.HEIGHT);
                 } while (Castle.getCastles()
                         .stream()
-                        .anyMatch(castle -> new Rectangle2D((int) randPoint.x - minSpace, (int) randPoint.y - minSpace, Castle.WIDTH + 2 * minSpace, Castle.HEIGHT + 2 * minSpace)
-                                .intersects(castle.getBoundingRect())));
+                        .map(c -> new Rectangle2D(
+                                c.getBoundingRect().x,
+                                c.getBoundingRect().y,
+                                c.getBoundingRect().width,
+                                c.getBoundingRect().height))
+                        .anyMatch(rec -> new Rectangle2D(
+                                (int) randPoint.x - minSpace,
+                                (int) randPoint.y - minSpace,
+                                Castle.WIDTH + 2 * minSpace,
+                                Castle.HEIGHT + 2 * minSpace)
+                                .intersects(rec))
+                );
                 Cardinal randDoor = Cardinal.values()[r.nextInt(4)];
                 p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
             }
         });
 
-        Castle.getCastles().forEach(Castle::generateOst);
+
     }
 
     public static World getInstance() {
@@ -64,12 +77,10 @@ public class World {
 
     public void step() {
         frames++;
-        if (frames % 10 == 0) {
+        if (frames % 2== 0) {
             Castle.getCastles().forEach(Castle::step);
         }
-        if (frames % 20 == 0) {
-            Ost.getOsts().forEach(Ost::step);
-        }
+        Ost.getOsts().forEach(Ost::step);
         if (frames == 60) frames = 1;
     }
 
@@ -101,6 +112,16 @@ public class World {
     }
 
     public boolean castleHere(Point2D here) {
-        return Castle.getCastles().stream().map(Castle::getBoundingRect).anyMatch(rect -> rect.contains(here.x, here.y));
+        return Castle.getCastles().stream()
+                .map(Castle::getBoundingRect)
+                .anyMatch(rect -> rect.contains((int) here.x, (int) here.y));
     }
-}
+
+    // Returns true if two rectangles (l1, r1) and (l2, r2) overlap  
+    public static  boolean doOverlap(Rectangle a, Rectangle b) {
+        Rectangle2D lol = new Rectangle2D(a.x, a.y, a.width, a.height);
+        Rectangle2D lil = new Rectangle2D(b.x, b.y, b.width, b.height);
+        return lol.intersects(lil);
+    }
+
+} 
