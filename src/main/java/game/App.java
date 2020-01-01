@@ -2,6 +2,7 @@ package game;
 
 import game.view.scene.Game;
 import game.view.scene.NewGame;
+import game.view.scene.Welcome;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,18 +16,34 @@ public class App extends Application {
     public final static String WINDOW_TITLE = "Dukes Of The Realm";
 
     private static Game game;
-    private static NewGame newGame = new NewGame(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
+    private static NewGame newGame;
+    private static Welcome welcome;
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static Welcome getWelcome() {
+        return welcome;
+    }
+
+    public static Welcome buildWelcome() {
+        welcome = new Welcome(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
+        return welcome;
     }
 
     public static NewGame getNewGame() {
         return newGame;
     }
 
-    public static void buildGame(List<String> f, List<String> n, int c) {
+    public static NewGame buildNewGame() {
+        newGame = new NewGame(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
+        return newGame;
+    }
+
+    public static Game buildGame(List<String> f, List<String> n, int c) {
         game = new Game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE, f, n, c);
+        return game;
     }
 
     public static Game getGame() {
@@ -34,7 +51,7 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        getNewGame().start(primaryStage);
+    public void start(Stage stage) {
+        buildWelcome().start(stage);
     }
 }

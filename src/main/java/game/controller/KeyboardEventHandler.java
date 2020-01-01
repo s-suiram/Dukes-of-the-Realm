@@ -1,8 +1,5 @@
 package game.controller;
 
-import game.App;
-import game.logic.Cardinal;
-import game.view.WorldView;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -10,84 +7,63 @@ import javafx.stage.Stage;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
-public class KeyboardEventHandler {
-
-    private static KeyboardEventHandler instance;
+public abstract class KeyboardEventHandler {
 
     private Map<KeyCode, Boolean> keysPressed = new HashMap<>();
     private Map<KeyCode, Boolean> performed = new HashMap<>();
     private Map<KeyCode, Boolean> firstType = new HashMap<>();
 
-    private KeyboardEventHandler(Scene s, Stage stage) {
+
+    protected KeyboardEventHandler(Scene scene) {
         EnumSet.allOf(KeyCode.class).forEach(k -> keysPressed.put(k, false));
         EnumSet.allOf(KeyCode.class).forEach(k -> performed.put(k, true));
         EnumSet.allOf(KeyCode.class).forEach(k -> firstType.put(k, true));
 
-        s.setOnKeyPressed(event -> {
+        scene.setOnKeyPressed(event -> {
             keysPressed.put(event.getCode(), true);
             if (firstType.get(event.getCode())) {
                 firstType.put(event.getCode(), false);
                 performed.put(event.getCode(), false);
             }
-
-            doKeyTypedAction(KeyCode.ESCAPE, () -> System.exit(0));
-            doKeyTypedAction(KeyCode.ADD, WorldView.getInstance()::increaseCameraSpeed);
-            doKeyTypedAction(KeyCode.SUBTRACT, WorldView.getInstance()::decreaseCameraSpeed);
-            doKeyTypedAction(KeyCode.MULTIPLY, WorldView.getInstance()::resetCameraSpeed);
-            doKeyTypedAction(KeyCode.ENTER, () -> stage.setFullScreen(!stage.isFullScreen()), event.isAltDown());
-            doKeyTypedAction(KeyCode.SPACE, () -> App.getGame().togglePause());
         });
 
-        s.setOnKeyReleased(event -> {
+        scene.setOnKeyReleased(event -> {
             performed.put(event.getCode(), false);
             keysPressed.put(event.getCode(), false);
         });
     }
 
-    public static void init(Scene s, Stage stage) {
-        instance = new KeyboardEventHandler(s, stage);
+    public abstract void handle(Stage s);
+
+    protected boolean isTyped(KeyCode key, Action action) {
+        return isTyped(key, action, null);
     }
 
-    public static KeyboardEventHandler getInstance() {
-        return instance;
-    }
-
-    public void handle() {
-        handleKeysPressed();
-    }
-
-    private void handleKeysPressed() {
-        doKeyPressedAction(KeyCode.Z, WorldView.getInstance()::move, Cardinal.NORTH);
-        doKeyPressedAction(KeyCode.Q, WorldView.getInstance()::move, Cardinal.WEST);
-        doKeyPressedAction(KeyCode.S, WorldView.getInstance()::move, Cardinal.SOUTH);
-        doKeyPressedAction(KeyCode.D, WorldView.getInstance()::move, Cardinal.EAST);
-    }
-
-
-    private void doKeyTypedAction(KeyCode key, Action action) {
-        doKeyTypedAction(key, action, true);
-    }
-
-    private void doKeyTypedAction(KeyCode key, Action action, boolean combo) {
-        if (!combo) return;
+    protected boolean isTyped(KeyCode key, Action action, KeyCode combo) {
+        if (combo != null && !keysPressed.get(combo)) return false;
 
         if (keysPressed.get(key) && !performed.get(key)) {
             action.perform();
             performed.put(key, true);
+            return true;
         }
+        return false;
     }
 
-    private void doKeyPressedAction(KeyCode k, Consumer<Cardinal> consumer, Cardinal car) {
-        if (keysPressed.get(k)) {
-            consumer.accept(car);
-        }
-    }
-
-    private void doKeyPressedAction(KeyCode k, Action action) {
+    protected boolean isPressed(KeyCode k, Action action) {
         if (keysPressed.get(k)) {
             action.perform();
+            return true;
         }
+        return false;
+    }
+
+    protected boolean isPressed(Action action, KeyCode... k) {
+        for (KeyCode code : k) {
+            if (isPressed(code, action))
+                return true;
+        }
+        return false;
     }
 }

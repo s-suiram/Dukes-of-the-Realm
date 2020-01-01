@@ -2,21 +2,28 @@ package game.view.scene;
 
 import game.App;
 import game.FirstNameDico;
+import game.controller.FullscreenKeyboardController;
+import game.controller.KeyboardEventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NewGame extends CustomScene {
     private GridPane grid;
 
+    private KeyboardEventHandler keyboardController;
+
     public NewGame(int defaultWindowWidth, int defaultWindowHeight, boolean startFullscreen, String windowTitle) {
         super(defaultWindowWidth, defaultWindowHeight, startFullscreen, windowTitle);
+        keyboardController = new FullscreenKeyboardController(getScene());
     }
 
     @Override
@@ -54,19 +61,35 @@ public class NewGame extends CustomScene {
             for (int i = 0; i < nbNeutral.getValue(); i++) {
                 neutral.add(FirstNameDico.getRandName());
             }
-            App.buildGame(fighting, neutral, castlePerPlayer);
+            App.buildGame(fighting, neutral, castlePerPlayer).start(s);
             stop();
-            App.getGame().start(s);
+        });
+
+        cancel.setOnAction(e -> {
+            App.getWelcome().start(s);
+            stop();
+        });
+
+        Arrays.asList(playerName, nbFighting, nbNeutral, nbCastlePerPlayer).forEach(n -> {
+            n.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ENTER && !e.isAltDown()) {
+                    submit.fire();
+                    submit.setDisable(true);
+                }
+            });
         });
 
         grid.addRow(4, submit, cancel);
 
         grid.setStyle("-fx-font-size: 12pt");
         getRoot().addAll(grid);
+        getRoot().forEach(e -> e.setFocusTraversable(false));
     }
 
     @Override
     protected void loop(Stage s, long now) {
+        keyboardController.handle(s);
+
         grid.setTranslateX((windowWidth / 2.0) - grid.getWidth() / 2.0);
         grid.setTranslateY((windowHeight / 2.0) - grid.getHeight() / 2.0);
     }

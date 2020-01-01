@@ -1,11 +1,14 @@
 package game.view.scene;
 
 import com.sun.javafx.geom.Point2D;
+import game.App;
+import game.controller.GameKeyboardController;
 import game.controller.KeyboardEventHandler;
 import game.controller.MouseEventHandler;
 import game.logic.Cardinal;
 import game.logic.World;
 import game.view.WorldView;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -19,13 +22,15 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class Game extends CustomScene {
-    private boolean pause;
-    private VBox pauseHud;
+    private VBox menu;
+    private Label pauseLabel;
 
     private GameSetting settings;
 
     private List<String> f, n;
     private int castlePerPlayer;
+
+    private KeyboardEventHandler keyboardController;
 
     public Game(int defaultWindowWidth, int defaultWindowHeight,
                 boolean startFullScreen, String windowTitle,
@@ -35,6 +40,7 @@ public class Game extends CustomScene {
         this.n = n;
         this.castlePerPlayer = castlePerPlayer;
         settings = new GameSetting();
+        keyboardController = new GameKeyboardController(getScene());
     }
 
     @Override
@@ -44,9 +50,7 @@ public class Game extends CustomScene {
 
         World.init(f, n, castlePerPlayer);
         WorldView.init(castles, troops);
-        KeyboardEventHandler.init(getScene(), s);
         MouseEventHandler.init(getScene());
-        pause = false;
 
         Rectangle background = new Rectangle(
                 0, 0,
@@ -59,71 +63,82 @@ public class Game extends CustomScene {
         onWidthResize(background::setWidth);
         onHeightResize(background::setHeight);
 
-        Label pauseLabel = new Label("PAUSE !");
+        pauseLabel = new Label("PAUSE !");
+        pauseLabel.setVisible(false);
         pauseLabel.setStyle("-fx-font-size: 99pt");
         pauseLabel.setTextFill(Color.rgb(45, 62, 80));
-
         Button cameraToggle = new Button("Toggle camera border movement");
-        cameraToggle.setStyle("-fx-font-size: 20pt; -fx-background-color: #128011");
+        cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #128011");
         cameraToggle.setFocusTraversable(false);
         cameraToggle.setOnAction(e -> {
             settings.cameraMoveBorder = !settings.cameraMoveBorder;
             if (settings.cameraMoveBorder)
-                cameraToggle.setStyle("-fx-font-size: 20pt; -fx-background-color: #128011");
+                cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #128011");
             else
-                cameraToggle.setStyle("-fx-font-size: 20pt; -fx-background-color: #802a2b");
+                cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #802a2b");
         });
 
-        pauseHud = new VBox(pauseLabel, cameraToggle);
-        pauseHud.setVisible(false);
+        Button exit = new Button("Exit");
+        exit.setStyle("-fx-font-size: 13pt;");
+        exit.setFocusTraversable(false);
+        exit.setOnAction(e -> {
+            App.buildWelcome().start(s);
+            stop();
+        });
 
+        menu = new VBox(cameraToggle, exit);
+        menu.setVisible(false);
+        menu.setAlignment(Pos.CENTER);
+        menu.setSpacing(10);
 
-        getRoot().addAll(background, troops, castles, pauseHud);
+        getRoot().addAll(background, troops, castles, pauseLabel, menu);
     }
 
     @Override
     protected void loop(Stage s, long now) {
-        KeyboardEventHandler.getInstance().handle();
+        keyboardController.handle(s);
         WorldView.getInstance().draw();
         if (settings.cameraMoveBorder) handleCameraMove();
-        if (!isPause()) {
+        if (!pauseLabel.isVisible())
             World.getInstance().step();
-            pauseHud.setVisible(false);
-        } else {
-            pauseHud.setVisible(true);
-        }
+
+        pauseLabel.setTranslateX(windowWidth / 2.0 - pauseLabel.getWidth() / 2.0);
+
+        menu.setTranslateX(windowWidth / 2.0 - menu.getWidth() / 2.0);
+        menu.setTranslateY(windowHeight / 2.0 - menu.getHeight() / 2.0);
     }
 
     public void handleCameraMove() {
         Point2D p = MouseEventHandler.getInstance().getMousePos();
 
-        double topInset = getScene().getWindow().getHeight() - getScene().getHeight();
+        double topInset = 0.0;
+        if (getScene().getWindow() != null) {
+            topInset = getScene().getWindow().getHeight() - getScene().getHeight();
+        }
 
         Rectangle2D left = new Rectangle2D(0, 0, settings.cameraMoveBorderThickness, getWindowHeight());
         Rectangle2D right = new Rectangle2D(getWindowWidth() - settings.cameraMoveBorderThickness, 0, settings.cameraMoveBorderThickness, getWindowHeight());
         Rectangle2D up = new Rectangle2D(0, 0, getWindowWidth(), settings.cameraMoveBorderThickness);
         Rectangle2D down = new Rectangle2D(0, getWindowHeight() - settings.cameraMoveBorderThickness - topInset, getWindowWidth(), settings.cameraMoveBorderThickness);
 
-        if (left.contains((int) p.x, (int) p.y)) {
+        if (left.contains((int) p.x, (int) p.y))
             WorldView.getInstance().move(Cardinal.WEST);
-        }
-        if (right.contains((int) p.x, (int) p.y)) {
+        if (right.contains((int) p.x, (int) p.y))
             WorldView.getInstance().move(Cardinal.EAST);
-        }
-        if (up.contains((int) p.x, (int) p.y)) {
+        if (up.contains((int) p.x, (int) p.y))
             WorldView.getInstance().move(Cardinal.NORTH);
-        }
-        if (down.contains((int) p.x, (int) p.y)) {
+        if (down.contains((int) p.x, (int) p.y))
             WorldView.getInstance().move(Cardinal.SOUTH);
-        }
+
     }
 
-    public boolean isPause() {
-        return pause;
+    public void toggleMenu() {
+        menu.setVisible(!menu.isVisible());
+        pauseLabel.setVisible(menu.isVisible());
     }
 
     public void togglePause() {
-        this.pause = !this.pause;
+        pauseLabel.setVisible(!pauseLabel.isVisible());
     }
 
     static class GameSetting {

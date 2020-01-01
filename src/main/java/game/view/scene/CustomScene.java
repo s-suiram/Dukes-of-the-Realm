@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -18,24 +19,18 @@ public abstract class CustomScene {
     protected double windowWidth;
     protected double windowHeight;
     protected Scene scene;
-    boolean finished;
     private Consumer<Double> widthResize;
     private Consumer<Double> heightResize;
     private String windowTitle;
     private AnimationTimer animationTimer;
 
-    public CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle) {
+    protected CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle) {
         this.defaultWindowWidth = defaultWindowWidth;
         this.defaultWindowHeight = defaultWindowHeight;
         this.windowWidth = startFullScreen ? Screen.getPrimary().getBounds().getMaxX() : defaultWindowWidth;
         this.windowHeight = startFullScreen ? Screen.getPrimary().getBounds().getMaxY() : defaultWindowHeight;
         this.startFullscreen = startFullScreen;
         this.windowTitle = windowTitle;
-
-        widthResize = unused -> {
-        };
-        heightResize = unused -> {
-        };
 
         scene = new Scene(new Group(), windowWidth, windowHeight, Color.GREY);
     }
@@ -57,17 +52,16 @@ public abstract class CustomScene {
     }
 
     public void start(Stage s) {
-        finished = false;
         init(s);
-
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 loop(s, now);
             }
         };
-
         animationTimer.start();
+
+        s.setScene(scene);
 
         if (startFullscreen) {
             s.setFullScreen(true);
@@ -75,16 +69,18 @@ public abstract class CustomScene {
 
         s.widthProperty().addListener((obs, oldVal, newVal) -> {
             windowWidth = newVal.intValue();
-            widthResize.accept(windowWidth);
+            if (widthResize != null)
+                widthResize.accept(windowWidth);
         });
 
         s.heightProperty().addListener((obs, oldVal, newVal) -> {
             windowHeight = newVal.intValue();
-            heightResize.accept(windowHeight);
+            if (heightResize != null)
+                heightResize.accept(windowHeight);
         });
 
+        s.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         s.setFullScreenExitHint("");
-        s.setScene(scene);
         s.sizeToScene();
         s.setTitle(windowTitle);
         s.show();
