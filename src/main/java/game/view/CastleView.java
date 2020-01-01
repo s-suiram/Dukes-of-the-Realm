@@ -21,7 +21,7 @@ public class CastleView extends HitboxedGroup {
     private Rectangle rectangle;
 
     public CastleView(Castle c, Group parentRef) {
-        super(parentRef, new Rectangle(0, 0, 0, 0);
+        super(parentRef, new Rectangle(0, 0, 0, 0));
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
         rectangle = new Rectangle(0, 0, Castle.WIDTH, Castle.HEIGHT);
@@ -99,8 +99,6 @@ public class CastleView extends HitboxedGroup {
         }
         this.setTranslateX(model.getBoundingRect().x - cam.x);
         this.setTranslateY(model.getBoundingRect().y - cam.y);
-        this.setTranslateX(model.getBoundingRect().getMinX() - cam.x);
-        this.setTranslateY(model.getBoundingRect().getMinY() - cam.y);
         if (getModel().getOwner() == Player.getPlayer()) {
             rectangle.setStroke(Color.GOLD);
         } else {
