@@ -5,9 +5,7 @@ import com.sun.javafx.geom.Rectangle;
 import game.logic.Castle;
 import game.logic.World;
 
-import javax.management.Query;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Ost extends Observable {
 
@@ -148,7 +146,7 @@ public class Ost extends Observable {
                 }
             }
         } else {
-            System.out.println("impact");
+            //System.out.println("impact");
         }
 
     }
@@ -185,10 +183,7 @@ public class Ost extends Observable {
                 .filter(c -> World.doOverlap(shield, c.getBoundingRect()))
                 .findFirst()
                 .orElse(null);
-        if(currentIntersect == null)
-            return false;
-
-        return true;
+        return currentIntersect != null;
     }
 
     private void pathFind() {

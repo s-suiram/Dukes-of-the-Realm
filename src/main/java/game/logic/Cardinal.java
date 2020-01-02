@@ -1,5 +1,9 @@
 package game.logic;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum Cardinal {
     NORTH,
     SOUTH,
@@ -19,5 +23,9 @@ public enum Cardinal {
             default:
                 throw new IllegalArgumentException(s + " is not a cardinal value");
         }
+    }
+
+    public static List<Cardinal> valuesMinus(List<Cardinal> c) {
+        return Arrays.stream(values()).filter(card -> !c.contains(card)).collect(Collectors.toList());
     }
 }

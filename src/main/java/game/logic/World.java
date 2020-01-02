@@ -7,6 +7,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -20,9 +21,9 @@ public class World {
     public static Random generator = new Random();
 
     private static World instance;
+    public final Rectangle bounds;
     Double d = 5.0;
     private List<Player> players;
-    public final Rectangle bounds;
 
     public World() {
         players = new ArrayList<>();
@@ -132,19 +133,62 @@ public class World {
             }
         }
 
-        Stream.of(fightingNames, neutralNames).flatMap(Collection::stream).collect(Collectors.toList()).forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
-            for (int i = 0; i < nbCastlePerDuke; i++) {
-                Rectangle2D picked = tiles.remove(rand(0, tiles.size()));
-                int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
-                int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
-                p.addCastle(Cardinal.values()[rand(0, Cardinal.values().length)], new Point2D(x, y));
-            }
-        }));
+        tiles.forEach(t -> {
+//            System.out.println(t);
+            int i = tiles.indexOf(t);
+            int x = i / width;
+            int y = i % width;
+//            System.out.println((x * widthPerTile) + (widthPerTile * padding) + " " + ((y * heightPerTile) + (heightPerTile * padding)));
+        });
+
+        Function<Point2D, Boolean> isRight = p -> p.x == width - 1;
+        Function<Point2D, Boolean> isLeft = p -> p.x == 0;
+        Function<Point2D, Boolean> isUp = p -> p.y == 0;
+        Function<Point2D, Boolean> isDown = p -> p.y == height - 1;
+
+        Function<Point2D, Cardinal> getValidDoor = p -> {
+            List<Cardinal> exclude = new ArrayList<>(2);
+
+            if (isDown.apply(p))
+                exclude.add(Cardinal.SOUTH);
+            if (isLeft.apply(p))
+                exclude.add(Cardinal.WEST);
+            if (isRight.apply(p))
+                exclude.add(Cardinal.EAST);
+            if (isUp.apply(p))
+                exclude.add(Cardinal.NORTH);
+
+            return Cardinal.valuesMinus(exclude).get(rand(0, 4 - exclude.size()));
+        };
+
+        Set<Integer> randSet = new TreeSet<>((o1, o2) -> {
+            if (o1.equals(o2)) return 0;
+            return rand(-1, 1) == 0 ? 1 : -1;
+        });
+        IntStream.range(0, tiles.size()).forEach(randSet::add);
+
+        Queue<Integer> randQueue = new LinkedList<>(randSet);
+
+        Stream.of(fightingNames, neutralNames)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
+                .forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
+                    for (int i = 0; i < nbCastlePerDuke; i++) {
+                        int rand = randQueue.remove();
+                        Rectangle2D picked = tiles.get(rand);
+                        int x1 = rand / width;
+                        int y1 = rand % width;
+
+                        int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
+                        int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
+
+                        p.addCastle(getValidDoor.apply(new Point2D(x1, y1)), new Point2D(x, y));
+                    }
+                }));
     }
 
     public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
         instance = new World();
-//        randomGeneration(Arrays.asList("P1", "P2", "P3"), Arrays.asList("N1", "N2", "N3"), 5);
         randomGeneration(fightingNames, neutralNames, castlePerDuke);
     }
 
@@ -153,9 +197,16 @@ public class World {
         return instance;
     }
 
+    // Returns true if two rectangles (l1, r1) and (l2, r2) overlap
+    public static boolean doOverlap(Rectangle a, Rectangle b) {
+        Rectangle2D lol = new Rectangle2D(a.x, a.y, a.width, a.height);
+        Rectangle2D lil = new Rectangle2D(b.x, b.y, b.width, b.height);
+        return lol.intersects(lil);
+    }
+
     public void step() {
         frames++;
-        if (frames % 2== 0) {
+        if (frames % 2 == 0) {
             Castle.getCastles().forEach(Castle::step);
         }
         Ost.getOsts().forEach(Ost::step);
@@ -193,13 +244,6 @@ public class World {
         return Castle.getCastles().stream()
                 .map(Castle::getBoundingRect)
                 .anyMatch(rect -> rect.contains((int) here.x, (int) here.y));
-    }
-
-    // Returns true if two rectangles (l1, r1) and (l2, r2) overlap  
-    public static  boolean doOverlap(Rectangle a, Rectangle b) {
-        Rectangle2D lol = new Rectangle2D(a.x, a.y, a.width, a.height);
-        Rectangle2D lil = new Rectangle2D(b.x, b.y, b.width, b.height);
-        return lol.intersects(lil);
     }
 
 } 
