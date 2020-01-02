@@ -271,7 +271,6 @@ public class Squad extends Observable {
         shield.x = (int) (center.x - max / 2);
         shield.y = (int) (center.y - max / 2);
         minimumDistance = max / 2 + (Castle.WIDTH / 2 - Castle.CENTER_CARD_OFFSET);
-        System.out.println(minimumDistance);
     }
 
     private void computeDelta() {
