@@ -7,41 +7,37 @@ import game.logic.World;
 
 import java.util.*;
 
-public class Ost extends Observable {
+public class Squad extends Observable {
 
-    protected static final Set<Ost> OSTS = new HashSet<>();
+    protected static final Set<Squad> SQUADS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
     private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20;
     private static final int LOADING_CYCLES = 90;
-
+    private final Point2D spacing;
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
     private int frameSkip;
     private int counter;
     private int minimumDistance;
-
     private List<Troop> troops;
     private Castle origin;
     private Castle target;
     private Castle currentIntersect;
     private Rectangle shield;
-
     private boolean isTargetAlly;
     private boolean viewDone;
     private boolean lockDir;
     private boolean combatMode;
-
     private Point2D center;
     private Point2D delta;
     private Point2D speedDir;
     private Point2D lastSpeedDir;
     private Point2D startingPos;
-    private final Point2D spacing;
 
-    public Ost(List<Troop> troops, Castle origin, Castle target) {
+    public Squad(List<Troop> troops, Castle origin, Castle target) {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
@@ -60,7 +56,7 @@ public class Ost extends Observable {
         this.spacing = new Point2D();
         this.speedDir = new Point2D();
         this.lastSpeedDir = new Point2D();
-        this.delta = new Point2D((float)Double.MAX_VALUE,(float)Double.MAX_VALUE);
+        this.delta = new Point2D((float) Double.MAX_VALUE, (float) Double.MAX_VALUE);
         this.startingPos = new Point2D();
         this.center = new Point2D();
 
@@ -69,15 +65,19 @@ public class Ost extends Observable {
         this.origin.getTroops().removeAll(troops);
         troops.forEach(troop -> troop.setOst(this));
         computeStartingPos();
-        OSTS.add(this);
+        SQUADS.add(this);
     }
 
-    public static Set<Ost> getOsts() {
-        return Collections.unmodifiableSet(OSTS);
+    public static void clearSquads() {
+        SQUADS.clear();
     }
 
-    public static boolean isAlive(Ost o) {
-        return OSTS.contains(o);
+    public static Set<Squad> getSquads() {
+        return Collections.unmodifiableSet(SQUADS);
+    }
+
+    public static boolean isAlive(Squad o) {
+        return SQUADS.contains(o);
     }
 
     public List<Troop> getTroops() {
@@ -96,28 +96,28 @@ public class Ost extends Observable {
         return center;
     }
 
-    public boolean isLoading(){
+    public boolean isLoading() {
         return loadingCyclesLeft > 0;
     }
 
     public int getAngle() {
         int angle;
-        if(speedDir.x == 0){
-            if(speedDir.y < 0)
+        if (speedDir.x == 0) {
+            if (speedDir.y < 0)
                 angle = 0;
             else
                 angle = 180;
         } else {
-            if(speedDir.x < 0)
+            if (speedDir.x < 0)
                 angle = 90;
             else
                 angle = 270;
         }
-        return  angle;
+        return angle;
     }
 
-    public boolean dirChanged(){
-        if(onTarget())
+    public boolean dirChanged() {
+        if (onTarget())
             return false;
         return speedDir.x != lastSpeedDir.x || lastSpeedDir.y != speedDir.y;
     }
@@ -127,7 +127,7 @@ public class Ost extends Observable {
     }
 
     public void step() {
-        if(!onTarget()) {
+        if (!onTarget()) {
             counter++;
             translate(speedDir);
             if (!allSent()) {
@@ -138,8 +138,8 @@ public class Ost extends Observable {
                     if (shield.width == 0)
                         computeCenter();
                     else
-                       // updateShield();
-                    computeDelta();
+                        // updateShield();
+                        computeDelta();
                     pathFind();
                 } else {
                     loadingCyclesLeft--;
@@ -164,7 +164,7 @@ public class Ost extends Observable {
 
     public void kill() {
         troops.forEach(Troop::kill);
-        OSTS.remove(this);
+        SQUADS.remove(this);
         setChanged();
         notifyObservers();
     }
@@ -265,14 +265,14 @@ public class Ost extends Observable {
         float avgx = (float) (maxX + minX) / 2;
         float avgy = (float) (maxY + minY) / 2;
         float width = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxX - minX);
-        float height = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxY - minY) ;
+        float height = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxY - minY);
         int max = (int) Math.max(width, height);
         center.setLocation(avgx, avgy);
         shield.width = max;
         shield.height = max;
         shield.x = (int) (center.x - max / 2);
         shield.y = (int) (center.y - max / 2);
-        minimumDistance = max/2 + (Castle.WIDTH/2 - Castle.CENTER_CARD_OFFSET);
+        minimumDistance = max / 2 + (Castle.WIDTH / 2 - Castle.CENTER_CARD_OFFSET);
         System.out.println(minimumDistance);
     }
 
@@ -297,7 +297,7 @@ public class Ost extends Observable {
 
     }
 
-    private void translate(Point2D p){
+    private void translate(Point2D p) {
         troops.forEach(t -> t.translate(p.x, p.y));
         center.x += p.x;
         center.y += p.y;
@@ -305,11 +305,11 @@ public class Ost extends Observable {
         shield.y += p.y;
     }
 
-    private boolean onTarget(){
-        if(currentIntersect != target)
+    private boolean onTarget() {
+        if (currentIntersect != target)
             return false;
 
-        switch (target.getDoor()){
+        switch (target.getDoor()) {
             case SOUTH:
             case NORTH:
                 return Math.abs(delta.x) < speed && Math.abs(delta.y) <= minimumDistance;

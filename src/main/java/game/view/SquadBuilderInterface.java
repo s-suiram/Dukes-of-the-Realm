@@ -121,7 +121,7 @@ public class SquadBuilderInterface extends Group {
                 feedback.setText("You can't put more than " + 10 + " troops");
             } else {
                 if (all.size() > 0) {
-                    src.addOst(all, dest);
+                    src.createSquad(all, dest);
                     contextualMenuCastle.deleteSquadBuilder();
                 } else {
                     feedback.setText("You can't build an empty squad");

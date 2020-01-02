@@ -1,11 +1,7 @@
 package game.logic.troop;
 
 import com.sun.javafx.geom.Point2D;
-import com.sun.javafx.geom.Rectangle;
-import javafx.geometry.Rectangle2D;
 
-
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
@@ -24,7 +20,7 @@ public abstract class Troop extends Observable {
 
     private Point2D centerPos;
     private boolean viewDone;
-    private Ost parent;
+    private Squad parent;
 
     public Troop(int speed, int damage, int hp, String name) {
         this.speed = speed;
@@ -48,7 +44,7 @@ public abstract class Troop extends Observable {
         return speed;
     }
 
-    public void setOst(Ost o) {
+    public void setOst(Squad o) {
         this.parent = o;
     }
 

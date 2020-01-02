@@ -1,32 +1,29 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
-import game.logic.troop.Ost;
-import game.logic.troop.Troop;
+import game.logic.troop.Squad;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.stream.Collectors;
 
-public class OstView extends HitboxedGroup implements Observer {
+public class SquadView extends HitboxedGroup implements Observer {
 
-    private Ost o;
-    private  double lastAngle;
+    private Squad o;
+    private double lastAngle;
 
-    public OstView(Group parentRef, Ost o) {
+    public SquadView(Group parentRef, Squad o) {
         super(parentRef, new Rectangle());
         this.o = o;
         o.addObserver(this);
         o.setViewDone();
-       o.getTroops().forEach(troop -> {
-           TroopView tv = new TroopView(troop,this);
-                   tv.setTranslateX(troop.getCenterPos().x );
-                   tv.setTranslateY(troop.getCenterPos().y );
-       });
-       this.lastAngle = o.getAngle();
+        o.getTroops().forEach(troop -> {
+            TroopView tv = new TroopView(troop, this);
+            tv.setTranslateX(troop.getCenterPos().x);
+            tv.setTranslateY(troop.getCenterPos().y);
+        });
+        this.lastAngle = o.getAngle();
     }
 
     @Override

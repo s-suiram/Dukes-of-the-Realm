@@ -5,7 +5,7 @@ import game.App;
 import game.logic.Cardinal;
 import game.logic.Castle;
 import game.logic.World;
-import game.logic.troop.Ost;
+import game.logic.troop.Squad;
 import javafx.scene.Group;
 
 import java.util.HashSet;
@@ -20,13 +20,13 @@ public class WorldView {
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
     private Set<CastleView> castleViews;
-    private Set<OstView> ostViews;
+    private Set<SquadView> squadViews;
     private Group troopParent;
 
     private WorldView(Group castleParent, Group troopParent) {
         this.troopParent = troopParent;
         castleViews = new HashSet<>();
-        ostViews = new HashSet<>();
+        squadViews = new HashSet<>();
         cameraPos = new Point2D(0, 0);
         Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
     }
@@ -127,15 +127,15 @@ public class WorldView {
     }
 
     public void draw() {
-        ostViews.removeIf(OstView::killed);
-        ostViews.addAll(Ost.getOsts().stream()
-                .filter(Ost::viewNotDone)
-                .map(o -> new OstView(troopParent, o))
+        squadViews.removeIf(SquadView::killed);
+        squadViews.addAll(Squad.getSquads().stream()
+                .filter(Squad::viewNotDone)
+                .map(o -> new SquadView(troopParent, o))
                 .collect(Collectors.toSet())
         );
-        troopParent.getChildren().retainAll(ostViews);
+        troopParent.getChildren().retainAll(squadViews);
         castleViews.forEach(c -> c.draw(cameraPos));
-        ostViews.forEach(o -> o.draw(cameraPos));
+        squadViews.forEach(o -> o.draw(cameraPos));
     }
 
 

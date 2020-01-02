@@ -34,10 +34,6 @@ public abstract class Player {
         return castles;
     }
 
-    public void addCastle(Cardinal door) {
-        castles.add(new Castle(this, door));
-    }
-
     public void addCastle(Cardinal door, Point2D pos) {
         castles.add(new Castle(this, door, pos));
     }

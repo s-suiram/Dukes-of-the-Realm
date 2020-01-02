@@ -132,7 +132,7 @@ public class ContextualMenuCastle extends Group {
     }
 
     public void draw() {
-        money.setText("Money: " + castle.getMoney());
+        money.setText("Money: " + castle.getFlorin());
         level.setText("Level: " + castle.getLevel());
         p_val.setText(String.valueOf(castle.getPikemen().size()));
         k_val.setText(String.valueOf(castle.getKnights().size()));

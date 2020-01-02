@@ -2,7 +2,7 @@ package game.logic;
 
 import com.sun.javafx.geom.Point2D;
 import com.sun.javafx.geom.Rectangle;
-import game.logic.troop.Ost;
+import game.logic.troop.Squad;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class World {
-
     public static int FIELD_WIDTH = 4000;
+
     public static int FIELD_HEIGHT = 4000;
     public static int frames;
 
@@ -29,46 +29,15 @@ public class World {
     public World() {
         players = new ArrayList<>();
         bounds = new Rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
+        Castle.clearCastle();
+        Squad.clearSquads();
     }
 
-    private static void randomGen() {
-        instance.addFightingDukes("Fighting1");
-        instance.addFightingDukes("Fighting2");
-        instance.addFightingDukes("Fighting3");
-
-        instance.addNeutralDukes("Neutral1");
-        instance.addNeutralDukes("Neutral2");
-        instance.addNeutralDukes("Neutral3");
-        int minSpace = 300;
-        int nbCastlePerDukes = 5;
-        World.getInstance().getPlayers().forEach(p -> {
-            for (int i = 0; i < nbCastlePerDukes; i++) {
-                Random r = new Random();
-                final Point2D randPoint = new Point2D();
-                do {
-                    randPoint.x = r.nextInt(FIELD_WIDTH - Castle.WIDTH);
-                    randPoint.y = r.nextInt(FIELD_HEIGHT - Castle.HEIGHT);
-                } while (Castle.getCastles()
-                        .stream()
-                        .map(c -> new Rectangle2D(
-                                c.getBoundingRect().x,
-                                c.getBoundingRect().y,
-                                c.getBoundingRect().width,
-                                c.getBoundingRect().height))
-                        .anyMatch(rec -> new Rectangle2D(
-                                (int) randPoint.x - minSpace,
-                                (int) randPoint.y - minSpace,
-                                Castle.WIDTH + 2 * minSpace,
-                                Castle.HEIGHT + 2 * minSpace)
-                                .intersects(rec))
-                );
-                Cardinal randDoor = Cardinal.values()[r.nextInt(4)];
-                p.addCastle(randDoor, new Point2D(randPoint.x, randPoint.y));
-            }
-        });
-
-
+    public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
+        instance = new World();
+        randomGeneration(fightingNames, neutralNames, castlePerDuke);
     }
+
 
     private static int getBestGrid(int nbCastle) {
         int[] divisors = IntStream.range(1, nbCastle).parallel().filter(val -> nbCastle % val == 0).toArray();
@@ -180,12 +149,6 @@ public class World {
                 }));
     }
 
-    public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
-        instance = new World();
-        Castle.clearCastle();
-        randomGeneration(fightingNames, neutralNames, castlePerDuke);
-    }
-
     public static World getInstance() {
         if (instance == null) throw new NullPointerException("Call init on World");
         return instance;
@@ -203,7 +166,7 @@ public class World {
         if (frames % 2 == 0) {
             Castle.getCastles().forEach(Castle::step);
         }
-        Ost.getOsts().forEach(Ost::step);
+        Squad.getSquads().forEach(Squad::step);
         if (frames == 60) frames = 1;
     }
 
