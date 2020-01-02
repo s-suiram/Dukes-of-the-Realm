@@ -2,6 +2,7 @@ package game.view;
 
 import game.logic.Castle;
 import game.logic.troop.TroopType;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -164,5 +165,21 @@ public class ContextualMenuCastle extends Group {
         }
 
         if (squadBuilderInterface != null) squadBuilderInterface.draw();
+    }
+
+    public int getX() {
+        return (int) localToScene(new Point2D(getTranslateX(), getTranslateY())).getX();
+    }
+
+    public int getY() {
+        return (int) localToScene(new Point2D(getTranslateX(), getTranslateY())).getY();
+    }
+
+    public int getWidth() {
+        return (int) menu.getWidth();
+    }
+
+    public int getHeight() {
+        return (int) menu.getHeight();
     }
 }

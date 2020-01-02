@@ -66,7 +66,7 @@ public class NewGame extends CustomScene {
         });
 
         cancel.setOnAction(e -> {
-            App.getWelcome().start(s);
+            App.buildWelcome().start(s);
             stop();
         });
 

@@ -16,29 +16,17 @@ public class App extends Application {
     public final static String WINDOW_TITLE = "Dukes Of The Realm";
 
     private static Game game;
-    private static NewGame newGame;
-    private static Welcome welcome;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static Welcome getWelcome() {
-        return welcome;
-    }
-
     public static Welcome buildWelcome() {
-        welcome = new Welcome(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
-        return welcome;
-    }
-
-    public static NewGame getNewGame() {
-        return newGame;
+        return new Welcome(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
     }
 
     public static NewGame buildNewGame() {
-        newGame = new NewGame(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
-        return newGame;
+        return new NewGame(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
     }
 
     public static Game buildGame(List<String> f, List<String> n, int c) {

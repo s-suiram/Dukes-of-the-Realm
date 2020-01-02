@@ -4,7 +4,6 @@ import com.sun.javafx.geom.Point2D;
 import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.*;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,7 +13,7 @@ public class Castle {
 
     public static int WIDTH = 100;
     public static int HEIGHT = 100;
-    public static final int CENTER_CARD_OFFSET = HEIGHT/3;
+    public static final int CENTER_CARD_OFFSET = HEIGHT / 3;
     private static int tempCounter = 0;
 
     private Rectangle boundingRect;
@@ -70,6 +69,10 @@ public class Castle {
 
     public static Set<Castle> getCastles() {
         return Collections.unmodifiableSet(CASTLES);
+    }
+
+    public static void clearCastle() {
+        CASTLES.clear();
     }
 
     public int levelUpPrice() {

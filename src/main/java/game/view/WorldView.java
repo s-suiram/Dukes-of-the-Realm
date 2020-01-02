@@ -5,33 +5,30 @@ import game.App;
 import game.logic.Cardinal;
 import game.logic.Castle;
 import game.logic.World;
-import game.logic.troop.Onager;
 import game.logic.troop.Ost;
-import game.logic.troop.Troop;
 import javafx.scene.Group;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WorldView {
 
     private static WorldView instance = null;
+
     public final Point2D cameraPos;
     private int cameraSpeed = 10;
     private Set<CastleView> castleViews;
     private Set<OstView> ostViews;
-    private boolean cameraMoved = false;
-    private Group castleParent;
     private Group troopParent;
 
     private WorldView(Group castleParent, Group troopParent) {
-        this.castleParent = castleParent;
         this.troopParent = troopParent;
         castleViews = new HashSet<>();
         ostViews = new HashSet<>();
         cameraPos = new Point2D(0, 0);
         Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
-
     }
 
     public static WorldView getInstance() {
@@ -65,25 +62,47 @@ public class WorldView {
         setCameraSpeed(10);
     }
 
-    public boolean checkAndRestoreCameraMoved() {
-        if (cameraMoved) {
-            cameraMoved = false;
-            return true;
-        }
-        return false;
-    }
-
     private void checkCameraBound() {
+        int maxWidth = World.FIELD_WIDTH;
+        int maxHeight = World.FIELD_HEIGHT;
+
+        if (getMaxWidthWithContextual().isPresent()) {
+            maxWidth = getMaxWidthWithContextual().get();
+        }
+
+        if (getMaxHeightWithContextual().isPresent()) {
+            maxHeight = getMaxHeightWithContextual().get();
+        }
+
+        System.out.println(maxWidth + " " + maxHeight);
+
         if (cameraPos.x < 0) cameraPos.x = 0;
         if (cameraPos.y < 0) cameraPos.y = 0;
-        if (cameraPos.x > World.FIELD_WIDTH - App.getGame().getWindowWidth())
-            cameraPos.x = World.FIELD_WIDTH - (float) App.getGame().getWindowWidth();
-        if (cameraPos.y > World.FIELD_HEIGHT - App.getGame().getWindowHeight())
-            cameraPos.y = World.FIELD_HEIGHT - (float) App.getGame().getWindowHeight();
+        if (cameraPos.x > maxWidth - App.getGame().getWindowWidth())
+            cameraPos.x = maxWidth - (float) App.getGame().getWindowWidth();
+        if (cameraPos.y > maxHeight - App.getGame().getWindowHeight())
+            cameraPos.y = maxHeight - (float) App.getGame().getWindowHeight();
+    }
+
+    public Optional<Integer> getMaxWidthWithContextual() {
+        return castleViews.stream()
+                .map(CastleView::getContextualMenu)
+                .filter(Group::isVisible)
+                .map(c -> c.getX() + c.getWidth() + 100 + (int) cameraPos.x)
+                .filter(val -> val > World.FIELD_WIDTH)
+                .max(Integer::compareTo);
+    }
+
+    public Optional<Integer> getMaxHeightWithContextual() {
+        return castleViews.stream()
+                .map(CastleView::getContextualMenu)
+                .filter(Group::isVisible)
+                .map(c -> c.getY() + c.getHeight() + 100 + (int) cameraPos.y)
+                .filter(val -> val > World.FIELD_HEIGHT)
+                .max(Integer::compareTo);
     }
 
     public void move(Cardinal direction) {
-        cameraMoved = true;
         switch (direction) {
             case NORTH:
                 cameraPos.y -= cameraSpeed;
@@ -102,7 +121,6 @@ public class WorldView {
     }
 
     public void move(int x, int y) {
-        cameraMoved = true;
         cameraPos.y -= y;
         cameraPos.x -= x;
         checkCameraBound();

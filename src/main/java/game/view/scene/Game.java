@@ -23,6 +23,7 @@ import java.util.List;
 
 public class Game extends CustomScene {
     private VBox menu;
+    private Rectangle menuBackground;
     private Label pauseLabel;
 
     private GameSetting settings;
@@ -56,12 +57,10 @@ public class Game extends CustomScene {
                 0, 0,
                 getWindowWidth(), getWindowHeight()
         );
+
         background.setFill(Color.web("668054"));
         background.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
         background.setOnMouseEntered(e -> getScene().setCursor(Cursor.OPEN_HAND));
-
-        onWidthResize(background::setWidth);
-        onHeightResize(background::setHeight);
 
         pauseLabel = new Label("PAUSE !");
         pauseLabel.setVisible(false);
@@ -82,8 +81,8 @@ public class Game extends CustomScene {
         exit.setStyle("-fx-font-size: 13pt;");
         exit.setFocusTraversable(false);
         exit.setOnAction(e -> {
-            App.buildWelcome().start(s);
             stop();
+            App.buildWelcome().start(s);
         });
 
         menu = new VBox(cameraToggle, exit);
@@ -91,7 +90,22 @@ public class Game extends CustomScene {
         menu.setAlignment(Pos.CENTER);
         menu.setSpacing(10);
 
-        getRoot().addAll(background, troops, castles, pauseLabel, menu);
+        menuBackground = new Rectangle(0, 0, windowWidth, windowHeight);
+        menuBackground.setFill(new Color(1.0, 1.0, 1.0, 0.5));
+        menuBackground.setStrokeWidth(0);
+        menuBackground.setVisible(false);
+
+        onWidthResize(newVal -> {
+            background.setWidth(newVal);
+            menuBackground.setWidth(newVal);
+        });
+
+        onHeightResize(newVal -> {
+            background.setHeight(newVal);
+            menuBackground.setHeight(newVal);
+        });
+
+        getRoot().addAll(background, troops, castles, menuBackground, pauseLabel, menu);
     }
 
     @Override
@@ -134,6 +148,7 @@ public class Game extends CustomScene {
 
     public void toggleMenu() {
         menu.setVisible(!menu.isVisible());
+        menuBackground.setVisible(menu.isVisible());
         pauseLabel.setVisible(menu.isVisible());
     }
 

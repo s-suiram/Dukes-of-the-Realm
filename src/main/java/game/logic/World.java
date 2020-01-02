@@ -21,6 +21,7 @@ public class World {
     public static Random generator = new Random();
 
     private static World instance;
+
     public final Rectangle bounds;
     Double d = 5.0;
     private List<Player> players;
@@ -133,14 +134,6 @@ public class World {
             }
         }
 
-        tiles.forEach(t -> {
-//            System.out.println(t);
-            int i = tiles.indexOf(t);
-            int x = i / width;
-            int y = i % width;
-//            System.out.println((x * widthPerTile) + (widthPerTile * padding) + " " + ((y * heightPerTile) + (heightPerTile * padding)));
-        });
-
         Function<Point2D, Boolean> isRight = p -> p.x == width - 1;
         Function<Point2D, Boolean> isLeft = p -> p.x == 0;
         Function<Point2D, Boolean> isUp = p -> p.y == 0;
@@ -189,6 +182,7 @@ public class World {
 
     public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
         instance = new World();
+        Castle.clearCastle();
         randomGeneration(fightingNames, neutralNames, castlePerDuke);
     }
 
