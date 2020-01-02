@@ -74,8 +74,6 @@ public class WorldView {
             maxHeight = getMaxHeightWithContextual().get();
         }
 
-        System.out.println(maxWidth + " " + maxHeight);
-
         if (cameraPos.x < 0) cameraPos.x = 0;
         if (cameraPos.y < 0) cameraPos.y = 0;
         if (cameraPos.x > maxWidth - App.getGame().getWindowWidth())

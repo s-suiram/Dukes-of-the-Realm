@@ -3,32 +3,52 @@ package game.logic.troop;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Queue;
 
+/**
+ * The TroopProducer class encapsulate the process of producing troops.
+ * A Queue is used to produce troops in the good order one by one
+ */
 public class TroopProducer {
+    /**
+     * Store the troops who need to be produced, the first value of the queue is the troop being produced
+     */
+    private Queue<TroopRemainingTime> queue;
 
-    private LinkedList<TroopRemainingTime> queue;
-
+    /**
+     * Create a producer
+     */
     public TroopProducer() {
         queue = new LinkedList<>();
     }
 
+    /**
+     * Add a troop to the producing queue
+     *
+     * @param t the type of the troop to produce
+     */
     public void addTroop(TroopType t) {
         queue.add(new TroopRemainingTime(t));
     }
 
-    public void addTroop(TroopType t, int nb) {
-        for (int i = 0; i < nb; i++)
-            addTroop(t);
-    }
-
-    public LinkedList<TroopRemainingTime> getQueue() {
+    /**
+     * Returns the current queue
+     *
+     * @return the current queue
+     */
+    public Queue<TroopRemainingTime> getQueue() {
         return queue;
     }
 
+    /**
+     * Make the queue progress
+     *
+     * @return EMPTY if the first troop is not ready to be produced or if the queue is empty, and an Optional of the troop if the first troop is ready to be produced
+     */
     public Optional<Troop> step() {
         try {
             if ((queue.element().remainingTime -= 1) == 0) {
-                switch (queue.remove().t) {
+                switch (queue.remove().troopType) {
                     case KNIGHT:
                         return Optional.of(new Knight());
                     case ONAGER:
@@ -43,6 +63,14 @@ public class TroopProducer {
         }
     }
 
+    /**
+     * Cancel the current troop which is being produced.
+     * Does nothing if the queue is empty
+     */
+    public void cancel() {
+        if (!queue.isEmpty()) queue.remove();
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Currently in queue: \n");
@@ -50,31 +78,51 @@ public class TroopProducer {
         return s.toString();
     }
 
-    public void cancel() {
-        if (!queue.isEmpty()) queue.pop();
-    }
-
+    /**
+     * Data class that store the remaining time and the type of troop to produce when the time is over
+     */
     public static class TroopRemainingTime {
-        TroopType t;
+        /**
+         * The type of troop to produce
+         */
+        TroopType troopType;
 
+        /**
+         * The remaining time before the troop is produced
+         */
         int remainingTime;
 
-        public TroopRemainingTime(TroopType t) {
-            this.t = t;
-            this.remainingTime = t.getTime();
+        /**
+         * Build a TroopRemainingTime with the specified troop type
+         *
+         * @param troopType the troop type
+         */
+        public TroopRemainingTime(TroopType troopType) {
+            this.troopType = troopType;
+            this.remainingTime = troopType.getTime();
         }
 
+        /**
+         * Returns the remaining time
+         *
+         * @return the remaining time
+         */
         public int getRemainingTime() {
             return remainingTime;
         }
 
-        public TroopType getT() {
-            return t;
+        /**
+         * Returns the troop type
+         *
+         * @return the troop type
+         */
+        public TroopType getTroopType() {
+            return troopType;
         }
 
         @Override
         public String toString() {
-            return t + " : " + remainingTime + "\n";
+            return troopType + " : " + remainingTime + "\n";
         }
     }
 }

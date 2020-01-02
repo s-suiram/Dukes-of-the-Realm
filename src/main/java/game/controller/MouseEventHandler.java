@@ -7,19 +7,37 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
-
+/**
+ * This singleton handle the mouse gestures
+ */
 public class MouseEventHandler implements EventHandler<MouseEvent> {
-
+    /**
+     * The instance
+     */
     private static MouseEventHandler instance;
-
+    /**
+     * True if being dragging, false otherwise
+     */
     private boolean dragged = false;
     private Point2D delta;
+    /**
+     * The source of the dragging
+     */
     private Point2D mouseDragStartPos;
+    /**
+     * The current scene
+     */
     private Scene s;
-
+    /**
+     * The current mouse position
+     */
     private Point2D mousePos;
 
-
+    /**
+     * Build a MouseEventHandler
+     *
+     * @param s the current scene
+     */
     private MouseEventHandler(Scene s) {
         this.delta = new Point2D();
         mousePos = new Point2D();
@@ -30,10 +48,21 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         this.s = s;
     }
 
+    /**
+     * Initialize the singleton
+     *
+     * @param s the scene for the constructor
+     */
     public static void init(Scene s) {
         instance = new MouseEventHandler(s);
     }
 
+    /**
+     * Returns the instance of the singleton
+     *
+     * @return the instance of the singleton
+     * @throws NullPointerException if init() is not called before getInstance()
+     */
     public static MouseEventHandler getInstance() {
         if (instance == null) {
             throw new NullPointerException("instance not initialized");
@@ -61,6 +90,11 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         }
     }
 
+    /**
+     * Returns the mouse position
+     *
+     * @return the mouse position
+     */
     public Point2D getMousePos() {
         return mousePos;
     }

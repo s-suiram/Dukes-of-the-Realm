@@ -63,7 +63,7 @@ public class Squad extends Observable {
         this.isTargetAlly = origin.getOwner() == target.getOwner();
         this.troops.sort(Comparator.comparingInt(o -> o.speed));
         this.origin.getTroops().removeAll(troops);
-        troops.forEach(troop -> troop.setOst(this));
+        troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
         SQUADS.add(this);
     }
@@ -172,9 +172,7 @@ public class Squad extends Observable {
     private void move() {
         troops.stream()
                 .limit(troopIndex)
-                .forEach(troop -> {
-                    troop.translate(speedDir.x, speedDir.y);
-                });
+                .forEach(troop -> troop.translate(speedDir.x, speedDir.y));
     }
 
     private boolean intersectCastle() {

@@ -1,11 +1,21 @@
 package game.logic.troop;
 
+/**
+ * Represent the type of troop
+ */
 public enum TroopType {
     KNIGHT(20, 500),
     ONAGER(50, 1000),
     PIKE_MAN(5, 100);
 
+    /**
+     * The number of turn required for the troop to be produced
+     */
     final int time;
+
+    /**
+     * The cost of the unit
+     */
     final int cost;
 
     TroopType(int time, int cost) {
@@ -26,10 +36,20 @@ public enum TroopType {
         }
     }
 
+    /**
+     * Returns the time
+     *
+     * @return the time
+     */
     public int getTime() {
         return time;
     }
 
+    /**
+     * Returns the cost of the unit
+     *
+     * @return the cost of the unit
+     */
     public int getCost() {
         return cost;
     }

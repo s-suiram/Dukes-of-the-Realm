@@ -149,7 +149,7 @@ public class ContextualMenuCastle extends Group {
         castle.getProducer()
                 .getQueue()
                 .forEach(t -> queueBuilder
-                        .append(t.getT())
+                        .append(t.getTroopType())
                         .append("(")
                         .append(t.getRemainingTime())
                         .append(" left) < "));

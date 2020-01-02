@@ -7,6 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
+/**
+ * This class handle the keyboard event in the game scene
+ */
 public class GameKeyboardController extends FullscreenKeyboardController {
     public GameKeyboardController(Scene scene) {
         super(scene);

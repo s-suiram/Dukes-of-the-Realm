@@ -3,6 +3,7 @@ package game.logic;
 import com.sun.javafx.geom.Point2D;
 import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.Squad;
+import game.logic.troop.Troop;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
@@ -12,27 +13,60 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * The World singleton contains all the model :
+ * <ul>
+ *     <li>Players</li>
+ *     <li>Castle</li>
+ *     <li>Troops</li>
+ *     <li>Squads</li>
+ * </ul>
+ * <p>
+ * It also take care of all initialization for the model
+ */
 public class World {
+    /**
+     * The width of the field
+     */
     public static int FIELD_WIDTH = 4000;
-
+    /**
+     * The height of the field
+     */
     public static int FIELD_HEIGHT = 4000;
+    /**
+     * The number of frame elapsed
+     */
     public static int frames;
-
+    /**
+     * A random generator utility
+     */
     public static Random generator = new Random();
-
+    /**
+     * The instance of World
+     */
     private static World instance;
-
-    public final Rectangle bounds;
-    Double d = 5.0;
+    /**
+     * Store all the player in the game
+     */
     private List<Player> players;
 
-    public World() {
+    /**
+     * Build a new World
+     */
+    private World() {
         players = new ArrayList<>();
-        bounds = new Rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
         Castle.clearCastle();
         Squad.clearSquads();
+        Troop.clearTroops();
     }
 
+    /**
+     * Initialize the world and generate random castle configuration
+     *
+     * @param fightingNames the name of the fighting dukes
+     * @param neutralNames  the name of the neutral dukes
+     * @param castlePerDuke the number of castle for one duke
+     */
     public static void init(List<String> fightingNames, List<String> neutralNames, int castlePerDuke) {
         instance = new World();
         randomGeneration(fightingNames, neutralNames, castlePerDuke);
@@ -55,6 +89,13 @@ public class World {
         return divisors[index];
     }
 
+    /**
+     * Return a random integer that belongs to [min; max[
+     *
+     * @param min the lower bound (inclusive)
+     * @param max the max bound (exclusive)
+     * @return a random integer
+     */
     public static int rand(int min, int max) {
         return generator.nextInt(max - min) + min;
     }
@@ -149,18 +190,33 @@ public class World {
                 }));
     }
 
+    /**
+     * Returns the instance of World
+     *
+     * @return the instance of World
+     * @throws NullPointerException if the init() method is not called before getInstance()
+     */
     public static World getInstance() {
         if (instance == null) throw new NullPointerException("Call init on World");
         return instance;
     }
 
-    // Returns true if two rectangles (l1, r1) and (l2, r2) overlap
+    /**
+     * Check whether the a rectangle overlap the b one
+     *
+     * @param a the first rectangle
+     * @param b the second rectangle
+     * @return true if the two rectangles overlap and false if not
+     */
     public static boolean doOverlap(Rectangle a, Rectangle b) {
-        Rectangle2D lol = new Rectangle2D(a.x, a.y, a.width, a.height);
-        Rectangle2D lil = new Rectangle2D(b.x, b.y, b.width, b.height);
-        return lol.intersects(lil);
+        Rectangle2D r1 = new Rectangle2D(a.x, a.y, a.width, a.height);
+        Rectangle2D r2 = new Rectangle2D(b.x, b.y, b.width, b.height);
+        return r1.intersects(r2);
     }
 
+    /**
+     * Make the world advance
+     */
     public void step() {
         frames++;
         if (frames % 2 == 0) {
@@ -170,18 +226,39 @@ public class World {
         if (frames == 60) frames = 1;
     }
 
+    /**
+     * Returns the player list
+     *
+     * @return the player list
+     */
     public List<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Get a player by name
+     *
+     * @param name the name of the player
+     * @return a player named <code>name</code>
+     */
     public Optional<Player> getPlayer(String name) {
         return players.stream().filter(player -> player.getName().equals(name)).findFirst();
     }
 
+    /**
+     * Add a fighting duke
+     *
+     * @param name the name of the fighting duke
+     */
     public void addFightingDukes(String name) {
         players.add(new FightingDukes(name));
     }
 
+    /**
+     * Add a neutral duke
+     *
+     * @param name the name of the neutral duke
+     */
     public void addNeutralDukes(String name) {
         players.add(new NeutralDukes(name));
     }
@@ -191,16 +268,6 @@ public class World {
         StringBuilder s = new StringBuilder();
         players.forEach(p -> s.append(p.toString()));
         return s.toString();
-    }
-
-    public Optional<Castle> castleById(int id) {
-        return Castle.getCastles().stream().filter(c -> c.hashCode() == id).findFirst();
-    }
-
-    public boolean castleHere(Point2D here) {
-        return Castle.getCastles().stream()
-                .map(Castle::getBoundingRect)
-                .anyMatch(rect -> rect.contains((int) here.x, (int) here.y));
     }
 
 } 

@@ -8,6 +8,12 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is an encapsulation of the javafx event handling which is not really adapted to a real time game
+ * This class provide the pressed and the typed event :
+ * Pressed: The action bound to the event is executed each frame
+ * Typed: The action bound to the event is executed once
+ */
 public abstract class KeyboardEventHandler {
 
     private Map<KeyCode, Boolean> keysPressed = new HashMap<>();
@@ -34,32 +40,67 @@ public abstract class KeyboardEventHandler {
         });
     }
 
+    /**
+     * The method to override which should be called in the main loop
+     *
+     * @param s the stage
+     */
     public abstract void handle(Stage s);
 
-    protected boolean isTyped(KeyCode key, Action action) {
+    /**
+     * Execute an action if the key is typed
+     *
+     * @param key    the key to check
+     * @param action the action to execute
+     * @return true if the action is executed, false otherwise
+     */
+    protected boolean isTyped(KeyCode key, Runnable action) {
         return isTyped(key, action, null);
     }
 
-    protected boolean isTyped(KeyCode key, Action action, KeyCode combo) {
+    /**
+     * Execute an action if both key and combo are being typed
+     *
+     * @param key    the key to be pressed
+     * @param action the action to execute
+     * @param combo  the second key which must be pressed
+     * @return true if the action is executed, false otherwise
+     */
+    protected boolean isTyped(KeyCode key, Runnable action, KeyCode combo) {
         if (combo != null && !keysPressed.get(combo)) return false;
 
         if (keysPressed.get(key) && !performed.get(key)) {
-            action.perform();
+            action.run();
             performed.put(key, true);
             return true;
         }
         return false;
     }
 
-    protected boolean isPressed(KeyCode k, Action action) {
+    /**
+     * Execute an action if a key is being pressed
+     *
+     * @param k      the key to check
+     * @param action the action to execute
+     * @return true if the action is executed, false otherwise
+     */
+    protected boolean isPressed(KeyCode k, Runnable action) {
         if (keysPressed.get(k)) {
-            action.perform();
+            action.run();
             return true;
         }
         return false;
     }
 
-    protected boolean isPressed(Action action, KeyCode... k) {
+    /**
+     * Execute an action if any of the given key is being pressed.
+     * If multiple key of k array are pressed, then the action will be triggered only once
+     *
+     * @param action the action to execute
+     * @param k      the keys to check
+     * @return true if the action is executed, false otherwise
+     */
+    protected boolean isPressed(Runnable action, KeyCode... k) {
         for (KeyCode code : k) {
             if (isPressed(code, action))
                 return true;
