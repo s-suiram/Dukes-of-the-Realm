@@ -10,17 +10,45 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Handle the view of a castle
+ */
 public class CastleView extends HitboxedGroup {
-
+    /**
+     * Width of the door
+     */
     private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
+    /**
+     * Height of the door
+     */
     private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
+    /**
+     * The currently selected castle
+     */
     private static CastleView selected;
-
+    /**
+     * The model attached to this view
+     */
     private Castle model;
+    /**
+     * Representation of the door
+     */
     private Rectangle door;
+    /**
+     * The contextual menu which appear on right click on a castle
+     */
     private ContextualMenuCastle contextualMenu;
+    /**
+     * Rectangle which represent a castle
+     */
     private Rectangle rectangle;
 
+    /**
+     * Create a new castle view
+     *
+     * @param c         the model attached to this view
+     * @param parentRef the group which contains this view
+     */
     public CastleView(Castle c, Group parentRef) {
         super(parentRef, new Rectangle(0, 0, 0, 0));
         this.model = c;
@@ -87,6 +115,11 @@ public class CastleView extends HitboxedGroup {
         );
     }
 
+    /**
+     * Returns the selected castle
+     *
+     * @return the selected castle
+     */
     public static CastleView getSelected() {
         return selected;
     }
@@ -109,14 +142,29 @@ public class CastleView extends HitboxedGroup {
 
     }
 
+    /**
+     * Returns the model
+     *
+     * @return the model
+     */
     public Castle getModel() {
         return model;
     }
 
+    /**
+     * Returns the contextual menu
+     *
+     * @return the contextual menu
+     */
     public ContextualMenuCastle getContextualMenu() {
         return contextualMenu;
     }
 
+    /**
+     * Set the visibility of the contextual menu
+     *
+     * @param b the value of visibility
+     */
     public void setVisibleContextual(boolean b) {
         contextualMenu.setVisible(b);
     }

@@ -13,16 +13,41 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This singleton handle all the view
+ */
 public class WorldView {
-
+    /**
+     * The instance
+     */
     private static WorldView instance = null;
-
+    /**
+     * The camera position
+     */
     public final Point2D cameraPos;
+    /**
+     * The camera speed
+     */
     private int cameraSpeed = 10;
+    /**
+     * The castle views
+     */
     private Set<CastleView> castleViews;
+    /**
+     * The Squad view
+     */
     private Set<SquadView> squadViews;
+    /**
+     * The parent which contains
+     */
     private Group troopParent;
 
+    /**
+     * Build a world view
+     *
+     * @param castleParent the group which contains the castles
+     * @param troopParent  the group which contains the troops
+     */
     private WorldView(Group castleParent, Group troopParent) {
         this.troopParent = troopParent;
         castleViews = new HashSet<>();
@@ -31,37 +56,69 @@ public class WorldView {
         Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
     }
 
+    /**
+     * Returns the instance
+     *
+     * @return the instance
+     */
     public static WorldView getInstance() {
         if (instance == null) throw new NullPointerException("instance not initialized");
         return instance;
     }
 
+    /**
+     * Initialize the singleton
+     *
+     * @param castleParent the group which contains the castles
+     * @param troopParent  the group which contains the troops
+     */
     public static void init(Group castleParent, Group troopParent) {
         instance = new WorldView(castleParent, troopParent);
     }
 
-
+    /**
+     * Returns the camera speed
+     *
+     * @return the camera speed
+     */
     public int getCameraSpeed() {
         return cameraSpeed;
     }
 
+    /**
+     * Sets the camera speed
+     *
+     * @param cameraSpeed the new value
+     */
     public void setCameraSpeed(int cameraSpeed) {
         this.cameraSpeed = cameraSpeed;
         if (this.cameraSpeed < 1) this.cameraSpeed = 1;
     }
 
+    /**
+     * Decrement the camera speed
+     */
     public void decreaseCameraSpeed() {
         setCameraSpeed(cameraSpeed - 1);
     }
 
+    /**
+     * Increment the camera speed
+     */
     public void increaseCameraSpeed() {
         setCameraSpeed(cameraSpeed + 1);
     }
 
+    /**
+     * Reset the camera speed to the default value
+     */
     public void resetCameraSpeed() {
         setCameraSpeed(10);
     }
 
+    /**
+     * Check that the camera doesn't go beyond the limit of the field
+     */
     private void checkCameraBound() {
         int maxWidth = World.FIELD_WIDTH;
         int maxHeight = World.FIELD_HEIGHT;
@@ -82,7 +139,7 @@ public class WorldView {
             cameraPos.y = maxHeight - (float) App.getGame().getWindowHeight();
     }
 
-    public Optional<Integer> getMaxWidthWithContextual() {
+    private Optional<Integer> getMaxWidthWithContextual() {
         return castleViews.stream()
                 .map(CastleView::getContextualMenu)
                 .filter(Group::isVisible)
@@ -91,7 +148,7 @@ public class WorldView {
                 .max(Integer::compareTo);
     }
 
-    public Optional<Integer> getMaxHeightWithContextual() {
+    private Optional<Integer> getMaxHeightWithContextual() {
         return castleViews.stream()
                 .map(CastleView::getContextualMenu)
                 .filter(Group::isVisible)
@@ -100,6 +157,11 @@ public class WorldView {
                 .max(Integer::compareTo);
     }
 
+    /**
+     * Move the camera in a direction
+     *
+     * @param direction the direction to move the camera
+     */
     public void move(Cardinal direction) {
         switch (direction) {
             case NORTH:
@@ -118,14 +180,23 @@ public class WorldView {
         checkCameraBound();
     }
 
+    /**
+     * Move the camera
+     *
+     * @param x x offset
+     * @param y y offset
+     */
     public void move(int x, int y) {
         cameraPos.y -= y;
         cameraPos.x -= x;
         checkCameraBound();
     }
 
+    /**
+     * Method called each frame
+     */
     public void draw() {
-        squadViews.removeIf(SquadView::killed);
+        squadViews.removeIf(SquadView::getKilled);
         squadViews.addAll(Squad.getSquads().stream()
                 .filter(Squad::viewNotDone)
                 .map(o -> new SquadView(troopParent, o))
@@ -136,7 +207,9 @@ public class WorldView {
         squadViews.forEach(o -> o.draw(cameraPos));
     }
 
-
+    /**
+     * Set invisible all the contextual menus
+     */
     public void clearAllContextualMenu() {
         castleViews.forEach(c -> c.setVisibleContextual(false));
     }

@@ -8,6 +8,9 @@ import javafx.scene.shape.Rectangle;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * This class handle the squad view
+ */
 public class SquadView extends HitboxedGroup implements Observer {
 
     private Squad o;
@@ -30,7 +33,7 @@ public class SquadView extends HitboxedGroup implements Observer {
     protected void drawImpl(Point2D cam) {
         hitbox.setHeight(o.getShield().height);
         hitbox.setWidth(o.getShield().width);
-        getChildren().filtered(c -> c instanceof  TroopView).forEach(node -> {
+        getChildren().filtered(c -> c instanceof TroopView).forEach(node -> {
             TroopView t = ((TroopView) node);
             t.setTranslateX(t.getTroop().getRelativeX());
             t.setTranslateY(t.getTroop().getRelativeY());
@@ -38,8 +41,8 @@ public class SquadView extends HitboxedGroup implements Observer {
         this.setTranslateX(o.getShield().x - cam.x);
         this.setTranslateY(o.getShield().y - cam.y);
 
-        if(o.dirChanged()){
-            this.setRotate(lastAngle-o.getAngle());
+        if (o.dirChanged()) {
+            this.setRotate(lastAngle - o.getAngle());
         }
     }
 

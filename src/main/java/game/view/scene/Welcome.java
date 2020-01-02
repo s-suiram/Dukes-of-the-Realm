@@ -9,6 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Welcome scene
+ */
 public class Welcome extends CustomScene {
     private VBox elements;
     private Label title;

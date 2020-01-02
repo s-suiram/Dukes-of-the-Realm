@@ -21,6 +21,9 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * The game scene
+ */
 public class Game extends CustomScene {
     private VBox menu;
     private Rectangle menuBackground;

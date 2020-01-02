@@ -9,16 +9,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * This class handle the troop view
+ */
 public class TroopView extends HitboxedGroup implements Observer {
 
     protected final Troop t;
 
     public TroopView(Troop t, Group parentRef) {
-        super(parentRef , new Rectangle(-Troop.RADIUS, -Troop.RADIUS, Troop.DIAMETER,Troop.DIAMETER));
+        super(parentRef, new Rectangle(-Troop.RADIUS, -Troop.RADIUS, Troop.DIAMETER, Troop.DIAMETER));
         this.t = t;
         Circle background = new Circle(t.getCenterPos().x, t.getCenterPos().y, Troop.RADIUS);
         background.setFill(t instanceof Pikeman ? Color.RED : t instanceof Onager ? Color.BLUE : Color.WHITE);

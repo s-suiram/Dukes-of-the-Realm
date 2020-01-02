@@ -10,9 +10,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * The contextual menu which appear when right clicking on a castle
+ */
 public class ContextualMenuCastle extends Group {
-
+    /**
+     * The model
+     */
     private Castle castle;
+    /**
+     * The view
+     */
     private CastleView castleView;
     private boolean lvlup_enoughMoney;
     private Label money;
@@ -28,8 +36,16 @@ public class ContextualMenuCastle extends Group {
     private Label createSquad_feedback;
     private Label queue;
     private VBox menu;
+    /**
+     * The squad builder interface
+     */
     private SquadBuilderInterface squadBuilderInterface;
 
+    /**
+     * Build and initialize contextual menu
+     *
+     * @param c the castle view
+     */
     public ContextualMenuCastle(CastleView c) {
         super();
         setVisible(false);
@@ -115,14 +131,23 @@ public class ContextualMenuCastle extends Group {
         setOnMouseMoved(e -> getScene().setCursor(Cursor.HAND));
     }
 
+    /**
+     * Hide contextual menu
+     */
     public void hidePanel() {
         menu.setVisible(false);
     }
 
+    /**
+     * Show contextual menu
+     */
     public void showPanel() {
         menu.setVisible(true);
     }
 
+    /**
+     * Remove the view of the squad builder
+     */
     public void deleteSquadBuilder() {
         if (squadBuilderInterface != null) {
             getChildren().remove(squadBuilderInterface);
@@ -131,6 +156,9 @@ public class ContextualMenuCastle extends Group {
         }
     }
 
+    /**
+     * This method is called each frame
+     */
     public void draw() {
         money.setText("Money: " + castle.getFlorin());
         level.setText("Level: " + castle.getLevel());
@@ -167,18 +195,38 @@ public class ContextualMenuCastle extends Group {
         if (squadBuilderInterface != null) squadBuilderInterface.draw();
     }
 
+    /**
+     * Returns the x position of the contextual menu
+     *
+     * @return the x position of the contextual menu
+     */
     public int getX() {
         return (int) localToScene(new Point2D(getTranslateX(), getTranslateY())).getX();
     }
 
+    /**
+     * Returns the y position of the contextual menu
+     *
+     * @return the y position of the contextual menu
+     */
     public int getY() {
         return (int) localToScene(new Point2D(getTranslateX(), getTranslateY())).getY();
     }
 
+    /**
+     * Returns the contextual menu width
+     *
+     * @return the contextual menu width
+     */
     public int getWidth() {
         return (int) menu.getWidth();
     }
 
+    /**
+     * Returns the contextual menu height
+     *
+     * @return the contextual menu height
+     */
     public int getHeight() {
         return (int) menu.getHeight();
     }

@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * New game scene
+ */
 public class NewGame extends CustomScene {
     private GridPane grid;
 
@@ -70,14 +73,12 @@ public class NewGame extends CustomScene {
             stop();
         });
 
-        Arrays.asList(playerName, nbFighting, nbNeutral, nbCastlePerPlayer).forEach(n -> {
-            n.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ENTER && !e.isAltDown()) {
-                    submit.fire();
-                    submit.setDisable(true);
-                }
-            });
-        });
+        Arrays.asList(playerName, nbFighting, nbNeutral, nbCastlePerPlayer).forEach(n -> n.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER && !e.isAltDown()) {
+                submit.fire();
+                submit.setDisable(true);
+            }
+        }));
 
         grid.addRow(4, submit, cancel);
 

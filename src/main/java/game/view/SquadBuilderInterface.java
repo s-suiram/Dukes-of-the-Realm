@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A view which represent a squad builder
+ */
 public class SquadBuilderInterface extends Group {
 
     private int pikemanOutOfCastle;
@@ -33,13 +36,20 @@ public class SquadBuilderInterface extends Group {
     private Label k_in;
     private Label o_in;
 
-    public SquadBuilderInterface(Castle src, Castle dest, ContextualMenuCastle contextualMenuCastle) {
+    /**
+     * Build a squad builder
+     *
+     * @param src                  the source castle
+     * @param target               the target castle
+     * @param contextualMenuCastle the contextual menu
+     */
+    public SquadBuilderInterface(Castle src, Castle target, ContextualMenuCastle contextualMenuCastle) {
         super();
         setTranslateX(-15);
         setTranslateY(-15);
         contextualMenuCastle.hidePanel();
         this.srcCastle = src;
-        this.destCastle = dest;
+        this.destCastle = target;
         this.contextualMenuCastle = contextualMenuCastle;
 
         onagerOutOfCastle = 0;
@@ -121,7 +131,7 @@ public class SquadBuilderInterface extends Group {
                 feedback.setText("You can't put more than " + 10 + " troops");
             } else {
                 if (all.size() > 0) {
-                    src.createSquad(all, dest);
+                    src.createSquad(all, target);
                     contextualMenuCastle.deleteSquadBuilder();
                 } else {
                     feedback.setText("You can't build an empty squad");
@@ -187,6 +197,9 @@ public class SquadBuilderInterface extends Group {
         }
     }
 
+    /**
+     * Method called each frame
+     */
     public void draw() {
         onagerInCastle = srcCastle.getOnagers().size() - onagerOutOfCastle;
         knightInCastle = srcCastle.getKnights().size() - knightOutOfCastle;

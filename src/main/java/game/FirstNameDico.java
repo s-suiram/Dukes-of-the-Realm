@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Utility class to get random first name
+ */
 public class FirstNameDico {
     private static Scanner file;
     private static int size;
