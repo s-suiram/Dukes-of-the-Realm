@@ -1,5 +1,6 @@
 package game.logic;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * A utility enum to define directions
  */
-public enum Cardinal {
+public enum Cardinal implements Serializable {
     NORTH,
     SOUTH,
     EAST,

@@ -34,7 +34,6 @@ public class Game extends CustomScene {
     private List<String> f, n;
     private int castlePerPlayer;
 
-
     private KeyboardEventHandler keyboardController;
 
     public Game(int defaultWindowWidth, int defaultWindowHeight,

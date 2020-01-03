@@ -1,16 +1,17 @@
 package game.logic.troop;
 
-import com.sun.javafx.geom.Point2D;
-import com.sun.javafx.geom.Rectangle;
 import game.logic.Castle;
 import game.logic.World;
+import game.logic.utils.Point;
+import game.logic.utils.Rectangle;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * The type Squad.
  */
-public class Squad extends Observable {
+public class Squad extends Observable implements Serializable {
 
     private static final Set<Squad> SQUADS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
@@ -18,7 +19,7 @@ public class Squad extends Observable {
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20;
     private static final int LOADING_CYCLES = 90;
-    private final Point2D spacing;
+    private final Point spacing;
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
@@ -33,13 +34,13 @@ public class Squad extends Observable {
     private boolean viewDone;
     private boolean lockDir;
     private boolean combatMode;
-    private Point2D center;
-    private Point2D delta;
-    private Point2D speedDir;
-    private Point2D lastSpeedDir;
-    private Point2D startingPos;
+    private Point center;
+    private Point delta;
+    private Point speedDir;
+    private Point lastSpeedDir;
+    private Point startingPos;
 
-     /**
+    /**
      * Instantiates a new Squad.
      *
      * @param troops the troops
@@ -62,12 +63,12 @@ public class Squad extends Observable {
         this.loadingCyclesLeft = LOADING_CYCLES / speed;
         this.frameSkip = FRAME_SKIP / speed;
 
-        this.spacing = new Point2D();
-        this.speedDir = new Point2D();
-        this.lastSpeedDir = new Point2D();
-        this.delta = new Point2D((float) Double.MAX_VALUE, (float) Double.MAX_VALUE);
-        this.startingPos = new Point2D();
-        this.center = new Point2D();
+        this.spacing = new Point();
+        this.speedDir = new Point();
+        this.lastSpeedDir = new Point();
+        this.delta = new Point(Double.MAX_VALUE, Double.MAX_VALUE);
+        this.startingPos = new Point();
+        this.center = new Point();
 
         this.isTargetAlly = origin.getOwner() == target.getOwner();
         this.troops.sort(Comparator.comparingInt(o -> o.speed));
@@ -225,7 +226,7 @@ public class Squad extends Observable {
         notifyObservers();
     }
 
-    private boolean isInitDone(){
+    private boolean isInitDone() {
         return hitbox.width != 0;
     }
 
@@ -233,11 +234,11 @@ public class Squad extends Observable {
         return currentIntersect != null;
     }
 
-    private boolean intersectTarget(){
+    private boolean intersectTarget() {
         return currentIntersect == target;
     }
 
-    private void computeIntersection(){
+    private void computeIntersection() {
         currentIntersect = Castle.getCastles().stream()
                 .filter(c -> World.doOverlap(hitbox, c.getBoundingRect()))
                 .findFirst()
@@ -260,9 +261,9 @@ public class Squad extends Observable {
 
         if (!lockDir) {
             if (isOuTolerance(delta.x))
-                speedDir.setLocation(speed * (int) (delta.x / Math.abs(delta.x)), 0);
+                speedDir.setLocation(speed * (delta.x / Math.abs(delta.x)), 0);
             else if (isOuTolerance(delta.y)) {
-                speedDir.setLocation(0, speed * (int) (delta.y / Math.abs(delta.y)));
+                speedDir.setLocation(0, speed * (delta.y / Math.abs(delta.y)));
             }
         }
     }
@@ -272,7 +273,7 @@ public class Squad extends Observable {
     }
 
     private void computeStartingPos() {
-        Point2D center = origin.getCenter();
+        Point center = origin.getCenter();
         switch (origin.getDoor()) {
             case NORTH:
                 startingPos.setLocation(center.x, center.y - OFFSET);
@@ -306,7 +307,7 @@ public class Squad extends Observable {
         double maxY = Double.MIN_VALUE;
 
         for (Troop t : troops) {
-            Point2D p = t.getCenterPos();
+            Point p = t.getCenterPos();
             if (minX > p.x) {
                 minX = p.x;
             } else if (maxX < p.x) {
@@ -332,20 +333,20 @@ public class Squad extends Observable {
         center.setLocation(avgx, avgy);
         hitbox.width = max;
         hitbox.height = max;
-        hitbox.x = (int) (center.x - max / 2);
-        hitbox.y = (int) (center.y - max / 2);
+        hitbox.x = center.x - max / 2;
+        hitbox.y = center.y - max / 2;
     }
 
     private void computeDelta() {
         float dx, dy;
-        if( intersectTarget()) {
+        if (intersectTarget()) {
             dx = target.getTargetPoint().x - center.x;
             dy = target.getTargetPoint().y - center.y;
         } else {
             dx = target.getCenter().x - center.x;
             dy = target.getCenter().y - center.y;
         }
-        delta.setLocation((int) (dx), (int) (dy));
+        delta.setLocation(dx, dy);
     }
 
     private void avoidCastle() {
@@ -362,7 +363,7 @@ public class Squad extends Observable {
         }
     }
 
-    private void translate(Point2D p) {
+    private void translate(Point p) {
         troops.forEach(t -> t.translate(p.x, p.y));
         center.x += p.x;
         center.y += p.y;
@@ -377,10 +378,10 @@ public class Squad extends Observable {
         switch (target.getDoor()) {
             case SOUTH:
             case NORTH:
-                return Math.abs(delta.x) < speed && World.contains(hitbox,target.getTargetPoint());
+                return Math.abs(delta.x) < speed && World.contains(hitbox, target.getTargetPoint());
             case WEST:
             case EAST:
-                return Math.abs(delta.y) < speed && World.contains(hitbox,target.getTargetPoint());
+                return Math.abs(delta.y) < speed && World.contains(hitbox, target.getTargetPoint());
         }
         return false;
     }

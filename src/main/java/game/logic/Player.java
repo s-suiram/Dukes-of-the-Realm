@@ -1,15 +1,15 @@
 package game.logic;
 
+import game.logic.utils.Point;
 
-import com.sun.javafx.geom.Point2D;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The Player class represent a player that owns castles and make decisions
  */
-public abstract class Player {
+public abstract class Player implements Serializable {
     /**
      * The player which is in front of his computer
      */
@@ -77,7 +77,7 @@ public abstract class Player {
      * @param door the direction of the door of the castle
      * @param pos  the position on the field of the castle
      */
-    public void addCastle(Cardinal door, Point2D pos) {
+    public void addCastle(Cardinal door, Point pos) {
         castles.add(new Castle(this, door, pos));
     }
 
