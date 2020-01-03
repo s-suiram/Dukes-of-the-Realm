@@ -31,15 +31,16 @@ public class SquadView extends HitboxedGroup implements Observer {
 
     @Override
     protected void drawImpl(Point2D cam) {
-        hitbox.setHeight(o.getHitbox().height);
-        hitbox.setWidth(o.getHitbox().width);
+
+        hitbox.setHeight(o.getHitbox().getHeight());
+        hitbox.setWidth(o.getHitbox().getWidth());
+        this.setTranslateX(o.getHitbox().x - cam.x);
+        this.setTranslateY(o.getHitbox().y - cam.y);
         getChildren().filtered(c -> c instanceof TroopView).forEach(node -> {
             TroopView t = ((TroopView) node);
             t.setTranslateX(t.getTroop().getRelativeX());
             t.setTranslateY(t.getTroop().getRelativeY());
         });
-        this.setTranslateX(o.getHitbox().x - cam.x);
-        this.setTranslateY(o.getHitbox().y - cam.y);
 
         if (o.dirChanged()) {
             this.setRotate(lastAngle - o.getAngle());

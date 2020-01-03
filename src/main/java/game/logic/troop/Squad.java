@@ -52,7 +52,7 @@ public class Squad extends Observable implements Serializable {
         this.origin = origin;
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
-        this.hitbox = new Rectangle(0, 0, 0, 0);
+        this.hitbox = new Rectangle(0,0);
 
         this.viewDone = false;
         this.lockDir = false;
@@ -227,7 +227,7 @@ public class Squad extends Observable implements Serializable {
     }
 
     private boolean isInitDone() {
-        return hitbox.width != 0;
+        return hitbox.getWidth() != 0;
     }
 
     private boolean intersectCastle() {
@@ -240,7 +240,7 @@ public class Squad extends Observable implements Serializable {
 
     private void computeIntersection() {
         currentIntersect = Castle.getCastles().stream()
-                .filter(c -> World.doOverlap(hitbox, c.getBoundingRect()))
+                .filter(c -> hitbox.intersects(c.getBoundingRect()))
                 .findFirst()
                 .orElse(null);
     }
@@ -331,10 +331,7 @@ public class Squad extends Observable implements Serializable {
         float height = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxY - minY);
         int max = (int) Math.max(width, height);
         center.setLocation(avgx, avgy);
-        hitbox.width = max;
-        hitbox.height = max;
-        hitbox.x = center.x - max / 2;
-        hitbox.y = center.y - max / 2;
+        hitbox = new Rectangle(center.x - max / 2, center.y - max / 2, max, max);
     }
 
     private void computeDelta() {
@@ -372,18 +369,19 @@ public class Squad extends Observable implements Serializable {
     }
 
     private boolean onTarget() {
-        if (!intersectTarget())
+        if (!hitbox.contains(target.getTargetPoint()))
             return false;
 
         switch (target.getDoor()) {
             case SOUTH:
             case NORTH:
-                return Math.abs(delta.x) < speed && World.contains(hitbox, target.getTargetPoint());
+                return Math.abs(delta.x) < speed;
             case WEST:
             case EAST:
-                return Math.abs(delta.y) < speed && World.contains(hitbox, target.getTargetPoint());
+                return Math.abs(delta.y) < speed;
+            default:
+                return false;
         }
-        return false;
     }
 
     private void walkThroughDoor() {
@@ -394,5 +392,4 @@ public class Squad extends Observable implements Serializable {
         if (troopsLeft())
             troops.get(troopIndex++).setCenterPos(startingPos.x + spacing.x, startingPos.y + spacing.y);
     }
-
 }

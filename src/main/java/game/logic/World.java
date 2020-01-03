@@ -163,18 +163,26 @@ public class World implements Serializable {
 
             return Cardinal.valuesMinus(exclude).get(rand(0, 4 - exclude.size()));
         };
-
+/*
+    ///////////////////////////////// DSL MARIU LOL ////////////////////////////////////////////
         Set<Integer> randSet = new TreeSet<>((o1, o2) -> {
             if (o1.equals(o2)) return 0;
             return rand(-1, 1) == 0 ? 1 : -1;
         });
+
         IntStream.range(0, tiles.size()).forEach(randSet::add);
 
         Queue<Integer> randQueue = new LinkedList<>(randSet);
+        //////////////////////////////////////////////////////////////////////////////
+*/
+
+        Queue<Integer> randQueue = IntStream.range(0, tiles.size())
+                .boxed()
+                .collect(Collectors.toCollection(LinkedList::new));
+
 
         Stream.of(fightingNames, neutralNames)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList())
                 .forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
                     for (int i = 0; i < nbCastlePerDuke; i++) {
                         int rand = randQueue.remove();
@@ -182,12 +190,13 @@ public class World implements Serializable {
                         int x1 = rand / width;
                         int y1 = rand % width;
 
-                        int x = rand(picked.x, (picked.maxX - Castle.SIZE));
-                        int y = rand(picked.y, (picked.maxY - Castle.SIZE));
+                        int x = rand(picked.x, (picked.getMaxX() - Castle.SIZE));
+                        int y = rand(picked.y, (picked.getMaxY() - Castle.SIZE));
 
                         p.addCastle(getValidDoor.apply(new Point(x1, y1)), new Point(x, y));
                     }
                 }));
+
     }
 
     /**
@@ -199,30 +208,6 @@ public class World implements Serializable {
     public static World getInstance() {
         if (instance == null) throw new NullPointerException("Call init on World");
         return instance;
-    }
-
-    /**
-     * Check whether the a rectangle overlap the b one
-     *
-     * @param a the first rectangle
-     * @param b the second rectangle
-     * @return true if the two rectangles overlap and false if not
-     */
-    public static boolean doOverlap(Rectangle a, Rectangle b) {
-        Rectangle r1 = new Rectangle(a.x, a.y, a.width, a.height);
-        Rectangle r2 = new Rectangle(b.x, b.y, b.width, b.height);
-        return r1.intersects(r2);
-    }
-
-    /**
-     * Check if the rectangle contains the point
-     *
-     * @param r the rectangle
-     * @param p the point
-     * @return true if the rectangle contains the point
-     */
-    public static boolean contains(Rectangle r, Point p) {
-        return new Rectangle(r.x, r.y, r.width, r.height).contains(p.x, p.y);
     }
 
     /**
@@ -281,5 +266,9 @@ public class World implements Serializable {
         return s.toString();
     }
 
+    public static  <N extends Number & Comparable<Number>> int compare(N number){
+        return Integer.compare(number.compareTo(0), 0);
+
+    }
 
 }

@@ -7,6 +7,10 @@ import java.io.Serializable;
  */
 public class Rectangle implements Serializable {
 
+    private static  IllegalArgumentException subZero = new IllegalArgumentException(
+            "The width or height of a rectangle should not be negative."
+    );
+
     public int x;
     public int y;
     private int width;
@@ -22,7 +26,7 @@ public class Rectangle implements Serializable {
      */
     public <T extends Number> Rectangle(T x, T y, T w, T h) {
         if( w.intValue() < 0 || h.intValue() < 0)
-            throw new IllegalArgumentException("The width or height of a rectangle should not be negative.");
+            throw subZero;
 
         this.x = x.intValue();
         this.y = y.intValue();
@@ -50,6 +54,16 @@ public class Rectangle implements Serializable {
     }
 
     /**
+     * Instantiates a new Rectangle at (0,0)
+     *
+     * @param w the width
+     * @param h the height
+     */
+    public <N extends Number> Rectangle( N w, N h){
+        this(0,0,w,h);
+    }
+
+    /**
      * checks if a rectangle intersects another
      *
      * @param r the rectangle
@@ -74,8 +88,10 @@ public class Rectangle implements Serializable {
      *
      * @param width the width
      */
-    public void setWidth(int width) {
-        this.width = width;
+    public <N extends Number> void setWidth(N width) {
+        if(width.intValue() < 0)
+            throw subZero;
+        this.width = width.intValue();
     }
 
     /**
@@ -84,6 +100,7 @@ public class Rectangle implements Serializable {
      * @return the height
      */
     public int getHeight() {
+
         return height;
     }
 
@@ -92,8 +109,10 @@ public class Rectangle implements Serializable {
      *
      * @param height the height
      */
-    public void setHeight(int height) {
-        this.height = height;
+    public <N extends Number> void setHeight(N height) {
+        if(height.intValue() < 0)
+            throw subZero;
+        this.height = height.intValue();
     }
 
     /**
@@ -115,19 +134,27 @@ public class Rectangle implements Serializable {
     }
 
     /**
+     * Tanslates the rectangle
+     * @param x the x value
+     * @param y the y value
+     */
+    public <N extends Number> void translate(N x, N y) {
+        this.x += x.intValue();
+        this.y += y.intValue();
+    }
+
+    /**
      * Checks if this rectangle contains a point
      *
-     * @param cx the x coordinate
-     * @param cy the y coordinate
+     * @param px the x coordinate
+     * @param py the y coordinate
      * @return true if this rectangle contains the point
      */
-    public boolean contains(int cx, int cy) {
-        if ((width | height) < 0) {
-            // At least one of the dimensions is negative...
-            return false;
-        }
-        // Note: if either dimension is zero, tests below must return false...
+    public <N extends Number> boolean contains(N px, N py) {
+        int cx = px.intValue();
+        int cy = py.intValue();
 
+        // Note: if either dimension is zero, tests below must return false...
         if (cx < x || cy < y) {
             return false;
         }

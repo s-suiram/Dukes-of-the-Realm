@@ -90,6 +90,16 @@ public class Point implements Serializable {
 
 
     /**
+     * Tanslates the point
+     * @param x the x value
+     * @param y the y value
+     */
+    public <N extends Number> void translate(N x, N y) {
+        this.x += x.intValue();
+        this.y += y.intValue();
+    }
+
+    /**
      * compute the euclidean distance between two points.
      * the point calling the method is considered the starting point
      *
@@ -105,7 +115,7 @@ public class Point implements Serializable {
      *
      * @return this for chaining methods
      */
-    public Point neg(){
+    public Point neg() {
         x = -x;
         y = -y;
         return this;
@@ -132,4 +142,5 @@ public class Point implements Serializable {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+
 }
