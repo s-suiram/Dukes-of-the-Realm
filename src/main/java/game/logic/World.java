@@ -107,7 +107,7 @@ public class World {
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
 
-        Player.setPlayer(World.getInstance().getPlayer(fightingNames.get(0)).get());
+        Player.setPlayer(getInstance().getPlayer(fightingNames.get(0)).get());
 
         int nbNeutral = neutralNames.size();
         neutralNames.forEach(n -> getInstance().addNeutralDukes(n));
@@ -282,5 +282,4 @@ public class World {
     }
 
 
-
-} 
+}
