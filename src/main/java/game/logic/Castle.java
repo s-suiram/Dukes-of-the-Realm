@@ -1,16 +1,17 @@
 package game.logic;
 
-import com.sun.javafx.geom.Point2D;
-import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.*;
+import game.logic.utils.Point;
+import game.logic.utils.Rectangle;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Castle define the model of a castle in the game
  */
-public class Castle {
+public class Castle implements Serializable {
 
     /**
      * Constant which define size of a Castle
@@ -30,9 +31,9 @@ public class Castle {
     /**
      * Center of the Castle
      */
-    private Point2D center;
+    private Point center;
 
-    private Point2D targetPoint;
+    private Point targetPoint;
 
     /**
      * Store the player who owns the Castle
@@ -78,7 +79,7 @@ public class Castle {
      * @param door     The direction of the door
      * @param position The position of the Castle in the World
      */
-    public Castle(Player owner, Cardinal door, Point2D position) {
+    public Castle(Player owner, Cardinal door, Point position) {
         this.owner = owner;
         florin = 0;
         level = 1;
@@ -87,19 +88,18 @@ public class Castle {
         this.door = door;
         producer = new TroopProducer();
         CASTLES.add(this);
-        boundingRect = new Rectangle((int) position.x, (int) position.y, SIZE, SIZE);
-        center = new Point2D(
-                (float) this.getBoundingRect().x + Castle.SIZE / 2.0f,
-                (float) this.getBoundingRect().y + Castle.SIZE / 2.0f
+        boundingRect = new Rectangle(position.x, position.y, SIZE, SIZE);
+        center = new Point(
+                this.getBoundingRect().x + Castle.SIZE / 2.0f,
+                this.getBoundingRect().y + Castle.SIZE / 2.0f
         );
-        targetPoint = new Point2D();
-        targetPoint.setLocation(center);
+        targetPoint = new Point(center);
         switch (door) {
             case NORTH:
-                targetPoint.y -= SIZE/2f;
+                targetPoint.y -= SIZE / 2f;
                 break;
             case EAST:
-                targetPoint.x += SIZE/2f;
+                targetPoint.x += SIZE / 2f;
                 break;
             case WEST:
                 targetPoint.x -= SIZE/2f;
@@ -227,11 +227,11 @@ public class Castle {
      *
      * @return the center of the Castle
      */
-    public Point2D getCenter() {
+    public Point getCenter() {
         return center;
     }
 
-    public Point2D getTargetPoint() {
+    public Point getTargetPoint() {
         return targetPoint;
     }
 

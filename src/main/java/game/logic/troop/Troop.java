@@ -1,7 +1,8 @@
 package game.logic.troop;
 
-import com.sun.javafx.geom.Point2D;
+import game.logic.utils.Point;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.Set;
 /**
  * The Troop class represent the model of a troop in the game
  */
-public abstract class Troop extends Observable {
+public abstract class Troop extends Observable implements Serializable {
 
     /**
      * Radius of a Troop
@@ -43,7 +44,7 @@ public abstract class Troop extends Observable {
     /**
      * Store the center of the Troop
      */
-    private Point2D centerPos;
+    private Point centerPos;
 
     private boolean viewDone;
     /**
@@ -65,7 +66,7 @@ public abstract class Troop extends Observable {
         this.hp = hp;
         this.name = name;
         this.viewDone = false;
-        this.centerPos = new Point2D();
+        this.centerPos = new Point();
         squad = null;
         TROOPS.add(this);
     }
@@ -92,7 +93,7 @@ public abstract class Troop extends Observable {
      *
      * @return the center position of the troop
      */
-    public Point2D getCenterPos() {
+    public Point getCenterPos() {
         return centerPos;
     }
 
@@ -101,7 +102,7 @@ public abstract class Troop extends Observable {
      *
      * @param centerPos the center
      */
-    public void setCenterPos(Point2D centerPos) {
+    public void setCenterPos(Point centerPos) {
         this.centerPos.setLocation(centerPos);
     }
 

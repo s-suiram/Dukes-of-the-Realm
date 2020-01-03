@@ -1,9 +1,11 @@
 package game.logic.troop;
 
+import java.io.Serializable;
+
 /**
  * Represent the type of troop
  */
-public enum TroopType {
+public enum TroopType implements Serializable {
     KNIGHT(20, 500),
     ONAGER(50, 1000),
     PIKE_MAN(5, 100);

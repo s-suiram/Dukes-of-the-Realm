@@ -1,12 +1,12 @@
 package game.logic;
 
-import com.sun.javafx.geom.Point2D;
-import com.sun.javafx.geom.Rectangle;
 import game.logic.troop.Squad;
 import game.logic.troop.Troop;
-import javafx.geometry.Rectangle2D;
+import game.logic.utils.Point;
+import game.logic.utils.Rectangle;
 import javafx.stage.Screen;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  * <p>
  * It also take care of all initialization for the model
  */
-public class World {
+public class World implements Serializable {
     /**
      * The width of the field
      */
@@ -131,11 +131,11 @@ public class World {
         widthPerTile = FIELD_WIDTH / width;
         heightPerTile = FIELD_HEIGHT / height;
 
-        List<Rectangle2D> tiles = new ArrayList<>(nbCastle);
+        List<Rectangle> tiles = new ArrayList<>(nbCastle);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                tiles.add(new Rectangle2D(
+                tiles.add(new Rectangle(
                         (x * widthPerTile) + (widthPerTile * padding),
                         (y * heightPerTile) + (heightPerTile * padding),
                         widthPerTile * (1 - padding * 2),
@@ -144,12 +144,12 @@ public class World {
             }
         }
 
-        Function<Point2D, Boolean> isRight = p -> p.x == width - 1;
-        Function<Point2D, Boolean> isLeft = p -> p.x == 0;
-        Function<Point2D, Boolean> isUp = p -> p.y == 0;
-        Function<Point2D, Boolean> isDown = p -> p.y == height - 1;
+        Function<Point, Boolean> isRight = p -> p.x == width - 1;
+        Function<Point, Boolean> isLeft = p -> p.x == 0;
+        Function<Point, Boolean> isUp = p -> p.y == 0;
+        Function<Point, Boolean> isDown = p -> p.y == height - 1;
 
-        Function<Point2D, Cardinal> getValidDoor = p -> {
+        Function<Point, Cardinal> getValidDoor = p -> {
             List<Cardinal> exclude = new ArrayList<>(2);
 
             if (isDown.apply(p))
@@ -178,14 +178,14 @@ public class World {
                 .forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
                     for (int i = 0; i < nbCastlePerDuke; i++) {
                         int rand = randQueue.remove();
-                        Rectangle2D picked = tiles.get(rand);
+                        Rectangle picked = tiles.get(rand);
                         int x1 = rand / width;
                         int y1 = rand % width;
 
-                        int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.SIZE));
-                        int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.SIZE));
+                        int x = rand(picked.x, (picked.maxX - Castle.SIZE));
+                        int y = rand(picked.y, (picked.maxY - Castle.SIZE));
 
-                        p.addCastle(getValidDoor.apply(new Point2D(x1, y1)), new Point2D(x, y));
+                        p.addCastle(getValidDoor.apply(new Point(x1, y1)), new Point(x, y));
                     }
                 }));
     }
@@ -209,8 +209,8 @@ public class World {
      * @return true if the two rectangles overlap and false if not
      */
     public static boolean doOverlap(Rectangle a, Rectangle b) {
-        Rectangle2D r1 = new Rectangle2D(a.x, a.y, a.width, a.height);
-        Rectangle2D r2 = new Rectangle2D(b.x, b.y, b.width, b.height);
+        Rectangle r1 = new Rectangle(a.x, a.y, a.width, a.height);
+        Rectangle r2 = new Rectangle(b.x, b.y, b.width, b.height);
         return r1.intersects(r2);
     }
 
@@ -221,8 +221,8 @@ public class World {
      * @param p the point
      * @return true if the rectangle contains the point
      */
-    public static boolean contains(Rectangle r, Point2D p){
-        return new Rectangle2D(r.x, r.y, r.width, r.height).contains(p.x, p.y);
+    public static boolean contains(Rectangle r, Point p) {
+        return new Rectangle(r.x, r.y, r.width, r.height).contains(p.x, p.y);
     }
 
     /**

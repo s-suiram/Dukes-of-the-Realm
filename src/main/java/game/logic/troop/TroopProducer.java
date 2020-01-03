@@ -1,5 +1,6 @@
 package game.logic.troop;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.Queue;
  * The TroopProducer class encapsulate the process of producing troops.
  * A Queue is used to produce troops in the good order one by one
  */
-public class TroopProducer {
+public class TroopProducer implements Serializable {
     /**
      * Store the troops who need to be produced, the first value of the queue is the troop being produced
      */
