@@ -182,8 +182,8 @@ public class World {
                         int x1 = rand / width;
                         int y1 = rand % width;
 
-                        int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.WIDTH));
-                        int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.HEIGHT));
+                        int x = rand(((int) picked.getMinX()), ((int) picked.getMaxX() - Castle.SIZE));
+                        int y = rand(((int) picked.getMinY()), ((int) picked.getMaxY() - Castle.SIZE));
 
                         p.addCastle(getValidDoor.apply(new Point2D(x1, y1)), new Point2D(x, y));
                     }
@@ -212,6 +212,17 @@ public class World {
         Rectangle2D r1 = new Rectangle2D(a.x, a.y, a.width, a.height);
         Rectangle2D r2 = new Rectangle2D(b.x, b.y, b.width, b.height);
         return r1.intersects(r2);
+    }
+
+    /**
+     * Check if the rectangle contains the point
+     *
+     * @param r the rectangle
+     * @param p the point
+     * @return true if the rectangle contains the point
+     */
+    public static boolean contains(Rectangle r, Point2D p){
+        return new Rectangle2D(r.x, r.y, r.width, r.height).contains(p.x, p.y);
     }
 
     /**
@@ -269,5 +280,7 @@ public class World {
         players.forEach(p -> s.append(p.toString()));
         return s.toString();
     }
+
+
 
 } 

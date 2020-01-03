@@ -17,11 +17,11 @@ public class CastleView extends HitboxedGroup {
     /**
      * Width of the door
      */
-    private static final int DOOR_WIDTH = (int) (Castle.WIDTH / 1.5);
+    private static final int DOOR_WIDTH = (int) (Castle.SIZE / 1.5);
     /**
      * Height of the door
      */
-    private static final int DOOR_HEIGHT = Castle.HEIGHT / 12;
+    private static final int DOOR_HEIGHT = Castle.SIZE / 12;
     /**
      * The currently selected castle
      */
@@ -53,7 +53,7 @@ public class CastleView extends HitboxedGroup {
         super(parentRef, new Rectangle(0, 0, 0, 0));
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
-        rectangle = new Rectangle(0, 0, Castle.WIDTH, Castle.HEIGHT);
+        rectangle = new Rectangle(0, 0, Castle.SIZE, Castle.SIZE);
 
         double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
         final int thickness = 5;
@@ -113,6 +113,7 @@ public class CastleView extends HitboxedGroup {
                     }
                 }
         );
+
     }
 
     /**

@@ -124,11 +124,11 @@ public abstract class Troop extends Observable {
     }
 
     public double getRelativeX() {
-        return centerPos.x - squad.getShield().x;
+        return centerPos.x - squad.getHitbox().x;
     }
 
     public double getRelativeY() {
-        return centerPos.y - squad.getShield().y;
+        return centerPos.y - squad.getHitbox().y;
     }
 
     /**

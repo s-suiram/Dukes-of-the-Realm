@@ -7,11 +7,14 @@ import game.logic.World;
 
 import java.util.*;
 
+/**
+ * The type Squad.
+ */
 public class Squad extends Observable {
 
-    protected static final Set<Squad> SQUADS = new HashSet<>();
+    private static final Set<Squad> SQUADS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
-    private static final int OFFSET = (int) (Castle.WIDTH * 0.7);
+    private static final int OFFSET = (int) (Castle.SIZE * 0.7);
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20;
     private static final int LOADING_CYCLES = 90;
@@ -21,12 +24,11 @@ public class Squad extends Observable {
     private int loadingCyclesLeft;
     private int frameSkip;
     private int counter;
-    private int minimumDistance;
     private List<Troop> troops;
     private Castle origin;
     private Castle target;
     private Castle currentIntersect;
-    private Rectangle shield;
+    private Rectangle hitbox;
     private boolean isTargetAlly;
     private boolean viewDone;
     private boolean lockDir;
@@ -37,12 +39,19 @@ public class Squad extends Observable {
     private Point2D lastSpeedDir;
     private Point2D startingPos;
 
+     /**
+     * Instantiates a new Squad.
+     *
+     * @param troops the troops
+     * @param origin the origin
+     * @param target the target
+     */
     public Squad(List<Troop> troops, Castle origin, Castle target) {
         this.troops = troops;
         this.origin = origin;
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
-        this.shield = new Rectangle(0, 0, 0, 0);
+        this.hitbox = new Rectangle(0, 0, 0, 0);
 
         this.viewDone = false;
         this.lockDir = false;
@@ -68,38 +77,72 @@ public class Squad extends Observable {
         SQUADS.add(this);
     }
 
+    /**
+     * Clear squads.
+     */
     public static void clearSquads() {
         SQUADS.clear();
     }
 
+    /**
+     * Gets squads.
+     *
+     * @return the squads
+     */
     public static Set<Squad> getSquads() {
         return Collections.unmodifiableSet(SQUADS);
+
     }
 
+    /**
+     * Is alive boolean.
+     *
+     * @param o the o
+     * @return the boolean
+     */
     public static boolean isAlive(Squad o) {
         return SQUADS.contains(o);
     }
 
+    /**
+     * Gets troops.
+     *
+     * @return the troops
+     */
     public List<Troop> getTroops() {
         return troops;
     }
 
+    /**
+     * Sets view done.
+     */
     public void setViewDone() {
         viewDone = true;
     }
 
+    /**
+     * View not done boolean.
+     *
+     * @return the boolean
+     */
     public boolean viewNotDone() {
         return !viewDone;
     }
 
-    public Point2D getCenter() {
-        return center;
-    }
-
+    /**
+     * Is loading boolean.
+     *
+     * @return true if the squad is still loading
+     */
     public boolean isLoading() {
         return loadingCyclesLeft > 0;
     }
 
+    /**
+     * Gets angle.
+     *
+     * @return the angle
+     */
     public int getAngle() {
         int angle;
         if (speedDir.x == 0) {
@@ -116,31 +159,42 @@ public class Squad extends Observable {
         return angle;
     }
 
+    /**
+     * Dir changed boolean.
+     *
+     * @return the boolean
+     */
     public boolean dirChanged() {
         if (onTarget())
             return false;
         return speedDir.x != lastSpeedDir.x || lastSpeedDir.y != speedDir.y;
     }
 
-    public boolean allSent() {
-        return troopIndex >= troops.size();
+    /**
+     * All sent boolean.
+     *
+     * @return true if some troops aren't sent yet
+     */
+    public boolean troopsLeft() {
+        return troopIndex < troops.size();
     }
 
+    /**
+     * Updates the squad.
+     */
     public void step() {
         if (!onTarget()) {
             counter++;
             translate(speedDir);
-            if (!allSent()) {
+            if (troopsLeft()) {
                 if (counter % frameSkip == 0)
                     walkThroughDoor();
             } else {
                 if (!isLoading()) {
-                    if (shield.width == 0)
-                        computeCenter();
+                    if (isInitDone())
+                        pathFind();
                     else
-                        // updateShield();
-                        computeDelta();
-                    pathFind();
+                        initHitbox();
                 } else {
                     loadingCyclesLeft--;
                 }
@@ -148,20 +202,21 @@ public class Squad extends Observable {
         } else {
             //System.out.println("impact");
         }
-
     }
 
-    private void updateShield() {
-        center.x += speedDir.x;
-        center.y += speedDir.y;
-        shield.x += speedDir.x;
-        shield.y += speedDir.y;
+
+    /**
+     * Gets hitbox.
+     *
+     * @return the hitbox
+     */
+    public Rectangle getHitbox() {
+        return hitbox;
     }
 
-    public Rectangle getShield() {
-        return shield;
-    }
-
+    /**
+     * Kills the squad and its troops
+     */
     public void kill() {
         troops.forEach(Troop::kill);
         SQUADS.remove(this);
@@ -169,30 +224,30 @@ public class Squad extends Observable {
         notifyObservers();
     }
 
-    private void move() {
-        troops.stream()
-                .limit(troopIndex)
-                .forEach(troop -> troop.translate(speedDir.x, speedDir.y));
+    private boolean isInitDone(){
+        return hitbox.width != 0;
     }
 
     private boolean intersectCastle() {
-        Rectangle r = shield;
-        currentIntersect = Castle.getCastles().stream()
-                .filter(c -> World.doOverlap(shield, c.getBoundingRect()))
-                .findFirst()
-                .orElse(null);
         return currentIntersect != null;
     }
 
+    private boolean intersectTarget(){
+        return currentIntersect == target;
+    }
+
+    private void computeIntersection(){
+        currentIntersect = Castle.getCastles().stream()
+                .filter(c -> World.doOverlap(hitbox, c.getBoundingRect()))
+                .findFirst()
+                .orElse(null);
+    }
+
     private void pathFind() {
+        computeIntersection();
+        computeDelta();
         lastSpeedDir.setLocation(speedDir);
-        if (!lockDir) {
-            if (isOuTolerance(delta.x))
-                speedDir.setLocation(speed * (int) (delta.x / Math.abs(delta.x)), 0);
-            else if (isOuTolerance(delta.y)) {
-                speedDir.setLocation(0, speed * (int) (delta.y / Math.abs(delta.y)));
-            }
-        }
+
         if (intersectCastle()) {
             if (!lockDir) {
                 avoidCastle();
@@ -200,6 +255,14 @@ public class Squad extends Observable {
             }
         } else {
             lockDir = false;
+        }
+
+        if (!lockDir) {
+            if (isOuTolerance(delta.x))
+                speedDir.setLocation(speed * (int) (delta.x / Math.abs(delta.x)), 0);
+            else if (isOuTolerance(delta.y)) {
+                speedDir.setLocation(0, speed * (int) (delta.y / Math.abs(delta.y)));
+            }
         }
     }
 
@@ -235,7 +298,7 @@ public class Squad extends Observable {
     }
 
 
-    private void computeCenter() {
+    private void initHitbox() {
         double maxX = Double.MIN_VALUE;
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
@@ -266,20 +329,26 @@ public class Squad extends Observable {
         float height = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxY - minY);
         int max = (int) Math.max(width, height);
         center.setLocation(avgx, avgy);
-        shield.width = max;
-        shield.height = max;
-        shield.x = (int) (center.x - max / 2);
-        shield.y = (int) (center.y - max / 2);
-        minimumDistance = max / 2 + (Castle.WIDTH / 2 - Castle.CENTER_CARD_OFFSET);
+        hitbox.width = max;
+        hitbox.height = max;
+        hitbox.x = (int) (center.x - max / 2);
+        hitbox.y = (int) (center.y - max / 2);
     }
 
     private void computeDelta() {
-        float dx = target.getCenterCard().x - center.x;
-        float dy = target.getCenterCard().y - center.y;
+        float dx, dy;
+        if( intersectTarget()) {
+            dx = target.getTargetPoint().x - center.x;
+            dy = target.getTargetPoint().y - center.y;
+        } else {
+            dx = target.getCenter().x - center.x;
+            dy = target.getCenter().y - center.y;
+        }
         delta.setLocation((int) (dx), (int) (dy));
     }
 
     private void avoidCastle() {
+        System.out.println("avoid" + speedDir);
         if (speedDir.x == 0) {
             if (delta.x > 0)
                 speedDir.setLocation(speed, 0);
@@ -291,39 +360,37 @@ public class Squad extends Observable {
             else
                 speedDir.setLocation(0, -speed);
         }
-
     }
 
     private void translate(Point2D p) {
         troops.forEach(t -> t.translate(p.x, p.y));
         center.x += p.x;
         center.y += p.y;
-        shield.x += p.x;
-        shield.y += p.y;
+        hitbox.x += p.x;
+        hitbox.y += p.y;
     }
 
     private boolean onTarget() {
-        if (currentIntersect != target)
+        if (!intersectTarget())
             return false;
 
         switch (target.getDoor()) {
             case SOUTH:
             case NORTH:
-                return Math.abs(delta.x) < speed && Math.abs(delta.y) <= minimumDistance;
+                return Math.abs(delta.x) < speed && World.contains(hitbox,target.getTargetPoint());
             case WEST:
             case EAST:
-                return Math.abs(delta.y) < speed && Math.abs(delta.x) <= minimumDistance;
+                return Math.abs(delta.y) < speed && World.contains(hitbox,target.getTargetPoint());
         }
         return false;
     }
 
-
     private void walkThroughDoor() {
 
         troops.get(troopIndex++).setCenterPos(startingPos.x - spacing.x, startingPos.y - spacing.y);
-        if (!allSent())
+        if (troopsLeft())
             troops.get(troopIndex++).setCenterPos(startingPos);
-        if (!allSent())
+        if (troopsLeft())
             troops.get(troopIndex++).setCenterPos(startingPos.x + spacing.x, startingPos.y + spacing.y);
     }
 

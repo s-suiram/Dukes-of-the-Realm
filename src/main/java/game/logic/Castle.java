@@ -13,15 +13,10 @@ import java.util.stream.Collectors;
 public class Castle {
 
     /**
-     * Constant which define height of a Castle
+     * Constant which define size of a Castle
      */
-    public final static int WIDTH = 100;
-    /**
-     * Constant which define height of a Castle
-     */
-    public final static int HEIGHT = 100;
+    public final static int SIZE = 100;
 
-    public static final int CENTER_CARD_OFFSET = HEIGHT / 3;
     /**
      * Store all the created castles
      */
@@ -37,7 +32,7 @@ public class Castle {
      */
     private Point2D center;
 
-    private Point2D centerCard;
+    private Point2D targetPoint;
 
     /**
      * Store the player who owns the Castle
@@ -92,25 +87,25 @@ public class Castle {
         this.door = door;
         producer = new TroopProducer();
         CASTLES.add(this);
-        boundingRect = new Rectangle((int) position.x, (int) position.y, WIDTH, HEIGHT);
+        boundingRect = new Rectangle((int) position.x, (int) position.y, SIZE, SIZE);
         center = new Point2D(
-                (float) this.getBoundingRect().x + Castle.WIDTH / 2.0f,
-                (float) this.getBoundingRect().y + Castle.WIDTH / 2.0f
+                (float) this.getBoundingRect().x + Castle.SIZE / 2.0f,
+                (float) this.getBoundingRect().y + Castle.SIZE / 2.0f
         );
-        centerCard = new Point2D();
-        centerCard.setLocation(center);
+        targetPoint = new Point2D();
+        targetPoint.setLocation(center);
         switch (door) {
             case NORTH:
-                centerCard.y -= CENTER_CARD_OFFSET;
+                targetPoint.y -= SIZE/2f;
                 break;
             case EAST:
-                centerCard.x += CENTER_CARD_OFFSET;
+                targetPoint.x += SIZE/2f;
                 break;
             case WEST:
-                centerCard.x -= CENTER_CARD_OFFSET;
+                targetPoint.x -= SIZE/2f;
                 break;
             case SOUTH:
-                centerCard.y += CENTER_CARD_OFFSET;
+                targetPoint.y += SIZE/2f;
                 break;
         }
         squads = new ArrayList<>();
@@ -236,8 +231,8 @@ public class Castle {
         return center;
     }
 
-    public Point2D getCenterCard() {
-        return centerCard;
+    public Point2D getTargetPoint() {
+        return targetPoint;
     }
 
     /**
