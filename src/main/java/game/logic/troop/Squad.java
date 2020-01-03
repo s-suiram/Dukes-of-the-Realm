@@ -183,6 +183,7 @@ public class Squad extends Observable {
      * Updates the squad.
      */
     public void step() {
+
         if (!onTarget()) {
             counter++;
             translate(speedDir);
@@ -348,7 +349,6 @@ public class Squad extends Observable {
     }
 
     private void avoidCastle() {
-        System.out.println("avoid" + speedDir);
         if (speedDir.x == 0) {
             if (delta.x > 0)
                 speedDir.setLocation(speed, 0);
