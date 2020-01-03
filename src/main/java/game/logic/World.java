@@ -175,11 +175,11 @@ public class World implements Serializable {
         Queue<Integer> randQueue = new LinkedList<>(randSet);
         //////////////////////////////////////////////////////////////////////////////
 */
-
         Queue<Integer> randQueue = IntStream.range(0, tiles.size())
                 .boxed()
                 .collect(Collectors.toCollection(LinkedList::new));
 
+        Collections.shuffle((List<?>) randQueue);
 
         Stream.of(fightingNames, neutralNames)
                 .flatMap(Collection::stream)
