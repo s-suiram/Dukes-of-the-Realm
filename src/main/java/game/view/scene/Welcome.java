@@ -31,7 +31,6 @@ public class Welcome extends CustomScene {
 
     @Override
     protected void init(Stage s) {
-        //getScene().getStylesheets().add(getClass().getResource("welcome.css").toExternalForm());
 
         title = new Label("DUKES OF THE REALM");
         title.setStyle("-fx-font-size: 60pt");
