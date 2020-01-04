@@ -13,7 +13,6 @@ import java.util.*;
  */
 public class Squad implements Serializable {
 
-    private static final Set<Squad> SQUADS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
     private static final int OFFSET = (int) (Castle.SIZE * 0.7);
     private static final int SHIELD_MARGIN = 40;
@@ -73,24 +72,12 @@ public class Squad implements Serializable {
         this.origin.getTroops().removeAll(troops);
         troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
-        SQUADS.add(this);
+        World.getInstance().squads.add(this);
     }
 
-    /**
-     * Clear squads.
-     */
-    public static void clearSquads() {
-        SQUADS.clear();
-    }
 
-    /**
-     * Gets squads.
-     *
-     * @return the squads
-     */
-    public static Set<Squad> getSquads() {
-        return Collections.unmodifiableSet(SQUADS);
-
+    public static Set<Squad> getSquads(){
+        return  World.getInstance().squads;
     }
 
     /**
@@ -100,7 +87,7 @@ public class Squad implements Serializable {
      * @return the boolean
      */
     public static boolean isAlive(Squad o) {
-        return SQUADS.contains(o);
+        return World.getInstance().squads.contains(o);
     }
 
     /**
@@ -203,7 +190,7 @@ public class Squad implements Serializable {
      */
     public void kill() {
         troops.forEach(Troop::kill);
-        SQUADS.remove(this);
+        World.getInstance().squads.remove(this);
     }
 
     private boolean isInitDone() {

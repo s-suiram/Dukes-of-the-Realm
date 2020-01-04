@@ -19,11 +19,6 @@ public class Castle implements Serializable {
     public final static int SIZE = 100;
 
     /**
-     * Store all the created castles
-     */
-    private static final Set<Castle> CASTLES = new HashSet<>();
-
-    /**
      * Position and size of the Castle
      */
     private Rectangle boundingRect;
@@ -87,7 +82,6 @@ public class Castle implements Serializable {
         troops = new ArrayList<>();
         this.door = door;
         producer = new TroopProducer();
-        CASTLES.add(this);
         boundingRect = new Rectangle(position.x, position.y, SIZE, SIZE);
         center = new Point(
                 this.getBoundingRect().x + Castle.SIZE / 2.0f,
@@ -109,6 +103,8 @@ public class Castle implements Serializable {
                 break;
         }
         squads = new ArrayList<>();
+        getCastles().add(this);
+
     }
 
     /**
@@ -117,14 +113,7 @@ public class Castle implements Serializable {
      * @return a unmodifiable set of all the castle created since the game was launched
      */
     public static Set<Castle> getCastles() {
-        return Collections.unmodifiableSet(CASTLES);
-    }
-
-    /**
-     * Clear the castle list
-     */
-    public static void clearCastle() {
-        CASTLES.clear();
+        return World.getInstance().castles;
     }
 
     /**

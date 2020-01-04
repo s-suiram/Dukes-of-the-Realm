@@ -1,6 +1,7 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
+import game.logic.World;
 import game.logic.troop.Squad;
 import game.logic.troop.Troop;
 import javafx.scene.Group;
@@ -33,6 +34,7 @@ public class SquadView extends Group {
         });
         this.lastAngle = o.getAngle();
         this.getChildren().add(hitbox);
+
     }
 
 

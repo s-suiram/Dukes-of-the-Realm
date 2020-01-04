@@ -50,14 +50,18 @@ public class World implements Serializable {
      */
     private List<Player> players;
 
+    public Set<Castle> castles;
+
+    public Set<Squad> squads;
+
+
     /**
      * Build a new World
      */
     private World() {
         players = new ArrayList<>();
-        Castle.clearCastle();
-        Squad.clearSquads();
-        Troop.clearTroops();
+        castles = new HashSet<>();
+        squads = new HashSet<>();
     }
 
     /**

@@ -43,6 +43,7 @@ public class WorldView {
      */
     private Group troopParent;
 
+
     /**
      * Build a world view
      *
@@ -199,9 +200,11 @@ public class WorldView {
      */
     public void draw() {
 
-        //troopParent.getChildren().removeIf(node -> ((SquadView) node).isModelDead());
+        troopParent.getChildren().removeIf(node -> ((SquadView) node).isModelDead());
 
         Squad.getSquads().forEach(squad -> {
+            if(!Squad.isAlive(squad))
+                squadViewMap.remove(squad);
             if(!squadViewMap.containsKey(squad)){
                 SquadView sv = new SquadView(squad);
                 squadViewMap.put(squad,sv);
@@ -209,14 +212,9 @@ public class WorldView {
             }
         });
 
-        if( troopParent.getChildren().size() > 0)
-        System.out.println(troopParent.getChildren().get(0).getTranslateY() + cameraPos.y);
-
         castleViews.forEach(c -> c.draw(cameraPos));
         troopParent.getChildren().forEach(o -> ((SquadView)o).draw(cameraPos));
     }
-
-
 
     /**
      * Set invisible all the contextual menus

@@ -23,7 +23,7 @@ public abstract class Troop implements Serializable {
     /**
      * Set of all the troops created since the beginning of the game
      */
-    protected static final Set<Troop> TROOPS = new HashSet<>();
+
     /**
      * Speed of the Troop, define how fast the troop will be on the field
      */
@@ -32,10 +32,7 @@ public abstract class Troop implements Serializable {
      * Store the damage of the Troop
      */
     public final int damage;
-    /**
-     * Store the life of the Troop
-     */
-    public final int hp;
+
     /**
      * Store the name of the Troop (Pikeman, Knight or Onager)
      */
@@ -53,6 +50,11 @@ public abstract class Troop implements Serializable {
     private Squad squad;
 
     /**
+     * Store the life of the Troop
+     */
+    public int hp;
+
+    /**
      * Build a Troop
      *
      * @param speed  the speed of the Troop
@@ -68,7 +70,6 @@ public abstract class Troop implements Serializable {
         this.viewDone = false;
         this.centerPos = new Point();
         squad = null;
-        TROOPS.add(this);
     }
 
     /**
@@ -77,15 +78,8 @@ public abstract class Troop implements Serializable {
      * @param t the troop
      * @return true if the Troop is alive and false if not
      */
-    public static boolean isAlive(Troop t) {
-        return TROOPS.contains(t);
-    }
-
-    /**
-     * Clear all the troops created
-     */
-    public static void clearTroops() {
-        TROOPS.clear();
+    public boolean isAlive(Troop t){
+        return hp == 0;
     }
 
     /**
@@ -137,7 +131,7 @@ public abstract class Troop implements Serializable {
      * Remove the troop
      */
     public void kill() {
-        TROOPS.remove(this);
+        hp = 0;
     }
 
     /**
