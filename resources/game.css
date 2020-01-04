@@ -1,0 +1,38 @@
+#background {
+    -fx-fill: #668054;
+}
+
+.button {
+    -fx-pref-width: 300px;
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+    -fx-border-radius: 5px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-padding: 15px 80px 15px 80px;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 0px;
+    -fx-background-color: white;
+    -fx-font-size: 13pt;
+    -fx-cursor: default;
+}
+
+#pause {
+    -fx-font-size: 99pt;
+    -fx-text-fill: rgb(45, 62, 80);
+}
+
+.camera-activated {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.camera-not-activated {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.button:pressed {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+}

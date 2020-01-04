@@ -7,9 +7,11 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.function.Consumer;
 
 /**
@@ -52,6 +54,12 @@ public abstract class CustomScene {
     private AnimationTimer animationTimer;
 
     /**
+     * The background rectangle of the scene
+     */
+
+    protected Rectangle background;
+
+    /**
      * Build a CustomScene
      *
      * @param defaultWindowWidth  the default width if not fullscreen
@@ -59,13 +67,18 @@ public abstract class CustomScene {
      * @param startFullScreen     the default state of the window
      * @param windowTitle         the title of the window
      */
-    protected CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle) {
+    protected CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle, String stylesheet) {
         this.windowWidth = startFullScreen ? Screen.getPrimary().getBounds().getMaxX() : defaultWindowWidth;
         this.windowHeight = startFullScreen ? Screen.getPrimary().getBounds().getMaxY() : defaultWindowHeight;
         this.startFullscreen = startFullScreen;
         this.windowTitle = windowTitle;
 
-        scene = new Scene(new Group(), windowWidth, windowHeight, Color.GREY);
+        background = new Rectangle(0, 0, windowWidth, windowHeight);
+        background.setFill(Color.WHITE);
+        background.setId("background");
+        scene = new Scene(new Group(background), windowWidth, windowHeight, Color.GREY);
+        File f = new File("resources/" + stylesheet);
+        getScene().getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
     }
 
     /**
@@ -127,12 +140,14 @@ public abstract class CustomScene {
 
         s.widthProperty().addListener((obs, oldVal, newVal) -> {
             windowWidth = newVal.intValue();
+            background.setWidth(newVal.intValue());
             if (widthResize != null)
                 widthResize.accept(windowWidth);
         });
 
         s.heightProperty().addListener((obs, oldVal, newVal) -> {
             windowHeight = newVal.intValue();
+            background.setHeight(newVal.intValue());
             if (heightResize != null)
                 heightResize.accept(windowHeight);
         });

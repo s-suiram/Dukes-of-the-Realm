@@ -25,7 +25,7 @@ public class NewGame extends CustomScene {
     private KeyboardEventHandler keyboardController;
 
     public NewGame(int defaultWindowWidth, int defaultWindowHeight, boolean startFullscreen, String windowTitle) {
-        super(defaultWindowWidth, defaultWindowHeight, startFullscreen, windowTitle);
+        super(defaultWindowWidth, defaultWindowHeight, startFullscreen, windowTitle, "newgame.css");
         keyboardController = new FullscreenKeyboardController(getScene());
     }
 
@@ -82,7 +82,8 @@ public class NewGame extends CustomScene {
 
         grid.addRow(4, submit, cancel);
 
-        grid.setStyle("-fx-font-size: 12pt");
+        grid.setId("grid");
+
         getRoot().addAll(grid);
         getRoot().forEach(e -> e.setFocusTraversable(false));
     }

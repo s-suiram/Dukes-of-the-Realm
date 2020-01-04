@@ -46,7 +46,7 @@ public class Game extends CustomScene {
     public Game(int defaultWindowWidth, int defaultWindowHeight,
                 boolean startFullScreen, String windowTitle,
                 List<String> f, List<String> n, int castlePerPlayer) {
-        super(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle);
+        super(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle, "game.css");
         this.f = f;
         this.n = n;
         this.castlePerPlayer = castlePerPlayer;
@@ -74,32 +74,26 @@ public class Game extends CustomScene {
         WorldView.init(castles, troops);
         MouseEventHandler.init(getScene());
 
-        Rectangle background = new Rectangle(
-                0, 0,
-                getWindowWidth(), getWindowHeight()
-        );
-
-        background.setFill(Color.web("668054"));
         background.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
         background.setOnMouseEntered(e -> getScene().setCursor(Cursor.OPEN_HAND));
 
         pauseLabel = new Label("PAUSE !");
+        pauseLabel.setId("pause");
         pauseLabel.setVisible(false);
-        pauseLabel.setStyle("-fx-font-size: 99pt");
-        pauseLabel.setTextFill(Color.rgb(45, 62, 80));
         Button cameraToggle = new Button("Toggle camera border movement");
-        cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #128011");
+        cameraToggle.getStyleClass().add("camera-activated");
         cameraToggle.setFocusTraversable(false);
         cameraToggle.setOnAction(e -> {
             settings.cameraMoveBorder = !settings.cameraMoveBorder;
+            cameraToggle.getStyleClass().removeIf(classVal -> classVal.startsWith("camera"));
+
             if (settings.cameraMoveBorder)
-                cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #128011");
+                cameraToggle.getStyleClass().add("camera-activated");
             else
-                cameraToggle.setStyle("-fx-font-size: 13pt; -fx-background-color: #802a2b");
+                cameraToggle.getStyleClass().add("camera-not-activated");
         });
 
         Button exit = new Button("Exit");
-        exit.setStyle("-fx-font-size: 13pt;");
         exit.setFocusTraversable(false);
         exit.setOnAction(e -> {
             stop();
@@ -107,7 +101,6 @@ public class Game extends CustomScene {
         });
 
         Button save = new Button("Save");
-
         save.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             File f = fileChooser.showSaveDialog(s);
@@ -133,17 +126,11 @@ public class Game extends CustomScene {
         menuBackground.setVisible(false);
 
 
-        onWidthResize(newVal -> {
-            background.setWidth(newVal);
-            menuBackground.setWidth(newVal);
-        });
+        onWidthResize(menuBackground::setWidth);
 
-        onHeightResize(newVal -> {
-            background.setHeight(newVal);
-            menuBackground.setHeight(newVal);
-        });
+        onHeightResize(menuBackground::setHeight);
 
-        getRoot().addAll(background, troops, castles, menuBackground, pauseLabel, menu);
+        getRoot().addAll(troops, castles, menuBackground, pauseLabel, menu);
     }
 
     @Override

@@ -4,7 +4,6 @@ import game.App;
 import game.controller.FullscreenKeyboardController;
 import game.controller.KeyboardEventHandler;
 import game.logic.World;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -25,7 +24,7 @@ public class Welcome extends CustomScene {
     private KeyboardEventHandler keyboardController;
 
     public Welcome(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle) {
-        super(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle);
+        super(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle, "welcome.css");
         keyboardController = new FullscreenKeyboardController(getScene());
     }
 
@@ -33,7 +32,7 @@ public class Welcome extends CustomScene {
     protected void init(Stage s) {
 
         title = new Label("DUKES OF THE REALM");
-        title.setStyle("-fx-font-size: 60pt");
+        title.setId("title");
 
         Button newGame = new Button("New Game");
         newGame.setFocusTraversable(false);
@@ -65,13 +64,13 @@ public class Welcome extends CustomScene {
         exit.setFocusTraversable(false);
         exit.setOnAction(e -> System.exit(0));
 
-
         getRoot().addAll(title, elements = new VBox(newGame, loadGame, exit, corruptedSaveLabel));
-        elements.setSpacing(50);
+        elements.setId("menu");
+
+        onWidthResize(elements::setPrefWidth);
 
         onHeightResize(elements::setPrefHeight);
-        onWidthResize(elements::setPrefWidth);
-        elements.setAlignment(Pos.CENTER);
+
     }
 
     @Override
