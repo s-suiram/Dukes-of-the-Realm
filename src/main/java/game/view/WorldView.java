@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This singleton handle all the view
@@ -37,12 +36,11 @@ public class WorldView {
     /**
      * The Squad view
      */
-    private HashMap<Squad,SquadView> squadViewMap;
+    private HashMap<Squad, SquadView> squadViewMap;
     /**
      * The parent which contains
      */
     private Group troopParent;
-
 
     /**
      * Build a world view
@@ -203,17 +201,17 @@ public class WorldView {
         troopParent.getChildren().removeIf(node -> ((SquadView) node).isModelDead());
 
         Squad.getSquads().forEach(squad -> {
-            if(!Squad.isAlive(squad))
+            if (!Squad.isAlive(squad))
                 squadViewMap.remove(squad);
-            if(!squadViewMap.containsKey(squad)){
+            if (!squadViewMap.containsKey(squad)) {
                 SquadView sv = new SquadView(squad);
-                squadViewMap.put(squad,sv);
+                squadViewMap.put(squad, sv);
                 troopParent.getChildren().add(sv);
             }
         });
 
         castleViews.forEach(c -> c.draw(cameraPos));
-        troopParent.getChildren().forEach(o -> ((SquadView)o).draw(cameraPos));
+        troopParent.getChildren().forEach(o -> ((SquadView) o).draw(cameraPos));
     }
 
     /**

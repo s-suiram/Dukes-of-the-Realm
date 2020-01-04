@@ -1,7 +1,6 @@
 package game.logic;
 
 import game.logic.troop.Squad;
-import game.logic.troop.Troop;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 import javafx.stage.Screen;
@@ -62,6 +61,15 @@ public class World implements Serializable {
         players = new ArrayList<>();
         castles = new HashSet<>();
         squads = new HashSet<>();
+        castles = new HashSet<>();
+        frames = 0;
+    }
+
+    private World(World world) {
+        this();
+        this.players.addAll(world.getPlayers());
+        this.squads.addAll(world.squads);
+        this.castles.addAll(world.castles);
     }
 
     /**
@@ -76,6 +84,10 @@ public class World implements Serializable {
         randomGeneration(fightingNames, neutralNames, castlePerDuke);
     }
 
+
+    public static void init(World world) {
+        instance = new World(world);
+    }
 
     private static int getBestGrid(int nbCastle) {
         int[] divisors = IntStream.range(1, nbCastle).parallel().filter(val -> nbCastle % val == 0).toArray();
@@ -223,7 +235,7 @@ public class World implements Serializable {
         if (frames % 2 == 0) {
             Castle.getCastles().forEach(Castle::step);
         }
-        Squad.getSquads().forEach(Squad::step);
+        World.getInstance().squads.forEach(Squad::step);
         if (frames == 60) frames = 1;
     }
 

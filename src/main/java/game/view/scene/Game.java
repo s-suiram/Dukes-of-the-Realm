@@ -17,8 +17,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
@@ -34,6 +39,8 @@ public class Game extends CustomScene {
     private List<String> f, n;
     private int castlePerPlayer;
 
+    private World world;
+
     private KeyboardEventHandler keyboardController;
 
     public Game(int defaultWindowWidth, int defaultWindowHeight,
@@ -45,6 +52,12 @@ public class Game extends CustomScene {
         this.castlePerPlayer = castlePerPlayer;
         settings = new GameSetting();
         keyboardController = new GameKeyboardController(getScene());
+        this.world = null;
+    }
+
+    public Game(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle, World w) {
+        this(defaultWindowWidth, defaultWindowHeight, startFullScreen, windowTitle, null, null, -1);
+        this.world = w;
     }
 
     @Override
@@ -52,7 +65,12 @@ public class Game extends CustomScene {
         Group castles = new Group();
         Group troops = new Group();
 
-        World.init(f, n, castlePerPlayer);
+        if (world != null) {
+            World.init(world);
+        } else {
+            World.init(f, n, castlePerPlayer);
+        }
+
         WorldView.init(castles, troops);
         MouseEventHandler.init(getScene());
 
@@ -88,7 +106,23 @@ public class Game extends CustomScene {
             App.buildWelcome().start(s);
         });
 
-        menu = new VBox(cameraToggle, exit);
+        Button save = new Button("Save");
+
+        save.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            File f = fileChooser.showSaveDialog(s);
+            if (f != null) {
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(f));
+                    outputStream.writeObject(World.getInstance());
+                    outputStream.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        menu = new VBox(cameraToggle, exit, save);
         menu.setVisible(false);
         menu.setAlignment(Pos.CENTER);
         menu.setSpacing(10);
@@ -97,6 +131,7 @@ public class Game extends CustomScene {
         menuBackground.setFill(new Color(1.0, 1.0, 1.0, 0.5));
         menuBackground.setStrokeWidth(0);
         menuBackground.setVisible(false);
+
 
         onWidthResize(newVal -> {
             background.setWidth(newVal);

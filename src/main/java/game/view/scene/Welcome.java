@@ -3,11 +3,18 @@ package game.view.scene;
 import game.App;
 import game.controller.FullscreenKeyboardController;
 import game.controller.KeyboardEventHandler;
+import game.logic.World;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * Welcome scene
@@ -24,6 +31,8 @@ public class Welcome extends CustomScene {
 
     @Override
     protected void init(Stage s) {
+        //getScene().getStylesheets().add(getClass().getResource("welcome.css").toExternalForm());
+
         title = new Label("DUKES OF THE REALM");
         title.setStyle("-fx-font-size: 60pt");
 
@@ -34,15 +43,31 @@ public class Welcome extends CustomScene {
             stop();
         });
 
+        Label corruptedSaveLabel = new Label("Your file is corrupted or it is not a save file !");
+        corruptedSaveLabel.setVisible(false);
         Button loadGame = new Button("Load Game");
         loadGame.setFocusTraversable(false);
+
+        loadGame.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(s);
+            if (file != null) {
+                try {
+                    ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
+                    App.buildGame((World) inputStream.readObject()).start(s);
+                    inputStream.close();
+                } catch (IOException | ClassNotFoundException ex) {
+                    corruptedSaveLabel.setVisible(true);
+                }
+            }
+        });
 
         Button exit = new Button("Exit");
         exit.setFocusTraversable(false);
         exit.setOnAction(e -> System.exit(0));
 
 
-        getRoot().addAll(title, elements = new VBox(newGame, loadGame, exit));
+        getRoot().addAll(title, elements = new VBox(newGame, loadGame, exit, corruptedSaveLabel));
         elements.setSpacing(50);
 
         onHeightResize(elements::setPrefHeight);

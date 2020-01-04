@@ -5,7 +5,9 @@ import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -96,10 +98,10 @@ public class Castle implements Serializable {
                 targetPoint.x += SIZE / 2f;
                 break;
             case WEST:
-                targetPoint.x -= SIZE/2f;
+                targetPoint.x -= SIZE / 2f;
                 break;
             case SOUTH:
-                targetPoint.y += SIZE/2f;
+                targetPoint.y += SIZE / 2f;
                 break;
         }
         squads = new ArrayList<>();
@@ -309,7 +311,7 @@ public class Castle implements Serializable {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Owner: " + owner + "\n" +
-                "id: " + hashCode() + "\n" +
+                "pos: " + boundingRect + "\n" +
                 "door: " + door + "\n" +
                 "money: " + florin + "\n" +
                 "level: " + level + "\n" +

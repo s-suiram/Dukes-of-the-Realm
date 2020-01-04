@@ -1,5 +1,6 @@
 package game;
 
+import game.logic.World;
 import game.view.scene.Game;
 import game.view.scene.NewGame;
 import game.view.scene.Welcome;
@@ -34,13 +35,17 @@ public class App extends Application {
         return game;
     }
 
+    public static Game buildGame(World w) {
+        game = new Game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE, w);
+        return game;
+    }
+
     public static Game getGame() {
         return game;
     }
 
     @Override
     public void start(Stage stage) {
-
         buildWelcome().start(stage);
     }
 }
