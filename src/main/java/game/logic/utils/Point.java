@@ -121,6 +121,12 @@ public class Point implements Serializable {
         return this;
     }
 
+    public <N extends Number> Point mul(N scal){
+        x *= scal.intValue();
+        y *= scal.intValue();
+        return this;
+    }
+
     /**
      * copy this point into another.
      *
@@ -143,4 +149,11 @@ public class Point implements Serializable {
         return Objects.hash(x, y);
     }
 
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

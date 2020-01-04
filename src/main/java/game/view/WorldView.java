@@ -8,6 +8,7 @@ import game.logic.World;
 import game.logic.troop.Squad;
 import javafx.scene.Group;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class WorldView {
     /**
      * The Squad view
      */
-    private Set<SquadView> squadViews;
+    private HashMap<Squad,SquadView> squadViewMap;
     /**
      * The parent which contains
      */
@@ -51,9 +52,10 @@ public class WorldView {
     private WorldView(Group castleParent, Group troopParent) {
         this.troopParent = troopParent;
         castleViews = new HashSet<>();
-        squadViews = new HashSet<>();
+        squadViewMap = new HashMap<>();
         cameraPos = new Point2D(0, 0);
-        Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c, castleParent)));
+        Castle.getCastles().forEach(c -> castleViews.add(new CastleView(c)));
+        castleParent.getChildren().addAll(castleViews);
     }
 
     /**
@@ -196,16 +198,25 @@ public class WorldView {
      * Method called each frame
      */
     public void draw() {
-        squadViews.removeIf(SquadView::getKilled);
-        squadViews.addAll(Squad.getSquads().stream()
-                .filter(Squad::viewNotDone)
-                .map(o -> new SquadView(troopParent, o))
-                .collect(Collectors.toSet())
-        );
-        troopParent.getChildren().retainAll(squadViews);
+
+        //troopParent.getChildren().removeIf(node -> ((SquadView) node).isModelDead());
+
+        Squad.getSquads().forEach(squad -> {
+            if(!squadViewMap.containsKey(squad)){
+                SquadView sv = new SquadView(squad);
+                squadViewMap.put(squad,sv);
+                troopParent.getChildren().add(sv);
+            }
+        });
+
+        if( troopParent.getChildren().size() > 0)
+        System.out.println(troopParent.getChildren().get(0).getTranslateY() + cameraPos.y);
+
         castleViews.forEach(c -> c.draw(cameraPos));
-        squadViews.forEach(o -> o.draw(cameraPos));
+        troopParent.getChildren().forEach(o -> ((SquadView)o).draw(cameraPos));
     }
+
+
 
     /**
      * Set invisible all the contextual menus

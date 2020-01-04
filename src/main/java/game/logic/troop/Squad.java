@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * The type Squad.
  */
-public class Squad extends Observable implements Serializable {
+public class Squad implements Serializable {
 
     private static final Set<Squad> SQUADS = new HashSet<>();
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
@@ -31,7 +31,6 @@ public class Squad extends Observable implements Serializable {
     private Castle currentIntersect;
     private Rectangle hitbox;
     private boolean isTargetAlly;
-    private boolean viewDone;
     private boolean lockDir;
     private boolean combatMode;
     private Point center;
@@ -52,9 +51,8 @@ public class Squad extends Observable implements Serializable {
         this.origin = origin;
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
-        this.hitbox = new Rectangle(0,0);
+        this.hitbox = new Rectangle(0, 0);
 
-        this.viewDone = false;
         this.lockDir = false;
         this.combatMode = false;
 
@@ -112,22 +110,6 @@ public class Squad extends Observable implements Serializable {
      */
     public List<Troop> getTroops() {
         return troops;
-    }
-
-    /**
-     * Sets view done.
-     */
-    public void setViewDone() {
-        viewDone = true;
-    }
-
-    /**
-     * View not done boolean.
-     *
-     * @return the boolean
-     */
-    public boolean viewNotDone() {
-        return !viewDone;
     }
 
     /**
@@ -222,8 +204,6 @@ public class Squad extends Observable implements Serializable {
     public void kill() {
         troops.forEach(Troop::kill);
         SQUADS.remove(this);
-        setChanged();
-        notifyObservers();
     }
 
     private boolean isInitDone() {
@@ -261,9 +241,9 @@ public class Squad extends Observable implements Serializable {
 
         if (!lockDir) {
             if (isOuTolerance(delta.x))
-                speedDir.setLocation(speed * (delta.x / Math.abs(delta.x)), 0);
+                speedDir.setLocation(World.compare(delta.x), 0).mul(speed);
             else if (isOuTolerance(delta.y)) {
-                speedDir.setLocation(0, speed * (delta.y / Math.abs(delta.y)));
+                speedDir.setLocation(0, World.compare(delta.y)).mul(speed);
             }
         }
     }
@@ -276,22 +256,22 @@ public class Squad extends Observable implements Serializable {
         Point center = origin.getCenter();
         switch (origin.getDoor()) {
             case NORTH:
-                startingPos.setLocation(center.x, center.y - OFFSET);
+                startingPos.setLocation(0, -OFFSET).add(center);
                 spacing.setLocation(SPACING_VALUE, 0);
                 speedDir.setLocation(0, -speed);
                 break;
             case SOUTH:
-                startingPos.setLocation(center.x, center.y + OFFSET);
+                startingPos.setLocation(0, OFFSET).add(center);
                 spacing.setLocation(SPACING_VALUE, 0);
                 speedDir.setLocation(0, speed);
                 break;
             case EAST:
-                startingPos.setLocation(center.x + OFFSET, center.y);
+                startingPos.setLocation(OFFSET, 0).add(center);
                 spacing.setLocation(0, SPACING_VALUE);
                 speedDir.setLocation(speed, 0);
                 break;
             case WEST:
-                startingPos.setLocation(center.x - OFFSET, center.y);
+                startingPos.setLocation(- OFFSET,0).add(center);
                 spacing.setLocation(0, SPACING_VALUE);
                 speedDir.setLocation(-speed, 0);
                 break;
@@ -332,18 +312,15 @@ public class Squad extends Observable implements Serializable {
         int max = (int) Math.max(width, height);
         center.setLocation(avgx, avgy);
         hitbox = new Rectangle(center.x - max / 2, center.y - max / 2, max, max);
+        System.out.println(center);
+        System.out.println(hitbox);
     }
 
     private void computeDelta() {
-        float dx, dy;
-        if (intersectTarget()) {
-            dx = target.getTargetPoint().x - center.x;
-            dy = target.getTargetPoint().y - center.y;
-        } else {
-            dx = target.getCenter().x - center.x;
-            dy = target.getCenter().y - center.y;
-        }
-        delta.setLocation(dx, dy);
+        if (intersectTarget())
+            delta.setLocation(target.getTargetPoint().cpy().sub(center));
+        else
+            delta.setLocation(target.getCenter().cpy().sub(center));
     }
 
     private void avoidCastle() {

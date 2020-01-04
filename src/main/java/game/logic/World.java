@@ -181,6 +181,7 @@ public class World implements Serializable {
 
         Collections.shuffle((List<?>) randQueue);
 
+        System.out.println(Arrays.deepToString(randQueue.toArray()));
         Stream.of(fightingNames, neutralNames)
                 .flatMap(Collection::stream)
                 .forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
@@ -266,7 +267,7 @@ public class World implements Serializable {
         return s.toString();
     }
 
-    public static  <N extends Number & Comparable<Number>> int compare(N number){
+    public static  <N extends Number & Comparable<Integer>> int compare(N number){
         return Integer.compare(number.compareTo(0), 0);
 
     }

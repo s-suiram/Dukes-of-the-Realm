@@ -174,4 +174,14 @@ public class Rectangle implements Serializable {
     public boolean contains(Point p) {
         return contains(p.x, p.y);
     }
+
+    @Override
+    public String toString() {
+        return "Rectangle{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

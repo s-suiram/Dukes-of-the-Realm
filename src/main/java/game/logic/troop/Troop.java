@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * The Troop class represent the model of a troop in the game
  */
-public abstract class Troop extends Observable implements Serializable {
+public abstract class Troop implements Serializable {
 
     /**
      * Radius of a Troop
@@ -42,7 +42,7 @@ public abstract class Troop extends Observable implements Serializable {
     public final String name;
 
     /**
-     * Store the center of the Troop
+     * Store the absolute pos
      */
     private Point centerPos;
 
@@ -97,6 +97,15 @@ public abstract class Troop extends Observable implements Serializable {
         return centerPos;
     }
 
+    public int getRelativeX(){
+        return centerPos.x - squad.getHitbox().x;
+    }
+
+    public int getRelativeY(){
+        return centerPos.y- squad.getHitbox().y;
+    }
+
+
     /**
      * Define the center of the troop with a Point2D
      *
@@ -124,21 +133,11 @@ public abstract class Troop extends Observable implements Serializable {
         this.squad = o;
     }
 
-    public double getRelativeX() {
-        return centerPos.x - squad.getHitbox().x;
-    }
-
-    public double getRelativeY() {
-        return centerPos.y - squad.getHitbox().y;
-    }
-
     /**
      * Remove the troop
      */
     public void kill() {
         TROOPS.remove(this);
-        setChanged();
-        notifyObservers();
     }
 
     /**
@@ -158,14 +157,7 @@ public abstract class Troop extends Observable implements Serializable {
      * @param y the y position
      */
     public void setCenterPos(double x, double y) {
-        this.centerPos.setLocation((float) x, (float) y);
-    }
-
-    /**
-     * Specify that the troop view should disappear
-     */
-    public void setViewDone() {
-        viewDone = true;
+        this.centerPos.setLocation( x,  y);
     }
 
     /**

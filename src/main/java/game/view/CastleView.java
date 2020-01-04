@@ -13,7 +13,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Handle the view of a castle
  */
-public class CastleView extends HitboxedGroup {
+public class CastleView extends Group {
     /**
      * Width of the door
      */
@@ -47,10 +47,8 @@ public class CastleView extends HitboxedGroup {
      * Create a new castle view
      *
      * @param c         the model attached to this view
-     * @param parentRef the group which contains this view
      */
-    public CastleView(Castle c, Group parentRef) {
-        super(parentRef, new Rectangle(0, 0, 0, 0));
+    public CastleView(Castle c) {
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
         rectangle = new Rectangle(0, 0, Castle.SIZE, Castle.SIZE);
@@ -97,9 +95,9 @@ public class CastleView extends HitboxedGroup {
         contextualMenu.setTranslateX(rectangle.getX() - 20);
         contextualMenu.setTranslateY(rectangle.getY() - 20);
 
-        addAllNodes(rectangle, door, contextualMenu);
+        this.getChildren().addAll(rectangle, door, contextualMenu);
 
-        rectangle.setOnMouseEntered(e -> parentRef.getScene().setCursor(Cursor.HAND));
+        rectangle.setOnMouseEntered(e -> this.getScene().setCursor(Cursor.HAND));
 
         rectangle.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
@@ -125,8 +123,7 @@ public class CastleView extends HitboxedGroup {
         return selected;
     }
 
-    @Override
-    protected void drawImpl(Point2D cam) {
+    protected void draw(Point2D cam) {
         if (this == getSelected()) {
             rectangle.setFill(new Color(1.0, 1.0, 1.0, 0.4));
         } else {
