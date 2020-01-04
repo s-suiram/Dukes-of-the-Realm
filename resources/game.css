@@ -14,7 +14,7 @@
     -fx-background-insets: 0px;
     -fx-background-color: white;
     -fx-font-size: 13pt;
-    -fx-cursor: default;
+    -fx-cursor: hand;
 }
 
 #pause {
@@ -35,4 +35,8 @@
 .button:pressed {
     -fx-text-fill: white;
     -fx-background-color: black;
+}
+
+.button:hover {
+    -fx-background-color: #333333;
 }

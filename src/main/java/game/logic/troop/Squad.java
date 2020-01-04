@@ -171,7 +171,7 @@ public class Squad implements Serializable {
                 }
             }
         } else {
-            //System.out.println("impact");
+
         }
     }
 

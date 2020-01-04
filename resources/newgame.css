@@ -10,7 +10,7 @@
     -fx-background-insets: 0px;
     -fx-background-color: black;
     -fx-font-size: 13pt;
-    -fx-cursor: default;
+    -fx-cursor: hand;
     -fx-text-fill: white;
 }
 
@@ -30,11 +30,18 @@
 
 .text-field {
     -fx-background-color: #000000;
+    -fx-border-color: #000000;
+    -fx-border-radius: 3px;
+    -fx-border-width: 2px;
     -fx-text-fill: white;
 }
 
 .spinner {
     -fx-arrows-visible: hidden;
+}
+
+.text-field:hover {
+    -fx-border-color: #333333;
 }
 
 .label {
@@ -45,4 +52,8 @@
     -fx-background-color: white;
     -fx-text-fill: black;
     -fx-border-color: black;
+}
+
+.button:hover {
+    -fx-background-color: #333333;
 }
