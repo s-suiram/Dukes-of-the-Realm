@@ -55,6 +55,9 @@ public class Game extends CustomScene {
         settings = new GameSetting();
         keyboardController = new GameKeyboardController(getScene());
         this.world = null;
+
+
+
     }
 
     public Game(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle, World w) {

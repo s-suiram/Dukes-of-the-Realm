@@ -80,11 +80,9 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
                 handleDrag(event);
             }
         }
-
         if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
             handleDragStop();
         }
-
         if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
             handleMouseMoved(event);
         }

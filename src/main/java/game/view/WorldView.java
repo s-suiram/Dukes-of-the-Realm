@@ -199,25 +199,18 @@ public class WorldView {
      */
     public void draw() {
 
-        troopParent.getChildren().clear();
-        //System.out.println(troopParent.getChildren().size());
-        troopParent.getChildren().addAll(
-                Squad.getSquads()
-                        .stream()
-                        .map(SquadView::new)
-                        .collect(Collectors.toList())
-        );
 
-     /*   Squad.getSquads().forEach(squad -> {
-            if (squad.isDead())
+        Squad.getSquads().forEach(squad -> {
+            if (squad.isDead()) {
+                troopParent.getChildren().remove(squadViewMap.get(squad));
                 squadViewMap.remove(squad);
-            if (!squadViewMap.containsKey(squad)) {
-                SquadView sv = new SquadView(squad);
-                squadViewMap.put(squad, sv);
-                troopParent.getChildren().add(sv);
+            } else if (!squadViewMap.containsKey(squad)) {
+                    SquadView sv = new SquadView(squad);
+                    squadViewMap.put(squad, sv);
+                    troopParent.getChildren().add(sv);
             }
         });
-*/
+
         castleViews.forEach(c -> c.draw(cameraPos));
         troopParent.getChildren().forEach(o -> ((SquadView) o).draw(cameraPos));
     }
