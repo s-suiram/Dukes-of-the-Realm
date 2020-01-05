@@ -1,5 +1,6 @@
 package game.logic;
 
+import com.sun.org.apache.bcel.internal.generic.LUSHR;
 import game.logic.troop.*;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
@@ -114,7 +115,7 @@ public class Castle implements Serializable {
      *
      * @return a unmodifiable set of all the castle created since the game was launched
      */
-    public static Set<Castle> getCastles() {
+    public static List<Castle> getCastles() {
         return World.getInstance().castles;
     }
 
@@ -125,6 +126,10 @@ public class Castle implements Serializable {
      */
     public int levelUpPrice() {
         return (level + 1) * 1000;
+    }
+
+    public List<Squad> getSquads() {
+        return squads;
     }
 
     /**

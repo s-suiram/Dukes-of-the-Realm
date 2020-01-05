@@ -58,7 +58,7 @@ public class Squad implements Serializable {
      * @param target the target
      */
     public Squad(List<Troop> troops, Castle origin, Castle target) {
-        this.troops = troops;
+        this.troops = new ArrayList<>(troops);
         this.origin = origin;
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
@@ -87,7 +87,8 @@ public class Squad implements Serializable {
         this.origin.getTroops().removeAll(troops);
 
         prh.add(this::handleFight, 5,"handleFight");
-        troops.forEach(troop -> troop.setSquad(this));
+        this.troops.forEach(troop -> troop.setSquad(this));
+        System.out.println(this.troops.get(0).getSquad() + " dfgdfgfdgdf");
         computeStartingPos();
         computeLastAngle();
         walkThroughDoor();
@@ -95,7 +96,7 @@ public class Squad implements Serializable {
     }
 
 
-    public static Set<Squad> getSquads() {
+    public static List<Squad> getSquads() {
         return World.getInstance().squads;
     }
 
@@ -210,6 +211,10 @@ public class Squad implements Serializable {
             default:
                 return false;
         }
+    }
+
+    public boolean isInitDone() {
+        return hitbox.getWidth() != 0;
     }
 
     private void handleContact() {

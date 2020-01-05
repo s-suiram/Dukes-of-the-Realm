@@ -1,6 +1,7 @@
 package game.logic;
 
 import game.logic.troop.Squad;
+import game.logic.troop.TroopType;
 import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
@@ -50,9 +51,9 @@ public class World implements Serializable {
      */
     private List<Player> players;
 
-    public Set<Castle> castles;
+    public List<Castle> castles;
 
-    public Set<Squad> squads;
+    public List<Squad> squads;
 
 
 
@@ -61,9 +62,8 @@ public class World implements Serializable {
      */
     private World() {
         players = new ArrayList<>();
-        castles = new HashSet<>();
-        squads = new HashSet<>();
-        castles = new HashSet<>();
+        castles = new ArrayList<>();
+        squads = new ArrayList<>();
         frames = 0;
     }
 
@@ -125,7 +125,7 @@ public class World implements Serializable {
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
 
-        Player.setPlayer(getInstance().getPlayer(fightingNames.get(0)).get());
+        getInstance().getPlayer(fightingNames.get(0)).ifPresent(p -> p.isBot = false);
 
         int nbNeutral = neutralNames.size();
         neutralNames.forEach(n -> getInstance().addNeutralDukes(n));
@@ -226,8 +226,22 @@ public class World implements Serializable {
         squads.removeIf(Squad::isDead);
         castles.forEach(Castle::removeDeads);
 
+/*
+        if( frames % 5 == 0)  {
+
+            castles.forEach(c -> {
+                c.produce(TroopType.PIKE_MAN);
+                if( c.getTroops().size() > 8) {
+                    c.createSquad(c.getTroops(), castles.get(rand(0,castles.size())));
+                }
+            });
+        }
+*/
+
+
         castles.forEach(Castle::step);
         squads.forEach(Squad::step);
+        players.subList(1,players.size()).forEach(Player::act);
 
         if (frames == 60) frames = 1;
     }
@@ -258,6 +272,10 @@ public class World implements Serializable {
      */
     public void addFightingDukes(String name) {
         players.add(new FightingDukes(name));
+    }
+
+    public  Player getPlayer(){
+        return players.get(0);
     }
 
     /**

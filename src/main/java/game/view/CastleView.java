@@ -4,6 +4,7 @@ import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
 import game.logic.Player;
+import game.logic.World;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.input.MouseButton;
@@ -131,7 +132,7 @@ public class CastleView extends Group {
         }
         this.setTranslateX(model.getBoundingRect().x - cam.x);
         this.setTranslateY(model.getBoundingRect().y - cam.y);
-        if (getModel().getOwner() == Player.getPlayer()) {
+        if (getModel().getOwner() == World.getInstance().getPlayer()) {
             rectangle.setStroke(Color.GOLD);
         } else {
             rectangle.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);

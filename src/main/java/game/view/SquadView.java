@@ -20,12 +20,7 @@ public class SquadView extends Group {
         hitbox = new Rectangle(0,0);
         hitbox.setFill(Color.TRANSPARENT);
         hitbox.setStroke(Color.BLACK);
-        o.getTroops().forEach(troop -> {
-            TroopView tv = new TroopView(troop);
-            this.getChildren().add(tv);
-            tv.setTranslateX(troop.getRelativeX());
-            tv.setTranslateY(troop.getRelativeY());
-        });
+        o.getTroops().forEach(troop -> this.getChildren().add(new TroopView(troop)));
         this.firstAngle = o.getAngle();
         this.getChildren().add(hitbox);
 

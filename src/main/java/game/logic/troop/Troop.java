@@ -94,6 +94,7 @@ public abstract class Troop implements Serializable {
     }
 
     public int getRelativeX(){
+        System.out.println(squad);
         return centerPos.x - squad.getHitbox().x;
     }
 
@@ -101,6 +102,9 @@ public abstract class Troop implements Serializable {
         return centerPos.y- squad.getHitbox().y;
     }
 
+    public Squad getSquad() {
+        return squad;
+    }
 
     /**
      * Define the center of the troop with a Point2D
