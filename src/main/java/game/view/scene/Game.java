@@ -7,6 +7,7 @@ import game.controller.KeyboardEventHandler;
 import game.controller.MouseEventHandler;
 import game.logic.Cardinal;
 import game.logic.World;
+import game.logic.utils.Point;
 import game.view.WorldView;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -14,8 +15,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -24,13 +27,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The game scene
  */
 public class Game extends CustomScene {
-
+    List<Point> backgroundRectangles;
     private VBox menu;
     private Rectangle menuBackground;
     private Label pauseLabel;
@@ -38,8 +42,8 @@ public class Game extends CustomScene {
     private List<String> f, n;
     private int castlePerPlayer;
     private World world;
-
     private KeyboardEventHandler keyboardController;
+    private List<Rectangle> backgroundImage;
 
     public Game(int defaultWindowWidth, int defaultWindowHeight,
                 boolean startFullScreen, String windowTitle,
@@ -72,26 +76,27 @@ public class Game extends CustomScene {
         WorldView.init(castles, troops);
         MouseEventHandler.init(getScene());
 
-        background.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
-        background.setOnMouseEntered(e -> getScene().setCursor(Cursor.OPEN_HAND));
 
         pauseLabel = new Label("PAUSE !");
         pauseLabel.setId("pause");
         pauseLabel.setVisible(false);
         Button cameraToggle = new Button("Toggle camera border movement");
+        cameraToggle.setId("menu-button");
         cameraToggle.getStyleClass().add("camera-activated");
         cameraToggle.setFocusTraversable(false);
         cameraToggle.setOnAction(e -> {
             settings.cameraMoveBorder = !settings.cameraMoveBorder;
             cameraToggle.getStyleClass().removeIf(classVal -> classVal.startsWith("camera"));
 
-            if (settings.cameraMoveBorder)
+            if (settings.cameraMoveBorder) {
                 cameraToggle.getStyleClass().add("camera-activated");
-            else
+            } else {
                 cameraToggle.getStyleClass().add("camera-not-activated");
+            }
         });
 
         Button exit = new Button("Exit");
+        exit.setId("menu-button");
         exit.setFocusTraversable(false);
         exit.setOnAction(e -> {
             stop();
@@ -99,6 +104,7 @@ public class Game extends CustomScene {
         });
 
         Button save = new Button("Save");
+        save.setId("menu-button");
         save.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             File f = fileChooser.showSaveDialog(s);
@@ -113,6 +119,24 @@ public class Game extends CustomScene {
             }
         });
 
+        backgroundImage = new ArrayList<>();
+        backgroundRectangles = new ArrayList<>();
+        Image img = new Image("file:resources/grass.png");
+        int width = World.FIELD_WIDTH / (int) img.getWidth() + 1;
+        int height = World.FIELD_HEIGHT / (int) img.getHeight() + 1;
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Rectangle r = new Rectangle(x * img.getWidth(), y * img.getHeight(), img.getWidth(), img.getHeight());
+                r.setFill(new ImagePattern(img));
+                r.setStrokeWidth(0);
+                r.setOnMouseEntered(e -> getScene().setCursor(Cursor.OPEN_HAND));
+                r.setOnMouseClicked(e -> WorldView.getInstance().clearAllContextualMenu());
+                backgroundImage.add(r);
+                backgroundRectangles.add(new Point(x * img.getWidth(), y * img.getHeight()));
+            }
+        }
+
         menu = new VBox(cameraToggle, exit, save);
         menu.setVisible(false);
         menu.setAlignment(Pos.CENTER);
@@ -124,15 +148,26 @@ public class Game extends CustomScene {
         menuBackground.setVisible(false);
 
 
-        onWidthResize(menuBackground::setWidth);
+        onWidthResize(w -> {
+            menuBackground.setWidth(w);
+        });
 
-        onHeightResize(menuBackground::setHeight);
+        onHeightResize(h -> {
+            menuBackground.setHeight(h);
+        });
 
+        getRoot().addAll(backgroundImage);
         getRoot().addAll(troops, castles, menuBackground, pauseLabel, menu);
     }
 
     @Override
     protected void loop(Stage s, long now) {
+
+        for (int i = 0; i < backgroundImage.size(); i++) {
+            backgroundImage.get(i).setX(backgroundRectangles.get(i).x - WorldView.getInstance().cameraPos.x);
+            backgroundImage.get(i).setY(backgroundRectangles.get(i).y - WorldView.getInstance().cameraPos.y);
+        }
+
         keyboardController.handle(s);
         WorldView.getInstance().draw();
         if (settings.cameraMoveBorder) handleCameraMove();

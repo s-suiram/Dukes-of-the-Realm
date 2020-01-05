@@ -9,7 +9,9 @@ import game.logic.utils.Rectangle;
 import game.logic.utils.SingleRunHandler;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The type Squad.

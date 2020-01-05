@@ -45,8 +45,6 @@ public class SquadBuilderInterface extends Group {
      */
     public SquadBuilderInterface(Castle src, Castle target, ContextualMenuCastle contextualMenuCastle) {
         super();
-        setTranslateX(-15);
-        setTranslateY(-15);
         contextualMenuCastle.hidePanel();
         this.srcCastle = src;
         this.destCastle = target;
@@ -63,22 +61,16 @@ public class SquadBuilderInterface extends Group {
         Label title = new Label("Squad builder");
 
         Button plusOnager = new Button("+");
-        plusOnager.setFocusTraversable(false);
         Button plusKnight = new Button("+");
-        plusKnight.setFocusTraversable(false);
         Button plusPikeman = new Button("+");
-        plusPikeman.setFocusTraversable(false);
 
         plusOnager.setOnAction(e -> transferOnager(true));
         plusKnight.setOnAction(e -> transferKnight(true));
         plusPikeman.setOnAction(e -> transferPikeman(true));
 
         Button minusOnager = new Button("-");
-        minusOnager.setFocusTraversable(false);
         Button minusKnight = new Button("-");
-        minusKnight.setFocusTraversable(false);
         Button minusPikeman = new Button("-");
-        minusPikeman.setFocusTraversable(false);
 
         minusOnager.setOnAction(e -> transferOnager(false));
         minusKnight.setOnAction(e -> transferKnight(false));
@@ -105,17 +97,12 @@ public class SquadBuilderInterface extends Group {
         o_out = new Label();
 
         HBox onagerBox = new HBox(minusOnager, onagerLabel, plusOnager, in1, o_in, out1, o_out);
-        onagerBox.setSpacing(50);
         HBox knightBox = new HBox(minusKnight, knightLabel, plusKnight, in2, k_in, out2, k_out);
-        knightBox.setSpacing(50);
         HBox pikemanBox = new HBox(minusPikeman, pikemanLabel, plusPikeman, in3, p_in, out3, p_out);
-        pikemanBox.setSpacing(50);
 
         Label feedback = new Label();
 
         Button submit = new Button("Ok");
-        submit.setFocusTraversable(false);
-        submit.setStyle("-fx-background-color: #548045");
         submit.setOnAction(e -> {
             List<Pikeman> pikemen = srcCastle.getPikemen().stream().limit(pikemanOutOfCastle).collect(Collectors.toList());
             List<Knight> knights = srcCastle.getKnights().stream().limit(knightOutOfCastle).collect(Collectors.toList());
@@ -140,19 +127,13 @@ public class SquadBuilderInterface extends Group {
         });
 
         Button cancel = new Button("Cancel");
-        cancel.setFocusTraversable(false);
-        cancel.setStyle("-fx-background-color: #801c20");
         cancel.setOnAction(e -> contextualMenuCastle.deleteSquadBuilder());
 
         HBox quitButtons = new HBox(submit, cancel);
-        quitButtons.setSpacing(50);
 
         VBox menu = new VBox(title, pikemanBox, knightBox, onagerBox, feedback, quitButtons);
-        menu.setSpacing(20);
-        menu.getChildren().forEach(n -> n.setStyle("-fx-font-size: 14pt"));
-        menu.setStyle("-fx-background-color: rgba(83,124,156,0.79)");
+        menu.setId("squad-builder");
         getChildren().add(menu);
-        title.setStyle("-fx-font-size: 30pt");
     }
 
     private void transferPikeman(boolean plus) {

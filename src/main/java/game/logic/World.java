@@ -120,7 +120,7 @@ public class World implements Serializable {
 
     private static void randomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
         double padding = 0.1; //0.2 -> 20% smaller bounds
-        int fieldForCastle = 150; //Space on the field for one castle
+        int fieldForCastle = Castle.SIZE * 2; //Space on the field for one castle
 
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
