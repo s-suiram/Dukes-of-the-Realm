@@ -30,15 +30,13 @@ import java.util.List;
  * The game scene
  */
 public class Game extends CustomScene {
+
     private VBox menu;
     private Rectangle menuBackground;
     private Label pauseLabel;
-
     private GameSetting settings;
-
     private List<String> f, n;
     private int castlePerPlayer;
-
     private World world;
 
     private KeyboardEventHandler keyboardController;

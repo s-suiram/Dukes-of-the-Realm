@@ -1,16 +1,10 @@
 package game.view;
 
 import com.sun.javafx.geom.Point2D;
-import game.logic.World;
 import game.logic.troop.Squad;
-import game.logic.troop.Troop;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * This class handle the squad view
@@ -18,7 +12,7 @@ import java.util.Observer;
 public class SquadView extends Group {
 
     private Squad o;
-    private double lastAngle;
+    private double firstAngle;
     private final Rectangle hitbox;
 
     public SquadView( Squad o) {
@@ -32,7 +26,7 @@ public class SquadView extends Group {
             tv.setTranslateX(troop.getRelativeX());
             tv.setTranslateY(troop.getRelativeY());
         });
-        this.lastAngle = o.getAngle();
+        this.firstAngle = o.getAngle();
         this.getChildren().add(hitbox);
 
     }
@@ -48,12 +42,12 @@ public class SquadView extends Group {
                 .forEach(node -> ((TroopView) node).draw());
 
         if (o.dirChanged()) {
-            this.setRotate(lastAngle - o.getAngle());
+            this.setRotate(firstAngle - o.getAngle());
         }
     }
 
     public boolean isModelDead(){
-        return !Squad.isAlive(o);
+        return o.isDead();
     }
 
 }

@@ -1,9 +1,12 @@
 package game.logic.troop;
 
+import game.App;
 import game.logic.Castle;
 import game.logic.World;
+import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
+import game.logic.utils.SingleRunHandler;
 
 import java.io.Serializable;
 import java.util.*;
@@ -14,29 +17,38 @@ import java.util.*;
 public class Squad implements Serializable {
 
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
-    private static final int OFFSET = (int) (Castle.SIZE * 0.7);
+    private static final int OFFSET = (int) (Castle.SIZE * 0.5);
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20;
     private static final int LOADING_CYCLES = 90;
-    private final Point spacing;
+
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
     private int frameSkip;
     private int counter;
+
     private List<Troop> troops;
     private Castle origin;
     private Castle target;
     private Castle currentIntersect;
     private Rectangle hitbox;
+    private SingleRunHandler singleRunHandler;
+
     private boolean isTargetAlly;
     private boolean lockDir;
-    private boolean combatMode;
+    private boolean movingPhase;
+    private boolean killed;
+
+    private Point spacing;
     private Point center;
     private Point delta;
     private Point speedDir;
     private Point lastSpeedDir;
+    private Point finalSpeedDir;
     private Point startingPos;
+
+    private PeriodicRunHandler prh;
 
     /**
      * Instantiates a new Squad.
@@ -51,10 +63,12 @@ public class Squad implements Serializable {
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
         this.hitbox = new Rectangle(0, 0);
+        this.singleRunHandler = new SingleRunHandler();
+        this.prh = new PeriodicRunHandler();
 
         this.lockDir = false;
-        this.combatMode = false;
-
+        this.movingPhase = true;
+        this.killed = false;
         this.troopIndex = 0;
         this.counter = 0;
         this.loadingCyclesLeft = LOADING_CYCLES / speed;
@@ -63,6 +77,7 @@ public class Squad implements Serializable {
         this.spacing = new Point();
         this.speedDir = new Point();
         this.lastSpeedDir = new Point();
+        this.finalSpeedDir = new Point();
         this.delta = new Point(Double.MAX_VALUE, Double.MAX_VALUE);
         this.startingPos = new Point();
         this.center = new Point();
@@ -70,24 +85,27 @@ public class Squad implements Serializable {
         this.isTargetAlly = origin.getOwner() == target.getOwner();
         this.troops.sort(Comparator.comparingInt(o -> o.speed));
         this.origin.getTroops().removeAll(troops);
+
+        prh.add(this::handleFight, 5,"handleFight");
         troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
+        computeLastAngle();
+        walkThroughDoor();
         World.getInstance().squads.add(this);
     }
 
 
-    public static Set<Squad> getSquads(){
-        return  World.getInstance().squads;
+    public static Set<Squad> getSquads() {
+        return World.getInstance().squads;
     }
 
     /**
      * Is alive boolean.
      *
-     * @param o the o
      * @return the boolean
      */
-    public static boolean isAlive(Squad o) {
-        return World.getInstance().squads.contains(o);
+    public boolean isDead() {
+        return killed;
     }
 
     /**
@@ -114,19 +132,17 @@ public class Squad implements Serializable {
      * @return the angle
      */
     public int getAngle() {
-        int angle;
         if (speedDir.x == 0) {
             if (speedDir.y < 0)
-                angle = 0;
+                return 0;
             else
-                angle = 180;
+                return 180;
         } else {
             if (speedDir.x < 0)
-                angle = 90;
+                return 90;
             else
-                angle = 270;
+                return 270;
         }
-        return angle;
     }
 
     /**
@@ -135,8 +151,6 @@ public class Squad implements Serializable {
      * @return the boolean
      */
     public boolean dirChanged() {
-        if (onTarget())
-            return false;
         return speedDir.x != lastSpeedDir.x || lastSpeedDir.y != speedDir.y;
     }
 
@@ -153,28 +167,13 @@ public class Squad implements Serializable {
      * Updates the squad.
      */
     public void step() {
-
-        if (!onTarget()) {
-            counter++;
-            translate(speedDir);
-            if (troopsLeft()) {
-                if (counter % frameSkip == 0)
-                    walkThroughDoor();
-            } else {
-                if (!isLoading()) {
-                    if (isInitDone())
-                        pathFind();
-                    else
-                        initHitbox();
-                } else {
-                    loadingCyclesLeft--;
-                }
-            }
+        counter++;
+        if (!onTarget() && movingPhase) {
+            handleDisplacement();
         } else {
-
+            handleContact();
         }
     }
-
 
     /**
      * Gets hitbox.
@@ -186,15 +185,93 @@ public class Squad implements Serializable {
     }
 
     /**
-     * Kills the squad and its troops
+     * Kills the squad
      */
     public void kill() {
-        troops.forEach(Troop::kill);
-        World.getInstance().squads.remove(this);
+        this.killed = true;
     }
 
-    private boolean isInitDone() {
-        return hitbox.getWidth() != 0;
+    /**
+     * check if the squad is arrived  at its final destination
+     *
+     * @return true if its the case
+     */
+    public boolean onTarget() {
+        if (!hitbox.contains(target.getTargetPoint()))
+            return false;
+
+        switch (target.getDoor()) {
+            case SOUTH:
+            case NORTH:
+                return Math.abs(delta.x) < speed;
+            case WEST:
+            case EAST:
+                return Math.abs(delta.y) < speed;
+            default:
+                return false;
+        }
+    }
+
+    private void handleContact() {
+        singleRunHandler.doOnce(this::resetThings, "reset");
+        if (isTargetAlly) {
+            handleTransfer();
+        } else {
+           prh.doPeriodically("handleFight");
+        }
+    }
+
+    private void handleDisplacement() {
+        translate(speedDir);
+        if (troopsLeft()) {
+            if (goodFrame())
+                walkThroughDoor();
+        } else {
+            if (!isLoading()) {
+                singleRunHandler.doOnce(this::computeHitbox, "computeHitbox");
+                pathFind();
+            } else {
+                loadingCyclesLeft--;
+            }
+        }
+    }
+
+    private void handleTransfer() {
+        translate(speedDir);
+        if(target.getCenter().euclideanDist(center) <speed) {
+            target.getTroops().addAll(troops);
+            troops.clear();
+            kill();
+        }
+    }
+
+    private void handleFight() {
+        if(target.isVulnerable()){
+            origin.capture(target);
+            kill();
+        } else if(troops.size() == 0) {
+            kill();
+        } else {
+            Troop t;
+            while((t = target.getRandomFirst()) == null);
+            System.out.println(t + " " + t.getHp());
+            troops.get(0).attack(t);
+            System.out.println(t + " " + t.getHp());
+            if(troops.get(0).isDead())
+                troops.remove(0);
+        }
+    }
+
+    private boolean goodFrame() {
+        return counter % frameSkip == 0;
+    }
+
+
+    private void resetThings() {
+        speedDir.setLocation(finalSpeedDir);
+        movingPhase = false;
+        if (speedDir.y == 0)
+            translate(new Point(0, -(center.y - target.getTargetPoint().y)));
     }
 
     private boolean intersectCastle() {
@@ -205,11 +282,8 @@ public class Squad implements Serializable {
         return currentIntersect == target;
     }
 
-    private void computeIntersection() {
-        currentIntersect = Castle.getCastles().stream()
-                .filter(c -> hitbox.intersects(c.getBoundingRect()))
-                .findFirst()
-                .orElse(null);
+    private boolean isOuTolerance(double delta) {
+        return !(delta > -speed) || !(delta < speed);
     }
 
     private void pathFind() {
@@ -227,16 +301,24 @@ public class Squad implements Serializable {
         }
 
         if (!lockDir) {
-            if (isOuTolerance(delta.x))
-                speedDir.setLocation(World.compare(delta.x), 0).mul(speed);
-            else if (isOuTolerance(delta.y)) {
-                speedDir.setLocation(0, World.compare(delta.y)).mul(speed);
-            }
+            computeDirection();
         }
     }
 
-    private boolean isOuTolerance(double delta) {
-        return !(delta > -speed) || !(delta < speed);
+    private void computeIntersection() {
+        currentIntersect = Castle.getCastles().stream()
+                .filter(c -> hitbox.intersects(c.getBoundingRect()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void computeDirection() {
+        if (isOuTolerance(delta.x)) {
+            speedDir.setLocation(World.compare(delta.x), 0).mul(speed);
+        } else if (isOuTolerance(delta.y)) {
+            translate(new Point(-(center.x - target.getCenter().x), 0));
+            speedDir.setLocation(0, World.compare(delta.y)).mul(speed);
+        }
     }
 
     private void computeStartingPos() {
@@ -258,7 +340,7 @@ public class Squad implements Serializable {
                 speedDir.setLocation(speed, 0);
                 break;
             case WEST:
-                startingPos.setLocation(- OFFSET,0).add(center);
+                startingPos.setLocation(-OFFSET, 0).add(center);
                 spacing.setLocation(0, SPACING_VALUE);
                 speedDir.setLocation(-speed, 0);
                 break;
@@ -266,8 +348,24 @@ public class Squad implements Serializable {
         lastSpeedDir.setLocation(speedDir);
     }
 
+    private void computeLastAngle() {
+        switch (target.getDoor()) {
+            case NORTH:
+                finalSpeedDir.setLocation(0, 1);
+                break;
+            case SOUTH:
+                finalSpeedDir.setLocation(0, -1);
+                break;
+            case EAST:
+                finalSpeedDir.setLocation(-1, 0);
+                break;
+            case WEST:
+                finalSpeedDir.setLocation(1, 0);
+                break;
+        }
+    }
 
-    private void initHitbox() {
+    private void computeHitbox() {
         double maxX = Double.MIN_VALUE;
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
@@ -296,11 +394,10 @@ public class Squad implements Serializable {
         float avgy = (float) (maxY + minY) / 2;
         float width = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxX - minX);
         float height = (float) (Troop.DIAMETER + SHIELD_MARGIN + maxY - minY);
+
         int max = (int) Math.max(width, height);
         center.setLocation(avgx, avgy);
         hitbox = new Rectangle(center.x - max / 2, center.y - max / 2, max, max);
-        System.out.println(center);
-        System.out.println(hitbox);
     }
 
     private void computeDelta() {
@@ -325,35 +422,22 @@ public class Squad implements Serializable {
     }
 
     private void translate(Point p) {
-        troops.forEach(t -> t.translate(p.x, p.y));
+        troops.stream()
+                .limit(troopIndex)
+                .forEach(t -> t.translate(p.x, p.y));
         center.x += p.x;
         center.y += p.y;
         hitbox.x += p.x;
         hitbox.y += p.y;
-    }
 
-    private boolean onTarget() {
-        if (!hitbox.contains(target.getTargetPoint()))
-            return false;
-
-        switch (target.getDoor()) {
-            case SOUTH:
-            case NORTH:
-                return Math.abs(delta.x) < speed;
-            case WEST:
-            case EAST:
-                return Math.abs(delta.y) < speed;
-            default:
-                return false;
-        }
     }
 
     private void walkThroughDoor() {
-
         troops.get(troopIndex++).setCenterPos(startingPos.x - spacing.x, startingPos.y - spacing.y);
         if (troopsLeft())
             troops.get(troopIndex++).setCenterPos(startingPos);
         if (troopsLeft())
             troops.get(troopIndex++).setCenterPos(startingPos.x + spacing.x, startingPos.y + spacing.y);
     }
+
 }

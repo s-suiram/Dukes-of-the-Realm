@@ -103,11 +103,11 @@ public class Point implements Serializable {
      * compute the euclidean distance between two points.
      * the point calling the method is considered the starting point
      *
-     * @param p the point to compute distance to
+     * @paramt the sum of x+y distance
      * @return a new point containing the x and y distances
      */
-    public Point euclideanDist(Point p) {
-        return new Point(p.x - x, p.y - y);
+    public int euclideanDist(Point p){
+        return Math.abs((p.x - x) + ( p.y - y));
     }
 
     /**

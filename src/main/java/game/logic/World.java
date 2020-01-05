@@ -1,6 +1,7 @@
 package game.logic;
 
 import game.logic.troop.Squad;
+import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 import javafx.stage.Screen;
@@ -52,6 +53,7 @@ public class World implements Serializable {
     public Set<Castle> castles;
 
     public Set<Squad> squads;
+
 
 
     /**
@@ -179,18 +181,7 @@ public class World implements Serializable {
 
             return Cardinal.valuesMinus(exclude).get(rand(0, 4 - exclude.size()));
         };
-/*
-    ///////////////////////////////// DSL MARIU LOL ////////////////////////////////////////////
-        Set<Integer> randSet = new TreeSet<>((o1, o2) -> {
-            if (o1.equals(o2)) return 0;
-            return rand(-1, 1) == 0 ? 1 : -1;
-        });
 
-        IntStream.range(0, tiles.size()).forEach(randSet::add);
-
-        Queue<Integer> randQueue = new LinkedList<>(randSet);
-        //////////////////////////////////////////////////////////////////////////////
-*/
         Queue<Integer> randQueue = IntStream.range(0, tiles.size())
                 .boxed()
                 .collect(Collectors.toCollection(LinkedList::new));
@@ -232,10 +223,12 @@ public class World implements Serializable {
      */
     public void step() {
         frames++;
-        if (frames % 2 == 0) {
-            Castle.getCastles().forEach(Castle::step);
-        }
-        World.getInstance().squads.forEach(Squad::step);
+        squads.removeIf(Squad::isDead);
+        castles.forEach(Castle::removeDeads);
+
+        castles.forEach(Castle::step);
+        squads.forEach(Squad::step);
+
         if (frames == 60) frames = 1;
     }
 
