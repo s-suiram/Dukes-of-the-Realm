@@ -19,7 +19,7 @@ public class Castle implements Serializable {
     /**
      * Constant which define size of a Castle
      */
-    public final static int SIZE = 100;
+    public final static int SIZE = 150;
 
     /**
      * Position and size of the Castle
@@ -187,20 +187,24 @@ public class Castle implements Serializable {
      * Make the Castle state evolve
      */
     public void step() {
+
         if (owner instanceof NeutralDukes) {
             florin += level;
         } else {
             florin += level * 10;
         }
-
         producer.step().ifPresent(troop -> troops.add(troop));
-
         if (timeToLevelUp > -1) {
             timeToLevelUp--;
             if (timeToLevelUp == 0) {
                 level++;
             }
         }
+    }
+
+    public void removeDeads(){
+        squads.removeIf(Squad::isDead);
+        troops.removeIf(Troop::isDead);
     }
 
     /**
@@ -295,7 +299,9 @@ public class Castle implements Serializable {
      * @return the onagers
      */
     public List<Onager> getOnagers() {
-        return troops.stream().filter(troop -> troop instanceof Onager).map(troop -> (Onager) troop).collect(Collectors.toList());
+        return troops.stream()
+                .filter(troop -> troop instanceof Onager)
+                .map(troop -> (Onager) troop).collect(Collectors.toList());
     }
 
     /**
@@ -304,7 +310,9 @@ public class Castle implements Serializable {
      * @return the pikemen
      */
     public List<Pikeman> getPikemen() {
-        return troops.stream().filter(troop -> troop instanceof Pikeman).map(troop -> (Pikeman) troop).collect(Collectors.toList());
+        return troops.stream()
+                .filter(troop -> troop instanceof Pikeman)
+                .map(troop -> (Pikeman) troop).collect(Collectors.toList());
     }
 
     /**
@@ -313,7 +321,32 @@ public class Castle implements Serializable {
      * @return the knights
      */
     public List<Knight> getKnights() {
-        return troops.stream().filter(troop -> troop instanceof Knight).map(troop -> (Knight) troop).collect(Collectors.toList());
+        return troops.stream()
+                .filter(troop -> troop instanceof Knight)
+                .map(troop -> (Knight) troop).collect(Collectors.toList());
+    }
+
+    public Troop getRandomFirst() {
+        int rnd = World.rand(0, 3);
+        Class<? extends Troop> c = rnd == 0 ? Onager.class : rnd == 1 ? Pikeman.class : Knight.class;
+        return troops.stream()
+                .filter(c::isInstance)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * check if the castle has any troops
+     *
+     * @return
+     */
+    public boolean isVulnerable() {
+        return troops.size() == 0;
+    }
+
+    public void capture(Castle toCapture) {
+        toCapture.owner = this.owner;
+        producer.getQueue().clear();
     }
 
     /**

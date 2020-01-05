@@ -201,7 +201,7 @@ public class WorldView {
         troopParent.getChildren().removeIf(node -> ((SquadView) node).isModelDead());
 
         Squad.getSquads().forEach(squad -> {
-            if (!Squad.isAlive(squad))
+            if (squad.isDead())
                 squadViewMap.remove(squad);
             if (!squadViewMap.containsKey(squad)) {
                 SquadView sv = new SquadView(squad);

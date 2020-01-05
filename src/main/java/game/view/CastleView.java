@@ -137,7 +137,6 @@ public class CastleView extends Group {
             rectangle.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         }
         contextualMenu.draw();
-
     }
 
     /**

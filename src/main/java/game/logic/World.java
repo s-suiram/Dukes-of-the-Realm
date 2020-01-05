@@ -1,6 +1,7 @@
 package game.logic;
 
 import game.logic.troop.Squad;
+import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 import javafx.stage.Screen;
@@ -52,6 +53,7 @@ public class World implements Serializable {
     public Set<Castle> castles;
 
     public Set<Squad> squads;
+
 
 
     /**
@@ -221,10 +223,12 @@ public class World implements Serializable {
      */
     public void step() {
         frames++;
-        if (frames % 2 == 0) {
-            Castle.getCastles().forEach(Castle::step);
-        }
-        World.getInstance().squads.forEach(Squad::step);
+        squads.removeIf(Squad::isDead);
+        castles.forEach(Castle::removeDeads);
+
+        castles.forEach(Castle::step);
+        squads.forEach(Squad::step);
+
         if (frames == 60) frames = 1;
     }
 

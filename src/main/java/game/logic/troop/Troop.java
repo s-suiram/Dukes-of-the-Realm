@@ -31,7 +31,7 @@ public abstract class Troop implements Serializable {
     /**
      * Store the damage of the Troop
      */
-    public final int damage;
+    private int damage;
 
     /**
      * Store the name of the Troop (Pikeman, Knight or Onager)
@@ -43,7 +43,6 @@ public abstract class Troop implements Serializable {
      */
     private Point centerPos;
 
-    private boolean viewDone;
     /**
      * Store the squad the Troop is part of, if the troop still belongs to a Castle, squad is null
      */
@@ -52,7 +51,7 @@ public abstract class Troop implements Serializable {
     /**
      * Store the life of the Troop
      */
-    public int hp;
+    private int hp;
 
     /**
      * Build a Troop
@@ -67,7 +66,6 @@ public abstract class Troop implements Serializable {
         this.damage = damage;
         this.hp = hp;
         this.name = name;
-        this.viewDone = false;
         this.centerPos = new Point();
         squad = null;
     }
@@ -75,11 +73,15 @@ public abstract class Troop implements Serializable {
     /**
      * Return whether the troop is alive or not
      *
-     * @param t the troop
-     * @return true if the Troop is alive and false if not
+     * @return true if the Troop is dead and false if not
      */
-    public boolean isAlive(Troop t){
-        return hp == 0;
+    public boolean isDead(){
+        return hp == 0 || damage == 0;
+    }
+
+    public void attack(Troop target){
+        target.hp--;
+        this.damage--;
     }
 
     /**
@@ -118,6 +120,11 @@ public abstract class Troop implements Serializable {
         return speed;
     }
 
+
+    public int getHp() {
+        return hp;
+    }
+
     /**
      * Assign a Squad to a troop
      *
@@ -154,18 +161,12 @@ public abstract class Troop implements Serializable {
         this.centerPos.setLocation( x,  y);
     }
 
-    /**
-     * Returns the negation of viewDone
-     *
-     * @return the negation of viewDone
-     */
-    public boolean viewNotDone() {
-        return !viewDone;
-    }
+
 
     @Override
     public String toString() {
         return name + "\n";
     }
+
 
 }

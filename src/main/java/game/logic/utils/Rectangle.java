@@ -115,6 +115,14 @@ public class Rectangle implements Serializable {
         this.height = height.intValue();
     }
 
+    public int getMidX() {
+        return (getMaxX() + x)/2;
+    }
+
+    public int getMidY() {
+        return (getMaxY() + y)/2;
+    }
+
     /**
      * computes the maxX coordinate
      *
@@ -153,16 +161,7 @@ public class Rectangle implements Serializable {
     public <N extends Number> boolean contains(N px, N py) {
         int cx = px.intValue();
         int cy = py.intValue();
-
-        // Note: if either dimension is zero, tests below must return false...
-        if (cx < x || cy < y) {
-            return false;
-        }
-
-        int mx = getMaxX();
-        int my = getMaxY();
-        //    overflow || intersect
-        return ((mx < x || mx > cx) && (my < y || my > cy));
+        return x < cx && cx < getMaxX() && y < cy && cy < getMaxY();
     }
 
     /**
@@ -173,6 +172,16 @@ public class Rectangle implements Serializable {
      */
     public boolean contains(Point p) {
         return contains(p.x, p.y);
+    }
+
+
+    /**
+     * check if the parameter rectangle is contained in this one
+     * @param r the rectangle
+     * @return  true if this rectangle contains r
+     */
+    public boolean contains(Rectangle r){
+        return x < r.x && r.getMaxX() < getMaxX() && y < r.y && r.getMaxY() < getMaxY();
     }
 
     @Override
