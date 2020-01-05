@@ -6,7 +6,9 @@ import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The type Squad.
@@ -76,8 +78,8 @@ public class Squad implements Serializable {
     }
 
 
-    public static Set<Squad> getSquads(){
-        return  World.getInstance().squads;
+    public static Set<Squad> getSquads() {
+        return World.getInstance().squads;
     }
 
     /**
@@ -258,7 +260,7 @@ public class Squad implements Serializable {
                 speedDir.setLocation(speed, 0);
                 break;
             case WEST:
-                startingPos.setLocation(- OFFSET,0).add(center);
+                startingPos.setLocation(-OFFSET, 0).add(center);
                 spacing.setLocation(0, SPACING_VALUE);
                 speedDir.setLocation(-speed, 0);
                 break;

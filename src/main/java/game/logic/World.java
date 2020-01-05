@@ -118,7 +118,7 @@ public class World implements Serializable {
 
     private static void randomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
         double padding = 0.1; //0.2 -> 20% smaller bounds
-        int fieldForCastle = 150; //Space on the field for one castle
+        int fieldForCastle = Castle.SIZE * 2; //Space on the field for one castle
 
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
@@ -179,18 +179,7 @@ public class World implements Serializable {
 
             return Cardinal.valuesMinus(exclude).get(rand(0, 4 - exclude.size()));
         };
-/*
-    ///////////////////////////////// DSL MARIU LOL ////////////////////////////////////////////
-        Set<Integer> randSet = new TreeSet<>((o1, o2) -> {
-            if (o1.equals(o2)) return 0;
-            return rand(-1, 1) == 0 ? 1 : -1;
-        });
 
-        IntStream.range(0, tiles.size()).forEach(randSet::add);
-
-        Queue<Integer> randQueue = new LinkedList<>(randSet);
-        //////////////////////////////////////////////////////////////////////////////
-*/
         Queue<Integer> randQueue = IntStream.range(0, tiles.size())
                 .boxed()
                 .collect(Collectors.toCollection(LinkedList::new));

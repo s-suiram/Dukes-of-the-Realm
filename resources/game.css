@@ -1,19 +1,21 @@
-#background {
-    -fx-fill: #668054;
+.button {
+    -fx-background-insets: 0px;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+    -fx-border-color: white;
+    -fx-background-color: black;
+    -fx-font-size: 13pt;
+    -fx-text-fill: white;
+    -fx-focus-traversable: false;
 }
 
-.button {
+#menu-button {
     -fx-pref-width: 300px;
-    -fx-border-width: 1px;
-    -fx-border-color: black;
-    -fx-border-radius: 5px;
-    -fx-wrap-text: true;
-    -fx-text-alignment: center;
     -fx-padding: 15px 80px 15px 80px;
     -fx-background-radius: 5px;
-    -fx-background-insets: 0px;
-    -fx-background-color: white;
-    -fx-font-size: 13pt;
     -fx-cursor: hand;
 }
 
@@ -32,11 +34,100 @@
     -fx-text-fill: white;
 }
 
-.button:pressed {
+#menu-button:pressed {
     -fx-text-fill: white;
     -fx-background-color: black;
 }
 
-.button:hover {
-    -fx-background-color: #333333;
+#menu-button:hover {
+    -fx-background-color: #858585;
+}
+
+/**
+Contextual Menu
+ */
+
+#menu-border {
+    -fx-background-color: #1e3e4b;
+}
+
+.min-width {
+    -fx-min-width: 100px;
+}
+
+.max-width {
+    -fx-max-width: 33px;
+}
+
+.coin {
+    -fx-image: url("coin.png");
+}
+
+#florin {
+    -fx-alignment: center-right;
+}
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 15pt;
+    -fx-padding: 5px;
+}
+
+#lvl-button {
+    -fx-graphic: url("levelup.png");
+    -fx-alignment: center-right;
+}
+
+#progress-lvl {
+}
+
+.red-bar {
+    -fx-accent: red;
+}
+
+.blue-bar {
+    -fx-accent: blue;
+}
+
+.onager-view {
+    -fx-image: url("onager.png");
+}
+
+.knight-view {
+    -fx-image: url("knight.png");
+}
+
+.pikeman-view {
+    -fx-image: url("pikeman.png");
+}
+
+#queue {
+    -fx-min-width: 100px;
+    -fx-min-height: 100px;
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+}
+
+/*
+Squad builder
+ */
+
+.button {
+    -fx-padding: 10px;
+}
+
+.label {
+    -fx-padding: 10px;
+}
+
+.hbox {
+    -fx-spacing: 10px;
+}
+
+.vbox {
+    -fx-spacing: 10px;
+}
+
+#squad-builder {
+    -fx-background-color: #1e3e4b;
 }

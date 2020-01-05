@@ -7,6 +7,7 @@ import game.logic.utils.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -127,18 +128,23 @@ public class Castle implements Serializable {
         return (level + 1) * 1000;
     }
 
+    public int nbTurnToLevelup() {
+        return 100 + 50 * (level + 1);
+    }
+
     /**
      * Launch the level up process if the castle has enough florin
      *
      * @return true if the castle has enough florin and false if a level is already ongoing or if the Castle has not enough money
      */
-    public boolean startLevelUp() {
-        if (timeToLevelUp == -1 && florin - levelUpPrice() >= 0) {
-            florin -= levelUpPrice();
-            timeToLevelUp = 100 + 50 * (level + 1);
-            return true;
-        }
-        return false;
+    public Optional<Error> startLevelUp() {
+        if (timeToLevelUp != -1)
+            return Optional.of(Error.ONGOING_PROCESS);
+        if (florin - levelUpPrice() < 0)
+            return Optional.of(Error.NOT_ENOUGH_MONEY);
+        florin -= levelUpPrice();
+        timeToLevelUp = 100 + 50 * (level + 1);
+        return Optional.empty();
     }
 
     /**
@@ -161,6 +167,17 @@ public class Castle implements Serializable {
         if (florin >= t.getCost()) {
             producer.addTroop(t);
             florin -= t.getCost();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean produce(TroopType t, int n) {
+        if (florin >= t.getCost() * n) {
+            for (int i = 0; i < n; i++) {
+                producer.addTroop(t);
+                florin -= t.getCost();
+            }
             return true;
         }
         return false;
@@ -320,5 +337,10 @@ public class Castle implements Serializable {
         troops.forEach(s::append);
         s.append(producer);
         return s.toString();
+    }
+
+    public enum Error {
+        NOT_ENOUGH_MONEY,
+        ONGOING_PROCESS
     }
 }

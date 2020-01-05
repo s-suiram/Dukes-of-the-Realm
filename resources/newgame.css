@@ -36,11 +36,6 @@
     -fx-text-fill: white;
 }
 
-.spinner {
-    -fx-arrows-visible: hidden;
-
-}
-
 .text-field:hover {
     -fx-border-color: #333333;
 }
