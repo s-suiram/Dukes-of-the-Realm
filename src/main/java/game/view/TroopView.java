@@ -49,7 +49,6 @@ public class TroopView extends Group {
         this.setTranslateY(t.getRelativeY());
         if(t.isDead())
             srh.doOnce(this::onDeath,"onDeath");
-
     }
 
     private void onDeath(){

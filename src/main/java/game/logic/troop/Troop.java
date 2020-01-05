@@ -94,7 +94,6 @@ public abstract class Troop implements Serializable {
     }
 
     public int getRelativeX(){
-        System.out.println(squad);
         return centerPos.x - squad.getHitbox().x;
     }
 

@@ -37,6 +37,7 @@ public class SquadView extends Group {
                 .forEach(node -> ((TroopView) node).draw());
 
         if (o.dirChanged()) {
+            System.out.println("là");
             this.setRotate(firstAngle - o.getAngle());
         }
     }

@@ -2,6 +2,7 @@ package game.logic;
 
 import game.logic.troop.Squad;
 import game.logic.troop.TroopType;
+import game.logic.utils.DistinctList;
 import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
@@ -49,21 +50,20 @@ public class World implements Serializable {
     /**
      * Store all the player in the game
      */
-    private List<Player> players;
+    private DistinctList<Player> players;
 
-    public List<Castle> castles;
+    public DistinctList<Castle> castles;
 
-    public List<Squad> squads;
-
+    public DistinctList<Squad> squads;
 
 
     /**
      * Build a new World
      */
     private World() {
-        players = new ArrayList<>();
-        castles = new ArrayList<>();
-        squads = new ArrayList<>();
+        players = new DistinctList<>();
+        castles = new DistinctList<>();
+        squads = new DistinctList<>();
         frames = 0;
     }
 

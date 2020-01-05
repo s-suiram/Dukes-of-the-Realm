@@ -1,18 +1,11 @@
 package game.logic.troop;
 
-import game.App;
 import game.logic.Castle;
 import game.logic.World;
-import game.logic.utils.PeriodicRunHandler;
-import game.logic.utils.Point;
-import game.logic.utils.Rectangle;
-import game.logic.utils.SingleRunHandler;
+import game.logic.utils.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The type Squad.
@@ -31,7 +24,7 @@ public class Squad implements Serializable {
     private int frameSkip;
     private int counter;
 
-    private List<Troop> troops;
+    private DistinctList<Troop> troops;
     private Castle origin;
     private Castle target;
     private Castle currentIntersect;
@@ -60,8 +53,8 @@ public class Squad implements Serializable {
      * @param origin the origin
      * @param target the target
      */
-    public Squad(List<Troop> troops, Castle origin, Castle target) {
-        this.troops = new ArrayList<>(troops);
+    public Squad(Collection<Troop> troops, Castle origin, Castle target) {
+        this.troops = new DistinctList<>(troops);
         this.origin = origin;
         this.target = target;
         this.speed = troops.stream().mapToInt(t -> t.speed).min().getAsInt();
@@ -91,7 +84,6 @@ public class Squad implements Serializable {
 
         prh.add(this::handleFight, 5,"handleFight");
         this.troops.forEach(troop -> troop.setSquad(this));
-        System.out.println(this.troops.get(0).getSquad() + " dfgdfgfdgdf");
         computeStartingPos();
         computeLastAngle();
         walkThroughDoor();
@@ -172,6 +164,7 @@ public class Squad implements Serializable {
      */
     public void step() {
         counter++;
+        lastSpeedDir.setLocation(speedDir);
         if (!onTarget() && movingPhase) {
             handleDisplacement();
         } else {
@@ -262,9 +255,7 @@ public class Squad implements Serializable {
         } else {
             Troop t;
             while((t = target.getRandomFirst()) == null);
-            System.out.println(t + " " + t.getHp());
             troops.get(0).attack(t);
-            System.out.println(t + " " + t.getHp());
             if(troops.get(0).isDead())
                 troops.remove(0);
         }
