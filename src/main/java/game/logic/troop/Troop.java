@@ -12,7 +12,7 @@ public abstract class Troop implements Serializable {
     /**
      * Radius of a Troop
      */
-    public static final int RADIUS = 5;
+    public static final int RADIUS = 8;
     /**
      * Diameter of a Troop
      */

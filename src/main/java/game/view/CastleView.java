@@ -4,13 +4,17 @@ import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
 import game.logic.World;
+import javafx.animation.AnimationTimer;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
 
 /**
  * Handle the view of a castle
@@ -29,6 +33,10 @@ public class CastleView extends Group {
     private static Image south = new Image("file:resources/castle-south.png", Castle.SIZE, Castle.SIZE, true, true);
     private static Image east = new Image("file:resources/castle-east.png", Castle.SIZE, Castle.SIZE, true, true);
     private static Image west = new Image("file:resources/castle-west.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image red = new Image("file:resources/castle-red.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image gold = new Image("file:resources/castle-gold.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image grey = new Image("file:resources/castle-grey.png", Castle.SIZE, Castle.SIZE, true, true);
+
     /**
      * The currently selected castle
      */
@@ -48,6 +56,8 @@ public class CastleView extends Group {
 
     private Rectangle rect;
 
+    private int rotate;
+
     /**
      * Create a new castle view
      *
@@ -56,19 +66,19 @@ public class CastleView extends Group {
     public CastleView(Castle c) {
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
-
+        img = new ImageView();
         switch (model.getDoor()) {
             case NORTH:
-                img = new ImageView(north);
+                img.setRotate(0);
                 break;
             case SOUTH:
-                img = new ImageView(south);
+                img.setRotate(180);
                 break;
             case EAST:
-                img = new ImageView(east);
+                img.setRotate(270);
                 break;
             case WEST:
-                img = new ImageView(west);
+                img.setRotate(90);
                 break;
         }
 
@@ -78,8 +88,9 @@ public class CastleView extends Group {
         contextualMenu.setTranslateY(img.getY() - 20);
 
         this.getChildren().addAll(img, rect, contextualMenu);
-        rect.setStrokeWidth(5);
-        rect.setOnMouseEntered(e -> this.getScene().setCursor(Cursor.HAND));
+        rect.setOnMouseEntered(e -> {
+            this.getScene().setCursor(Cursor.HAND);
+        });
 
         rect.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
@@ -95,6 +106,9 @@ public class CastleView extends Group {
                     }
                 }
         );
+
+        rect.setStrokeWidth(0);
+        rect.setVisible(true);
 
     }
 
@@ -116,12 +130,14 @@ public class CastleView extends Group {
         this.setTranslateX(model.getBoundingRect().x - cam.x);
         this.setTranslateY(model.getBoundingRect().y - cam.y);
         if (getModel().getOwner() == World.getInstance().getPlayer()) {
-            rect.setStroke(Color.GOLD);
+            img.setImage(gold);
         } else {
-            rect.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
+            img.setImage(getModel().getOwner() instanceof NeutralDukes ? grey : red);
+            //rect.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         }
         contextualMenu.draw();
     }
+
 
     /**
      * Returns the model

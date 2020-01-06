@@ -43,15 +43,14 @@ public class TroopView extends Group {
         l1.setStrokeWidth(3);
         i = t instanceof Pikeman ? p  : t instanceof Onager ? o : k;
         view = new ImageView(i);
-        view.setFitWidth(30);
-        view.setFitHeight(30);
-        view.setX(-15);
-        view.setY(-15);
+        view.setFitWidth(40);
+        view.setFitHeight(40);
+        view.setX(-20);
+        view.setY(-20);
         this.getChildren().addAll( l1, l2,view);
         l1.setVisible(false);
         l2.setVisible(false);
         srh = new SingleRunHandler();
-
     }
 
     public Troop getTroop() {
