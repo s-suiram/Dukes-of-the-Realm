@@ -7,6 +7,7 @@ import game.logic.World;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,10 +25,10 @@ public class CastleView extends Group {
      * Height of the door
      */
     private static final int DOOR_HEIGHT = Castle.SIZE / 12;
-    private static Image north = new Image("file:resources/castle-north.png");
-    private static Image south = new Image("file:resources/castle-south.png");
-    private static Image east = new Image("file:resources/castle-east.png");
-    private static Image west = new Image("file:resources/castle-west.png");
+    private static Image north = new Image("file:resources/castle-north.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image south = new Image("file:resources/castle-south.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image east = new Image("file:resources/castle-east.png", Castle.SIZE, Castle.SIZE, true, true);
+    private static Image west = new Image("file:resources/castle-west.png", Castle.SIZE, Castle.SIZE, true, true);
     /**
      * The currently selected castle
      */
@@ -37,17 +38,15 @@ public class CastleView extends Group {
      */
     private Castle model;
     /**
-     * Representation of the door
-     */
-    private Rectangle door;
-    /**
      * The contextual menu which appear on right click on a castle
      */
     private ContextualMenuCastle contextualMenu;
     /**
      * Rectangle which represent a castle
      */
-    private Rectangle rectangle;
+    private ImageView img;
+
+    private Rectangle rect;
 
     /**
      * Create a new castle view
@@ -57,55 +56,32 @@ public class CastleView extends Group {
     public CastleView(Castle c) {
         this.model = c;
         contextualMenu = new ContextualMenuCastle(this);
-        rectangle = new Rectangle(0, 0, Castle.SIZE, Castle.SIZE);
 
-        double doorOffset = rectangle.getWidth() / 2 - DOOR_WIDTH / 2.0;
-        final int thickness = 5;
-        rectangle.setStrokeWidth(thickness * 2);
-
-        switch (c.getDoor()) {
+        switch (model.getDoor()) {
             case NORTH:
-                door = new Rectangle(
-                        doorOffset + rectangle.getX(),
-                        rectangle.getY() - thickness,
-                        DOOR_WIDTH,
-                        DOOR_HEIGHT
-                );
+                img = new ImageView(north);
                 break;
             case SOUTH:
-                door = new Rectangle(
-                        doorOffset + rectangle.getX(),
-                        rectangle.getY() + rectangle.getHeight() - DOOR_HEIGHT + thickness,
-                        DOOR_WIDTH,
-                        DOOR_HEIGHT
-                );
+                img = new ImageView(south);
                 break;
             case EAST:
-                door = new Rectangle(
-                        rectangle.getX() + rectangle.getWidth() - DOOR_HEIGHT + thickness,
-                        rectangle.getY() + doorOffset,
-                        DOOR_HEIGHT,
-                        DOOR_WIDTH
-                );
+                img = new ImageView(east);
                 break;
             case WEST:
-                door = new Rectangle(
-                        rectangle.getX() - thickness,
-                        rectangle.getY() + doorOffset,
-                        DOOR_HEIGHT,
-                        DOOR_WIDTH
-                );
+                img = new ImageView(west);
                 break;
         }
 
-        contextualMenu.setTranslateX(rectangle.getX() - 20);
-        contextualMenu.setTranslateY(rectangle.getY() - 20);
+        rect = new Rectangle(model.getBoundingRect().getWidth(), model.getBoundingRect().getHeight());
 
-        this.getChildren().addAll(rectangle, door, contextualMenu);
+        contextualMenu.setTranslateX(img.getX() - 20);
+        contextualMenu.setTranslateY(img.getY() - 20);
 
-        rectangle.setOnMouseEntered(e -> this.getScene().setCursor(Cursor.HAND));
+        this.getChildren().addAll(img, rect, contextualMenu);
+        rect.setStrokeWidth(5);
+        rect.setOnMouseEntered(e -> this.getScene().setCursor(Cursor.HAND));
 
-        rectangle.setOnMouseClicked(event -> {
+        rect.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
                         if (selected == this) selected = null;
                         else selected = this;
@@ -131,16 +107,16 @@ public class CastleView extends Group {
 
     protected void draw(Point2D cam) {
         if (this == getSelected()) {
-            rectangle.setFill(new Color(1.0, 1.0, 1.0, 0.4));
+            rect.setFill(new Color(1.0, 1.0, 1.0, 0.4));
         } else {
-            rectangle.setFill(Color.TRANSPARENT);
+            rect.setFill(Color.TRANSPARENT);
         }
         this.setTranslateX(model.getBoundingRect().x - cam.x);
         this.setTranslateY(model.getBoundingRect().y - cam.y);
         if (getModel().getOwner() == World.getInstance().getPlayer()) {
-            rectangle.setStroke(Color.GOLD);
+            rect.setStroke(Color.GOLD);
         } else {
-            rectangle.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
+            rect.setStroke(getModel().getOwner() instanceof NeutralDukes ? Color.DARKGRAY : Color.RED);
         }
         contextualMenu.draw();
     }

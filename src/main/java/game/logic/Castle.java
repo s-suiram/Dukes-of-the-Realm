@@ -18,7 +18,7 @@ public class Castle implements Serializable {
     /**
      * Constant which define size of a Castle
      */
-    public final static int SIZE = 70;
+    public final static int SIZE = 100;
 
     /**
      * Position and size of the Castle

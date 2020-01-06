@@ -3,9 +3,6 @@ package game.logic.troop;
 import game.logic.utils.Point;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Set;
 
 /**
  * The Troop class represent the model of a troop in the game
@@ -20,9 +17,6 @@ public abstract class Troop implements Serializable {
      * Diameter of a Troop
      */
     public static final int DIAMETER = RADIUS * 2;
-    /**
-     * Set of all the troops created since the beginning of the game
-     */
 
     /**
      * Speed of the Troop, define how fast the troop will be on the field
