@@ -1,0 +1,31 @@
+.button {
+    -fx-pref-width: 300px;
+    -fx-border-width: 1px;
+    -fx-border-color: white;
+    -fx-border-radius: 5px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-padding: 15px 80px 15px 80px;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 0px;
+    -fx-background-color: black;
+    -fx-font-size: 13pt;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+}
+
+.label {
+    -fx-font-size: 99pt;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+}
+
+.vbox {
+    -fx-spacing: 50px;
+    -fx-text-alignment: center;
+}
+
+#background {
+    -fx-fill: #13262F;
+}

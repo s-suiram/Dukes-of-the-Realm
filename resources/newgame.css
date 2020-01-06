@@ -26,6 +26,7 @@
 
 .label {
     -fx-font-size: 25px;
+    -fx-text-fill: white;
 }
 
 .text-field {
@@ -38,10 +39,6 @@
 
 .text-field:hover {
     -fx-border-color: #333333;
-}
-
-.label {
-    -fx-text-fill: white;
 }
 
 .button:pressed {

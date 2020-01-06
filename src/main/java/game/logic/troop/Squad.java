@@ -5,7 +5,9 @@ import game.logic.World;
 import game.logic.utils.*;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The type Squad.
@@ -14,10 +16,10 @@ public class Squad implements Serializable {
 
     private static final int SPACING_VALUE = Troop.DIAMETER * 2;
     private static final int OFFSET = (int) (Castle.SIZE * 0.5);
+    private static int COOLDOWN_DISPLACEMENT = 3;
     private static final int SHIELD_MARGIN = 40;
-    private static final int FRAME_SKIP = 20;
+    private static final int FRAME_SKIP = 20 * COOLDOWN_DISPLACEMENT;
     private static final int LOADING_CYCLES = 90;
-
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
@@ -82,7 +84,8 @@ public class Squad implements Serializable {
         this.troops.sort(Comparator.comparingInt(o -> o.speed));
         this.origin.getTroops().removeAll(troops);
 
-        prh.add(this::handleFight, 5,"handleFight");
+        prh.add(this::handleFight, 5, "handleFight");
+        prh.add(this::handleDisplacement, COOLDOWN_DISPLACEMENT, "handleDis");
         this.troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
         computeLastAngle();
@@ -166,7 +169,7 @@ public class Squad implements Serializable {
         counter++;
         lastSpeedDir.setLocation(speedDir);
         if (!onTarget() && movingPhase) {
-            handleDisplacement();
+            prh.doPeriodically("handleDis");
         } else {
             handleContact();
         }
@@ -218,7 +221,7 @@ public class Squad implements Serializable {
         if (isTargetAlly) {
             handleTransfer();
         } else {
-           prh.doPeriodically("handleFight");
+            prh.doPeriodically("handleFight");
         }
     }
 
@@ -239,7 +242,7 @@ public class Squad implements Serializable {
 
     private void handleTransfer() {
         translate(speedDir);
-        if(target.getCenter().euclideanDist(center) <speed) {
+        if (target.getCenter().euclideanDist(center) < speed) {
             target.getTroops().addAll(troops);
             troops.clear();
             kill();
@@ -247,16 +250,16 @@ public class Squad implements Serializable {
     }
 
     private void handleFight() {
-        if(target.isVulnerable()){
+        if (target.isVulnerable()) {
             origin.capture(target);
             kill();
-        } else if(troops.size() == 0) {
+        } else if (troops.size() == 0) {
             kill();
         } else {
             Troop t;
-            while((t = target.getRandomFirst()) == null);
+            while ((t = target.getRandomFirst()) == null) ;
             troops.get(0).attack(t);
-            if(troops.get(0).isDead())
+            if (troops.get(0).isDead())
                 troops.remove(0);
         }
     }

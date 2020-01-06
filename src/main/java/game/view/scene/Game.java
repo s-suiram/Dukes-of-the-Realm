@@ -57,7 +57,6 @@ public class Game extends CustomScene {
         this.world = null;
 
 
-
     }
 
     public Game(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle, World w) {
@@ -181,20 +180,26 @@ public class Game extends CustomScene {
 
         menu.setTranslateX(windowWidth / 2.0 - menu.getWidth() / 2.0);
         menu.setTranslateY(windowHeight / 2.0 - menu.getHeight() / 2.0);
+
+        if (World.getInstance().hasEnemyWon()) {
+            stop();
+            App.buildGameOver().start(s);
+            return;
+        }
+
+        if (World.getInstance().hasPlayerWon()) {
+            stop();
+            App.buildWin().start(s);
+        }
     }
 
     public void handleCameraMove() {
         Point2D p = MouseEventHandler.getInstance().getMousePos();
 
-        double topInset = 0.0;
-        if (getScene().getWindow() != null) {
-            //topInset = getScene().getWindow().getHeight() - getScene().getHeight();
-        }
-
         Rectangle2D left = new Rectangle2D(0, 0, settings.cameraMoveBorderThickness, getWindowHeight());
         Rectangle2D right = new Rectangle2D(getWindowWidth() - settings.cameraMoveBorderThickness, 0, settings.cameraMoveBorderThickness, getWindowHeight());
         Rectangle2D up = new Rectangle2D(0, 0, getWindowWidth(), settings.cameraMoveBorderThickness);
-        Rectangle2D down = new Rectangle2D(0, getWindowHeight() - settings.cameraMoveBorderThickness - topInset, getWindowWidth(), settings.cameraMoveBorderThickness);
+        Rectangle2D down = new Rectangle2D(0, getWindowHeight() - settings.cameraMoveBorderThickness, getWindowWidth(), settings.cameraMoveBorderThickness);
 
         if (left.contains((int) p.x, (int) p.y))
             WorldView.getInstance().move(Cardinal.WEST);

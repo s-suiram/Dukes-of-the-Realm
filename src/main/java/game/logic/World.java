@@ -252,6 +252,7 @@ public class World implements Serializable {
             castles.forEach(Castle::step);
         }
         squads.forEach(Squad::step);
+
         players.subList(1, players.size()).forEach(Player::act);
 
         if (frames == 60) frames = 1;
@@ -303,6 +304,14 @@ public class World implements Serializable {
         StringBuilder s = new StringBuilder();
         players.forEach(p -> s.append(p.toString()));
         return s.toString();
+    }
+
+    public boolean hasPlayerWon() {
+        return players.stream().filter(Player::isBot).filter(p -> p instanceof FightingDukes).map(p -> p.getCastles().size()).reduce(0, Integer::sum) == 0;
+    }
+
+    public boolean hasEnemyWon() {
+        return players.stream().filter(p -> !p.isBot()).map(p -> p.getCastles().size()).reduce(0, Integer::sum) == 0;
     }
 
 }

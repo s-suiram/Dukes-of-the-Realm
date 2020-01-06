@@ -50,6 +50,10 @@ public abstract class Player implements Serializable {
         return name;
     }
 
+    public boolean isBot() {
+        return isBot;
+    }
+
     /**
      * Returns the castles of the player
      *

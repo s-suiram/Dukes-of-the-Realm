@@ -3,10 +3,10 @@ package game.view;
 import com.sun.javafx.geom.Point2D;
 import game.logic.Castle;
 import game.logic.NeutralDukes;
-import game.logic.Player;
 import game.logic.World;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -15,6 +15,7 @@ import javafx.scene.shape.Rectangle;
  * Handle the view of a castle
  */
 public class CastleView extends Group {
+
     /**
      * Width of the door
      */
@@ -23,6 +24,10 @@ public class CastleView extends Group {
      * Height of the door
      */
     private static final int DOOR_HEIGHT = Castle.SIZE / 12;
+    private static Image north = new Image("file:resources/castle-north.png");
+    private static Image south = new Image("file:resources/castle-south.png");
+    private static Image east = new Image("file:resources/castle-east.png");
+    private static Image west = new Image("file:resources/castle-west.png");
     /**
      * The currently selected castle
      */
@@ -47,7 +52,7 @@ public class CastleView extends Group {
     /**
      * Create a new castle view
      *
-     * @param c         the model attached to this view
+     * @param c the model attached to this view
      */
     public CastleView(Castle c) {
         this.model = c;

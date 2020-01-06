@@ -53,6 +53,7 @@ public class Welcome extends CustomScene {
                 try {
                     ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
                     App.buildGame((World) inputStream.readObject()).start(s);
+                    stop();
                     inputStream.close();
                 } catch (IOException | ClassNotFoundException ex) {
                     corruptedSaveLabel.setVisible(true);

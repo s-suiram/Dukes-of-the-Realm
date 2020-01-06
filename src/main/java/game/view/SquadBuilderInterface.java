@@ -194,4 +194,12 @@ public class SquadBuilderInterface extends Group {
         k_out.setText(String.valueOf(knightOutOfCastle));
         o_out.setText(String.valueOf(onagerOutOfCastle));
     }
+
+    public int getHeight() {
+        return (int) ((VBox) getChildren().get(0)).getHeight();
+    }
+
+    public int getWidth() {
+        return (int) ((VBox) getChildren().get(0)).getWidth();
+    }
 }

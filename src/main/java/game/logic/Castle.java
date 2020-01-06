@@ -344,15 +344,17 @@ public class Castle implements Serializable {
     /**
      * check if the castle has any troops
      *
-     * @return
+     * @return true if the castle is out of troop
      */
     public boolean isVulnerable() {
         return troops.size() == 0;
     }
 
     public void capture(Castle toCapture) {
+        toCapture.getOwner().getCastles().remove(toCapture);
         toCapture.owner = this.owner;
-        producer.getQueue().clear();
+        getCastles().add(toCapture);
+        toCapture.getProducer().getQueue().clear();
     }
 
     /**

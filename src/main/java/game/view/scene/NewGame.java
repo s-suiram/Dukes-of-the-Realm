@@ -38,7 +38,7 @@ public class NewGame extends CustomScene {
         grid.addRow(0, playerNameLabel, playerName);
 
         Label nbFightingLabel = new Label("Number of fighting dukes: ");
-        Spinner<Integer> nbFighting = new Spinner<>(1, 50, 3);
+        Spinner<Integer> nbFighting = new Spinner<>(2, 50, 3);
         grid.addRow(1, nbFightingLabel, nbFighting);
 
         Label nbNeutralLabel = new Label("Number of neutral dukes: ");
@@ -85,7 +85,6 @@ public class NewGame extends CustomScene {
         grid.setId("grid");
 
         getRoot().addAll(grid);
-        getRoot().forEach(e -> e.setFocusTraversable(false));
     }
 
     @Override

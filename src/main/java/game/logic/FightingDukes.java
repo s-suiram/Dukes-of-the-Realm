@@ -16,6 +16,7 @@ public class FightingDukes extends Player {
     @Override
     public void act() {
         int cs = castles.size();
+        if (cs == 0) return;
         Castle c = castles.get(World.rand(0, cs));
         Castle t = Castle.getCastles().get(World.rand(0, Castle.getCastles().size()));
         List<Troop> troops = c.getTroops();

@@ -11,7 +11,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.function.Consumer;
 
 /**
@@ -32,6 +31,11 @@ public abstract class CustomScene {
      * The scene which hold the elements to display
      */
     protected Scene scene;
+    /**
+     * The background rectangle of the scene
+     */
+
+    protected Rectangle background;
     /**
      * Boolean to know if the scene starts fullscreen or not
      */
@@ -54,18 +58,13 @@ public abstract class CustomScene {
     private AnimationTimer animationTimer;
 
     /**
-     * The background rectangle of the scene
-     */
-
-    protected Rectangle background;
-
-    /**
      * Build a CustomScene
      *
      * @param defaultWindowWidth  the default width if not fullscreen
      * @param defaultWindowHeight the default height if not fullscreen
      * @param startFullScreen     the default state of the window
      * @param windowTitle         the title of the window
+     * @param stylesheet          the style associated with the scene
      */
     protected CustomScene(int defaultWindowWidth, int defaultWindowHeight, boolean startFullScreen, String windowTitle, String stylesheet) {
         this.windowWidth = startFullScreen ? Screen.getPrimary().getBounds().getMaxX() : defaultWindowWidth;
@@ -74,11 +73,10 @@ public abstract class CustomScene {
         this.windowTitle = windowTitle;
 
         background = new Rectangle(0, 0, windowWidth, windowHeight);
-        background.setFill(Color.WHITE);
+        background.setFill(Color.GRAY);
         background.setId("background");
         scene = new Scene(new Group(background), windowWidth, windowHeight, Color.GREY);
-        File f = new File("resources/" + stylesheet);
-        getScene().getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        getScene().getStylesheets().add("file:resources/" + stylesheet);
     }
 
     /**

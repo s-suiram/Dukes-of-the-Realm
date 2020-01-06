@@ -212,11 +212,11 @@ public class ContextualMenuCastle extends Group {
         Button createSquad = new Button("Create Squad");
         Label squadFeedback = new Label();
         createSquad.setOnAction(e -> {
-            if (CastleView.getSelected().getModel() == castle) {
-                squadFeedback.setText("Select another castle");
-            } else if (CastleView.getSelected() == null) {
+            if (CastleView.getSelected() == null)
                 squadFeedback.setText("Select a castle");
-            } else {
+            else if (CastleView.getSelected().getModel() == castle)
+                squadFeedback.setText("Select another castle");
+            else {
                 squadBuilderInterface = new SquadBuilderInterface(castle, CastleView.getSelected().getModel(), this);
                 getChildren().add(squadBuilderInterface);
             }
@@ -327,6 +327,8 @@ public class ContextualMenuCastle extends Group {
      * @return the contextual menu width
      */
     public int getWidth() {
+        if (squadBuilderInterface != null)
+            return squadBuilderInterface.getWidth();
         return (int) pane.getWidth();
     }
 
@@ -336,6 +338,8 @@ public class ContextualMenuCastle extends Group {
      * @return the contextual menu height
      */
     public int getHeight() {
+        if (squadBuilderInterface != null)
+            return squadBuilderInterface.getHeight();
         return (int) pane.getHeight();
     }
 }

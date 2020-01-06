@@ -1,9 +1,7 @@
 package game;
 
 import game.logic.World;
-import game.view.scene.Game;
-import game.view.scene.NewGame;
-import game.view.scene.Welcome;
+import game.view.scene.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -38,6 +36,14 @@ public class App extends Application {
     public static Game buildGame(World w) {
         game = new Game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE, w);
         return game;
+    }
+
+    public static GameOver buildGameOver() {
+        return new GameOver(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
+    }
+
+    public static Win buildWin() {
+        return new Win(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, START_FULLSCREEN, WINDOW_TITLE);
     }
 
     public static Game getGame() {
