@@ -3,18 +3,18 @@ package game.view;
 import game.logic.Castle;
 import game.logic.troop.TroopType;
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 import java.util.stream.Collectors;
 
@@ -75,17 +75,17 @@ public class ContextualMenuCastle extends Group {
         ImageView coin = new ImageView();
         coin.getStyleClass().add("coin");
 
-        HBox top = new HBox(name, florinValue, new StackPane(coin));
-        top.getStyleClass().add("hbox");
 
-        Label lvlLabel = new Label("LVL: ");
+
+        Label lvlLabel = new Label("LVL   : ");
         lvlLabel.setId("lvl-label");
         lvl = new Label(String.valueOf(castle.getLevel()));
         lvl.setId("lvl-value");
+        lvl.setPrefWidth(50);
+        lvl.setAlignment(Pos.CENTER);
         Button lvl_up = new Button();
         lvl_up.setId("lvl-button");
         lvl_up.getStyleClass().add("max-width");
-
         lvl_up.setOnAction(e -> {
             levelUpProgress.setProgress(0.0);
             levelUpProgress.setManaged(true);
@@ -127,27 +127,41 @@ public class ContextualMenuCastle extends Group {
             }.start());
         });
 
+
+
         HBox firstLvlUp = new HBox(lvlLabel, lvl);
         firstLvlUp.setId("first-lvl");
         firstLvlUp.getStyleClass().add("hbox");
 
-        Label nextLabel = new Label("Next: ");
+        Label nextLabel = new Label("Next : ");
         nextValue = new Label(String.valueOf(castle.levelUpPrice()));
+        nextValue.setMinWidth(69);
+        nextValue.setAlignment(Pos.CENTER_RIGHT);
         ImageView coin2 = new ImageView();
         coin2.getStyleClass().add("coin");
-
-        HBox secondLvl = new HBox(nextLabel, nextValue, new StackPane(coin2));
+        StackPane s = new StackPane(coin2);
+        s.setMinWidth(20);
+        HBox secondLvl = new HBox(nextLabel, nextValue,s );
         secondLvl.setId("second-lvl");
         secondLvl.getStyleClass().add("hbox");
+
 
         levelUpProgress = new ProgressBar();
         levelUpProgress.setId("progress-lvl");
         levelUpProgress.getStyleClass().add("blue-bar");
+        levelUpProgress.setPrefWidth(200);
+
+        HBox top = new HBox(name,florinValue,new StackPane(coin) );
+        top.getStyleClass().add("hbox");
 
         VBox lvlInfo = new VBox(firstLvlUp, secondLvl);
         lvlInfo.getStyleClass().add("vbox");
-
-        HBox lvlUp = new HBox(lvlInfo, lvl_up, levelUpProgress);
+        HBox test = new HBox(lvl_up);
+        test.setAlignment(Pos.CENTER_RIGHT);
+        test.setMinWidth(72);
+        HBox lvlUp = new HBox(lvlInfo, test);
+        lvl_up.setPadding(new Insets(10));
+        lvlUp.setFillHeight(true);
         lvlUp.getStyleClass().add("hbox");
 
         GridPane troopsLayering = new GridPane();
@@ -161,6 +175,14 @@ public class ContextualMenuCastle extends Group {
         pVal = new Label();
         kVal = new Label();
         oVal = new Label();
+        pVal.setAlignment(Pos.CENTER);
+        oVal.setAlignment(Pos.CENTER);
+        kVal.setAlignment(Pos.CENTER);
+        oVal.setMinWidth(30);
+        kVal.setMinWidth(30);
+        pVal.setMinWidth(30);
+
+        troopsLayering.setHgap(14);
 
         troopsLayering.addColumn(1, pVal, kVal, oVal);
 
@@ -209,9 +231,11 @@ public class ContextualMenuCastle extends Group {
 
         queue.setId("queue");
 
-        Button createSquad = new Button("Create Squad");
+        Button createSquad = new Button("Attack !");
+        createSquad.setPrefSize(220,100);
         Label squadFeedback = new Label();
         createSquad.setOnAction(e -> {
+
             if (CastleView.getSelected() == null)
                 squadFeedback.setText("Select a castle");
             else if (CastleView.getSelected().getModel() == castle)
@@ -222,11 +246,32 @@ public class ContextualMenuCastle extends Group {
             }
         });
 
-        pane = new VBox(top, lvlUp, troopsLayering, queue, createSquad, squadFeedback);
+
+
+        pane = new VBox(top, separator(200), levelUpProgress, lvlUp, separator(200),
+                troopsLayering, separator(200), queue, separator(200), createSquad, separator(200), squadFeedback);
         pane.getStyleClass().add("vbox");
         pane.setId("menu-border");
+        pane.setPadding(new Insets(5));
+        Border b = new Border(
+                new BorderStroke(Color.rgb(48, 19, 0), BorderStrokeStyle.SOLID ,new CornerRadii(10), new BorderWidths(15) )
+        );
+
+        pane.setBorder(b);
+
         getChildren().addAll(pane);
     }
+
+    protected  static HBox separator(int l ){
+        Line sep = new Line(0,0,l,0);
+        sep.setStroke(Color.rgb(48, 19, 0));
+        sep.setStrokeWidth(3);
+        HBox g = new HBox();
+        g.setPadding(new Insets(5));
+        g.getChildren().add(sep);
+        return g;
+    }
+
 
     /**
      * This method is called each frame
@@ -246,12 +291,13 @@ public class ContextualMenuCastle extends Group {
             levelUpProgress.setProgress(castle.getTimeToLevelUp() / (double) castle.nbTurnToLevelup());
         }
         queue.getChildren().clear();
-        queue.getChildren().addAll(castle.getProducer().getQueue().stream().limit(5).map(t -> {
+        queue.setMaxHeight(50);
+        queue.getChildren().addAll(castle.getProducer().getQueue().stream().limit(4).map(t -> {
             ImageView v = new ImageView(t.getTroopType() == TroopType.PIKE_MAN ? p : t.getTroopType() == TroopType.KNIGHT ? k : o);
             return new VBox(v, new StackPane(new Label(String.valueOf(t.getRemainingTime()))));
         }).collect(Collectors.toList()));
-        if (queue.getChildren().size() == 5)
-            queue.getChildren().add(new Label("...+" + (castle.getProducer().getQueue().size() - 5)));
+        if (queue.getChildren().size() == 4)
+            queue.getChildren().add(new Label("...+" + (castle.getProducer().getQueue().size() - 4)));
         if (squadBuilderInterface != null)
             squadBuilderInterface.draw();
     }

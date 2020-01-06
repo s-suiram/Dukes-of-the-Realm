@@ -117,15 +117,16 @@ Squad builder
 }
 
 .label {
-    -fx-padding: 10px;
+    -fx-padding: 0px;
 }
 
 .hbox {
-    -fx-spacing: 10px;
+    -fx-spacing: 0px;
+    -fx-border-radius: 15px;
 }
 
 .vbox {
-    -fx-spacing: 10px;
+    -fx-spacing: 0px;
 }
 
 #squad-builder {
