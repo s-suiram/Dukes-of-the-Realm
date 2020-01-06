@@ -75,10 +75,10 @@ public class CastleView extends Group {
                 img.setRotate(180);
                 break;
             case EAST:
-                img.setRotate(270);
+                img.setRotate(90);
                 break;
             case WEST:
-                img.setRotate(90);
+                img.setRotate(270);
                 break;
         }
 
