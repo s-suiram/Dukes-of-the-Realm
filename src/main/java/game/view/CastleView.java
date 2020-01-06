@@ -87,9 +87,11 @@ public class CastleView extends Group {
                         else selected = this;
                     }
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        WorldView.getInstance().clearAllContextualMenu();
-                        this.toFront();
-                        setVisibleContextual(true);
+                        if(model.getOwner() == World.getInstance().getPlayer()) {
+                            WorldView.getInstance().clearAllContextualMenu();
+                            this.toFront();
+                            setVisibleContextual(true);
+                        }
                     }
                 }
         );

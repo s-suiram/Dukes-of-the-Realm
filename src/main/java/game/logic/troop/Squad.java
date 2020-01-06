@@ -19,14 +19,13 @@ public class Squad implements Serializable {
     private static int COOLDOWN_DISPLACEMENT = 3;
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20 * COOLDOWN_DISPLACEMENT;
-    private static final int LOADING_CYCLES = 90;
+    private static final int LOADING_CYCLES = 90 * COOLDOWN_DISPLACEMENT;
 
     private double xt, yt;
 
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
-    private int frameSkip;
     private int counter;
 
     private DistinctList<Troop> troops;
@@ -76,7 +75,6 @@ public class Squad implements Serializable {
         this.xt = 0;
         this.yt = 0;
         this.loadingCyclesLeft = LOADING_CYCLES / speed;
-        this.frameSkip = FRAME_SKIP / speed;
 
         this.spacing = new Point();
         this.speedDir = new Point();
@@ -91,6 +89,7 @@ public class Squad implements Serializable {
         this.origin.getTroops().removeAll(troops);
 
         prh.add(this::handleFight, 5, "handleFight");
+        prh.add(this::walkThroughDoor, 60/speed, "send");
         //prh.add(this::handleDisplacement, COOLDOWN_DISPLACEMENT, "handleDis");
         this.troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
@@ -241,8 +240,7 @@ public class Squad implements Serializable {
         yt -= (int)yt;
 
         if (troopsLeft()) {
-            if (goodFrame())
-                walkThroughDoor();
+            prh.doPeriodically("send");
         } else {
             if (!isLoading()) {
                 singleRunHandler.doOnce(this::computeHitbox, "computeHitbox");
@@ -276,11 +274,6 @@ public class Squad implements Serializable {
                 troops.remove(0);
         }
     }
-
-    private boolean goodFrame() {
-        return counter % frameSkip == 0;
-    }
-
 
     private void resetThings() {
         speedDir.setLocation(finalSpeedDir);

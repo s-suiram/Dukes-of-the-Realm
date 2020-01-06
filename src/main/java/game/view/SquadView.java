@@ -6,6 +6,9 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * This class handle the squad view
  */
@@ -22,7 +25,7 @@ public class SquadView extends Group {
         hitbox.setStroke(Color.BLACK);
         o.getTroops().forEach(troop -> this.getChildren().add(new TroopView(troop)));
         this.firstAngle = o.getAngle();
-        this.getChildren().add(hitbox);
+       // this.getChildren().add(hitbox);
 
     }
 
@@ -33,11 +36,16 @@ public class SquadView extends Group {
         this.setTranslateX(o.getHitbox().x - cam.x);
         this.setTranslateY(o.getHitbox().y - cam.y);
 
-        this.getChildren().filtered(n -> n instanceof TroopView)
-                .forEach(node -> ((TroopView) node).draw());
+        List<TroopView> tv = this.getChildren().stream()
+                .map(t -> (TroopView)t)
+                .collect(Collectors.toList());
+
+        tv.forEach(TroopView::draw);
 
         if (o.dirChanged()) {
-            this.setRotate(firstAngle - o.getAngle());
+            int angle = (int) (firstAngle - o.getAngle());
+            this.setRotate(angle);
+            tv.forEach(t -> t.rotateTroop(-angle));
         }
     }
 
