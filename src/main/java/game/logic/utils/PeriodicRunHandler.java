@@ -1,5 +1,6 @@
 package game.logic.utils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 
@@ -7,7 +8,7 @@ import java.util.HashMap;
  * a class tha encapsulates the periodic execution of methods in a loop
  * (the method that does not execute every loop and have a cooldown time)
  */
-public class PeriodicRunHandler {
+public class PeriodicRunHandler implements Serializable {
 
     private HashMap<String, PeriodicRunner> periodicRunnerMap;
 
@@ -17,11 +18,12 @@ public class PeriodicRunHandler {
 
     /**
      * add a function
-     * @param r the runnable
+     *
+     * @param r        the runnable
      * @param coolDown the cooldown in number of loop
-     * @param name the name of the runnable to identify it
+     * @param name     the name of the runnable to identify it
      */
-    public void add(Runnable r, int coolDown, String name){
+    public void add(SerializableRunnable r, int coolDown, String name) {
         periodicRunnerMap.put(name, new PeriodicRunner(coolDown, r));
     }
 
@@ -36,12 +38,12 @@ public class PeriodicRunHandler {
     }
 
 
-    private static class PeriodicRunner {
+    private static class PeriodicRunner implements Serializable {
         int cooldown;
         int counter;
-        Runnable r;
+        SerializableRunnable r;
 
-        PeriodicRunner(int skipRate, Runnable r) {
+        PeriodicRunner(int skipRate, SerializableRunnable r) {
             this.cooldown = skipRate;
             this.counter = 1;
             this.r = r;

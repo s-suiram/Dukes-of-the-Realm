@@ -188,7 +188,7 @@ public class Game extends CustomScene {
 
         double topInset = 0.0;
         if (getScene().getWindow() != null) {
-            topInset = getScene().getWindow().getHeight() - getScene().getHeight();
+            //topInset = getScene().getWindow().getHeight() - getScene().getHeight();
         }
 
         Rectangle2D left = new Rectangle2D(0, 0, settings.cameraMoveBorderThickness, getWindowHeight());

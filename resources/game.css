@@ -10,13 +10,13 @@
     -fx-font-size: 13pt;
     -fx-text-fill: white;
     -fx-focus-traversable: false;
+    -fx-cursor: hand;
 }
 
 #menu-button {
     -fx-pref-width: 300px;
     -fx-padding: 15px 80px 15px 80px;
     -fx-background-radius: 5px;
-    -fx-cursor: hand;
 }
 
 #pause {

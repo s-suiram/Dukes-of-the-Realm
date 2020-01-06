@@ -82,7 +82,7 @@ public class TroopProducer implements Serializable {
     /**
      * Data class that store the remaining time and the type of troop to produce when the time is over
      */
-    public static class TroopRemainingTime {
+    public static class TroopRemainingTime implements Serializable {
         /**
          * The type of troop to produce
          */

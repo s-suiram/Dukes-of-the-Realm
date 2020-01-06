@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +18,7 @@ public class Castle implements Serializable {
     /**
      * Constant which define size of a Castle
      */
-    public final static int SIZE = 150;
+    public final static int SIZE = 70;
 
     /**
      * Position and size of the Castle
@@ -191,7 +190,6 @@ public class Castle implements Serializable {
      * Make the Castle state evolve
      */
     public void step() {
-
         if (owner instanceof NeutralDukes) {
             florin += level;
         } else {
@@ -206,7 +204,7 @@ public class Castle implements Serializable {
         }
     }
 
-    public void removeDeads(){
+    public void removeDeads() {
         squads.removeIf(Squad::isDead);
         troops.removeIf(Troop::isDead);
     }
@@ -236,6 +234,10 @@ public class Castle implements Serializable {
      */
     public int getLevel() {
         return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     /**

@@ -42,11 +42,11 @@ public class NewGame extends CustomScene {
         grid.addRow(1, nbFightingLabel, nbFighting);
 
         Label nbNeutralLabel = new Label("Number of neutral dukes: ");
-        Spinner<Integer> nbNeutral = new Spinner<>(1, 50, 3);
+        Spinner<Integer> nbNeutral = new Spinner<>(1, 50, 2);
         grid.addRow(2, nbNeutralLabel, nbNeutral);
 
         Label nbCastlePerPlayerLabel = new Label("Number of castle per player: ");
-        Spinner<Integer> nbCastlePerPlayer = new Spinner<>(1, 50, 6);
+        Spinner<Integer> nbCastlePerPlayer = new Spinner<>(1, 50, 4);
         grid.addRow(3, nbCastlePerPlayerLabel, nbCastlePerPlayer);
 
         Button submit = new Button("Ok");

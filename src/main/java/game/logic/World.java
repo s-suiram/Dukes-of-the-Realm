@@ -1,9 +1,10 @@
 package game.logic;
 
+import game.logic.troop.Knight;
+import game.logic.troop.Onager;
+import game.logic.troop.Pikeman;
 import game.logic.troop.Squad;
-import game.logic.troop.TroopType;
 import game.logic.utils.DistinctList;
-import game.logic.utils.PeriodicRunHandler;
 import game.logic.utils.Point;
 import game.logic.utils.Rectangle;
 import javafx.stage.Screen;
@@ -47,14 +48,12 @@ public class World implements Serializable {
      * The instance of World
      */
     private static World instance;
+    public DistinctList<Castle> castles;
+    public DistinctList<Squad> squads;
     /**
      * Store all the player in the game
      */
     private DistinctList<Player> players;
-
-    public DistinctList<Castle> castles;
-
-    public DistinctList<Squad> squads;
 
 
     /**
@@ -119,8 +118,8 @@ public class World implements Serializable {
     }
 
     private static void randomGeneration(List<String> fightingNames, List<String> neutralNames, int nbCastlePerDuke) {
-        double padding = 0.1; //0.2 -> 20% smaller bounds
-        int fieldForCastle = Castle.SIZE * 2; //Space on the field for one castle
+        double padding = 0.2; //0.2 -> 20% smaller bounds
+        int fieldForCastle = Castle.SIZE; //Space on the field for one castle
 
         int nbFighter = fightingNames.size();
         fightingNames.forEach(n -> getInstance().addFightingDukes(n));
@@ -188,7 +187,6 @@ public class World implements Serializable {
 
         Collections.shuffle((List<?>) randQueue);
 
-        System.out.println(Arrays.deepToString(randQueue.toArray()));
         Stream.of(fightingNames, neutralNames)
                 .flatMap(Collection::stream)
                 .forEach(name -> getInstance().getPlayer(name).ifPresent(p -> {
@@ -205,6 +203,26 @@ public class World implements Serializable {
                     }
                 }));
 
+        neutralNames.forEach(e -> World.getInstance().getPlayer(e).get().getCastles().forEach(c -> {
+            for (int i = 0; i < 25; i++)
+                c.getTroops().add(new Pikeman());
+            for (int i = 0; i < 10; i++)
+                c.getTroops().add(new Knight());
+            for (int i = 0; i < 5; i++)
+                c.getTroops().add(new Onager());
+
+            c.setLevel(10);
+        }));
+
+        fightingNames.forEach(e -> World.getInstance().getPlayer(e).get().getCastles().forEach(c -> {
+            for (int i = 0; i < 5; i++)
+                c.getTroops().add(new Pikeman());
+            for (int i = 0; i < 2; i++)
+                c.getTroops().add(new Knight());
+            for (int i = 0; i < 1; i++)
+                c.getTroops().add(new Onager());
+        }));
+
     }
 
     /**
@@ -218,6 +236,11 @@ public class World implements Serializable {
         return instance;
     }
 
+    public static <N extends Number & Comparable<Integer>> int compare(N number) {
+        return Integer.compare(number.compareTo(0), 0);
+
+    }
+
     /**
      * Make the world advance
      */
@@ -225,23 +248,11 @@ public class World implements Serializable {
         frames++;
         squads.removeIf(Squad::isDead);
         castles.forEach(Castle::removeDeads);
-
-/*
-        if( frames % 5 == 0)  {
-
-            castles.forEach(c -> {
-                c.produce(TroopType.PIKE_MAN);
-                if( c.getTroops().size() > 8) {
-                    c.createSquad(c.getTroops(), castles.get(rand(0,castles.size())));
-                }
-            });
+        if (frames % 10 == 0) {
+            castles.forEach(Castle::step);
         }
-*/
-
-
-        castles.forEach(Castle::step);
         squads.forEach(Squad::step);
-        players.subList(1,players.size()).forEach(Player::act);
+        players.subList(1, players.size()).forEach(Player::act);
 
         if (frames == 60) frames = 1;
     }
@@ -274,7 +285,7 @@ public class World implements Serializable {
         players.add(new FightingDukes(name));
     }
 
-    public  Player getPlayer(){
+    public Player getPlayer() {
         return players.get(0);
     }
 
@@ -292,11 +303,6 @@ public class World implements Serializable {
         StringBuilder s = new StringBuilder();
         players.forEach(p -> s.append(p.toString()));
         return s.toString();
-    }
-
-    public static  <N extends Number & Comparable<Integer>> int compare(N number){
-        return Integer.compare(number.compareTo(0), 0);
-
     }
 
 }
