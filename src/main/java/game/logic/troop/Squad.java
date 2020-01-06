@@ -20,6 +20,9 @@ public class Squad implements Serializable {
     private static final int SHIELD_MARGIN = 40;
     private static final int FRAME_SKIP = 20 * COOLDOWN_DISPLACEMENT;
     private static final int LOADING_CYCLES = 90;
+
+    private double xt, yt;
+
     private int troopIndex;
     private int speed;
     private int loadingCyclesLeft;
@@ -46,6 +49,7 @@ public class Squad implements Serializable {
     private Point finalSpeedDir;
     private Point startingPos;
 
+
     private PeriodicRunHandler prh;
 
     /**
@@ -69,6 +73,8 @@ public class Squad implements Serializable {
         this.killed = false;
         this.troopIndex = 0;
         this.counter = 0;
+        this.xt = 0;
+        this.yt = 0;
         this.loadingCyclesLeft = LOADING_CYCLES / speed;
         this.frameSkip = FRAME_SKIP / speed;
 
@@ -85,7 +91,7 @@ public class Squad implements Serializable {
         this.origin.getTroops().removeAll(troops);
 
         prh.add(this::handleFight, 5, "handleFight");
-        prh.add(this::handleDisplacement, COOLDOWN_DISPLACEMENT, "handleDis");
+        //prh.add(this::handleDisplacement, COOLDOWN_DISPLACEMENT, "handleDis");
         this.troops.forEach(troop -> troop.setSquad(this));
         computeStartingPos();
         computeLastAngle();
@@ -169,7 +175,7 @@ public class Squad implements Serializable {
         counter++;
         lastSpeedDir.setLocation(speedDir);
         if (!onTarget() && movingPhase) {
-            prh.doPeriodically("handleDis");
+            handleDisplacement();
         } else {
             handleContact();
         }
@@ -226,7 +232,14 @@ public class Squad implements Serializable {
     }
 
     private void handleDisplacement() {
-        translate(speedDir);
+        xt += speedDir.x / (COOLDOWN_DISPLACEMENT * 1.0);
+        yt += speedDir.y / (COOLDOWN_DISPLACEMENT * 1.0);
+        if (speedDir.x != 0 && Math.abs(xt) < 1 || speedDir.y != 0 && Math.abs(yt) < 1)
+            return;
+        translate(new Point(xt, yt));
+        xt -= (int)xt;
+        yt -= (int)yt;
+
         if (troopsLeft()) {
             if (goodFrame())
                 walkThroughDoor();

@@ -248,7 +248,7 @@ public class World implements Serializable {
         frames++;
         squads.removeIf(Squad::isDead);
         castles.forEach(Castle::removeDeads);
-        if (frames % 10 == 0) {
+        if (frames % 1 == 0) {
             castles.forEach(Castle::step);
         }
         squads.forEach(Squad::step);
