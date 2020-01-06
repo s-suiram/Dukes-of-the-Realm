@@ -146,11 +146,6 @@ public class ContextualMenuCastle extends Group {
         secondLvl.getStyleClass().add("hbox");
 
 
-     /*   lvlLabel.setBorder(b);
-        lvl.setBorder(b);
-        nextLabel.setBorder(b);
-        nextValue.setBorder(b);
-*/
         levelUpProgress = new ProgressBar();
         levelUpProgress.setId("progress-lvl");
         levelUpProgress.getStyleClass().add("blue-bar");
@@ -253,8 +248,8 @@ public class ContextualMenuCastle extends Group {
 
 
 
-        pane = new VBox(top, separator(), levelUpProgress, lvlUp, separator(),
-                troopsLayering, separator(), queue, separator(), createSquad, separator(), squadFeedback);
+        pane = new VBox(top, separator(200), levelUpProgress, lvlUp, separator(200),
+                troopsLayering, separator(200), queue, separator(200), createSquad, separator(200), squadFeedback);
         pane.getStyleClass().add("vbox");
         pane.setId("menu-border");
         pane.setPadding(new Insets(5));
@@ -267,8 +262,8 @@ public class ContextualMenuCastle extends Group {
         getChildren().addAll(pane);
     }
 
-    private HBox separator(){
-        Line sep = new Line(0,0,200,0);
+    protected  static HBox separator(int l ){
+        Line sep = new Line(0,0,l,0);
         sep.setStroke(Color.rgb(48, 19, 0));
         sep.setStrokeWidth(3);
         HBox g = new HBox();
@@ -276,6 +271,7 @@ public class ContextualMenuCastle extends Group {
         g.getChildren().add(sep);
         return g;
     }
+
 
     /**
      * This method is called each frame
